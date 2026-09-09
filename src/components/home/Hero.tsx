@@ -1,7 +1,10 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LiquidButton } from "../ui/liquid-glass-button";
 
 export default function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative h-screen min-h-[600px] flex flex-col justify-center text-white pt-36 pb-20 overflow-hidden">
       <video 
@@ -26,9 +29,9 @@ export default function Hero() {
           </p>
           
           <div className="flex justify-center mb-16">
-            <Link to="/contact" className="bg-slate-900 text-white font-medium px-8 py-3.5 rounded-full hover:bg-black transition-colors flex items-center text-sm shadow-xl">
+            <LiquidButton size="lg" className="shadow-xl" onClick={() => navigate('/contact')}>
               Schedule A Call <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
+            </LiquidButton>
           </div>
         </div>
       </div>

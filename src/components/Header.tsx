@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Phone, MapPin, Search, Menu, X, ChevronDown, Activity, ArrowRight } from "lucide-react";
 import { companyInfo } from "../data/content";
+import { LiquidButton } from "./ui/liquid-glass-button";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <header className="absolute top-0 left-0 right-0 z-[100] bg-transparent text-white">
@@ -85,9 +87,9 @@ export default function Header() {
             <Link to="/contact" className="text-sm font-medium transition-colors text-white/90 hover:text-white">
               Sign In
             </Link>
-            <Link to="/contact" className="bg-slate-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-black transition-colors flex items-center">
+            <LiquidButton size="default" onClick={() => navigate('/contact')}>
               Schedule A Call <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
+            </LiquidButton>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -111,13 +113,18 @@ export default function Header() {
             <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
           </nav>
           <div className="mt-auto pb-8 border-t border-slate-100 pt-6">
-            <Link 
-              to="/contact" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex justify-center items-center w-full bg-slate-900 text-white font-bold py-4 rounded-full mb-4"
+            <LiquidButton 
+              size="xl" 
+              className="w-full"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                navigate('/contact');
+              }}
             >
-              Schedule A Call <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
+              <div className="flex justify-center items-center w-full">
+                Schedule A Call <ArrowRight className="w-5 h-5 ml-2" />
+              </div>
+            </LiquidButton>
           </div>
         </div>
       )}

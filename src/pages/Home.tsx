@@ -4,8 +4,12 @@ import CTACards from "../components/home/CTACards";
 import CategoryExplorer from "../components/home/CategoryExplorer";
 import ManufacturingSection from "../components/home/ManufacturingSection";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LiquidButton } from "../components/ui/liquid-glass-button";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white">
       <Hero />
@@ -92,12 +96,12 @@ export default function Home() {
             Connect with Emsurg for medical technology, product information, partnerships and healthcare solutions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <a href="/contact" className="w-full sm:w-auto bg-white text-slate-900 px-8 py-3.5 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-lg">
+            <LiquidButton size="lg" className="w-full sm:w-auto" onClick={() => navigate('/contact')}>
               Talk to Emsurg
-            </a>
-            <a href="/products" className="w-full sm:w-auto bg-slate-800 text-white px-8 py-3.5 rounded-full font-bold hover:bg-slate-700 transition-colors border border-slate-700">
+            </LiquidButton>
+            <LiquidButton size="lg" className="w-full sm:w-auto" onClick={() => navigate('/products')}>
               Explore Solutions
-            </a>
+            </LiquidButton>
           </div>
         </div>
       </section>
