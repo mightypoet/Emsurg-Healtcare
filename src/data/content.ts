@@ -6,7 +6,7 @@ export const companyInfo = {
   headquarters: "Kolkata",
   phone: "+91 33-2537-0069",
   whatsapp: "+91 7439757452",
-  email: "info@emsurg.com", // Placeholder as per instructions
+  email: "info@emsurghealthcare.com",
   hours: "Monday–Friday, 9:00 AM–4:00 PM",
   mission: "Advancing healthcare with innovation, integrity and expertise.",
   vision: "Engineering better outcomes through medical innovation and care.",

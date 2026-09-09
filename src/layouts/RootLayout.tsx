@@ -7,8 +7,7 @@ export default function RootLayout() {
   return (
     <div className="flex flex-col min-h-screen font-sans">
       <Header />
-      <main className="flex-grow pt-[114px]">
-        {/* pt-[114px] accounts for the fixed header height (34px top bar + 80px main header) */}
+      <main className="flex-grow">
         <Outlet />
       </main>
       <Footer />

@@ -10,12 +10,11 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm bg-blue-600 text-white`}>
-                <div className={`w-4 h-4 rounded-full bg-white opacity-80 -ml-2`}></div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-white leading-tight tracking-tight">EMSURG</span>
-              </div>
+              <img 
+                src="https://h2urzlmuwdqsab2o.private.blob.vercel-storage.com/logo%20(2).png?vercel-blob-delegation=eyJzdG9yZUlkIjoic3RvcmVfSDJ1cnpMTXVXRFFTQUIybyIsIm93bmVySWQiOiJ0ZWFtX0pOVU5UaW1oM1BYcHh1blY4Q3E4WXRJayIsInBhdGhuYW1lIjoiKiIsIm9wZXJhdGlvbnMiOlsiZ2V0IiwiaGVhZCJdLCJ2YWxpZFVudGlsIjoxNzg4OTc4OTY2MTM5LCJpYXQiOjE3ODg5MzU3NjcwNDZ9.syRRv7KvjF1OWG9FpZ8-A3YDlGkAdeW2-g_jIhtjIhk&vercel-blob-signature=P9rW-0d9rDScwycs76sb1MV5pyNkj7cK4_cuE440kBs" 
+                alt="Emsurg Logo" 
+                className="h-10 w-auto brightness-0 invert" 
+              />
             </div>
             <p className="text-sm text-slate-400 leading-relaxed pr-4">
               Advancing healthcare with innovation, integrity and expertise.
@@ -63,7 +62,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="font-semibold text-slate-300">{companyInfo.phone}</li>
               <li className="font-semibold text-slate-300">{companyInfo.whatsapp}</li>
-              <li className="font-semibold text-slate-300">[OFFICIAL EMAIL TO BE PROVIDED]</li>
+              <li className="font-semibold text-slate-300">{companyInfo.email}</li>
             </ul>
           </div>
 

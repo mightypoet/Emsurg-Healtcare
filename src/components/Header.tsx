@@ -1,40 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, MapPin, Search, Menu, X, ChevronDown, Activity, ArrowRight } from "lucide-react";
 import { companyInfo } from "../data/content";
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-md text-slate-900" : "bg-transparent text-white"}`}>
+    <header className="absolute top-0 left-0 right-0 z-[100] bg-transparent text-white">
       {/* Main Header */}
-      <div className={`transition-all duration-300 ${isScrolled ? "py-3" : "py-6"}`}>
+      <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 z-50">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm ${isScrolled ? "bg-blue-600 text-white" : "bg-white text-blue-600"}`}>
-              {/* Using a simple circle for the logo placeholder to match the modern UI */}
-              <div className={`w-4 h-4 rounded-full ${isScrolled ? "bg-white" : "bg-blue-600"} opacity-80 -ml-2`}></div>
-            </div>
-            <div className="flex flex-col">
-              <span className={`text-xl font-bold leading-tight tracking-tight ${isScrolled ? "text-slate-900" : "text-white"}`}>EMSURG</span>
-            </div>
+          <Link to="/" className="flex items-center space-x-2 z-[100]">
+            <img 
+              src="https://h2urzlmuwdqsab2o.private.blob.vercel-storage.com/logo%20(2).png?vercel-blob-delegation=eyJzdG9yZUlkIjoic3RvcmVfSDJ1cnpMTXVXRFFTQUIybyIsIm93bmVySWQiOiJ0ZWFtX0pOVU5UaW1oM1BYcHh1blY4Q3E4WXRJayIsInBhdGhuYW1lIjoiKiIsIm9wZXJhdGlvbnMiOlsiZ2V0IiwiaGVhZCJdLCJ2YWxpZFVudGlsIjoxNzg4OTc4OTY2MTM5LCJpYXQiOjE3ODg5MzU3NjcwNDZ9.syRRv7KvjF1OWG9FpZ8-A3YDlGkAdeW2-g_jIhtjIhk&vercel-blob-signature=P9rW-0d9rDScwycs76sb1MV5pyNkj7cK4_cuE440kBs" 
+              alt="Emsurg Logo" 
+              className="h-10 w-auto brightness-0 invert" 
+            />
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             <div className="group relative">
-              <button className={`flex items-center text-sm font-medium transition-colors py-2 ${isScrolled ? "text-slate-700 hover:text-blue-600" : "text-white/90 hover:text-white"}`}>
+              <button className="flex items-center text-sm font-medium transition-colors py-2 text-white/90 hover:text-white">
                 Solutions <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
               </button>
               {/* Mega Menu Dropdown */}
@@ -85,15 +74,15 @@ export default function Header() {
               </div>
             </div>
 
-            <Link to="/innovation" className={`text-sm font-medium transition-colors ${isScrolled ? "text-slate-700 hover:text-blue-600" : "text-white/90 hover:text-white"}`}>Manufacturing</Link>
-            <Link to="/partners" className={`text-sm font-medium transition-colors ${isScrolled ? "text-slate-700 hover:text-blue-600" : "text-white/90 hover:text-white"}`}>Partners</Link>
-            <Link to="/quality" className={`text-sm font-medium transition-colors ${isScrolled ? "text-slate-700 hover:text-blue-600" : "text-white/90 hover:text-white"}`}>Quality</Link>
-            <Link to="/about" className={`text-sm font-medium transition-colors ${isScrolled ? "text-slate-700 hover:text-blue-600" : "text-white/90 hover:text-white"}`}>About</Link>
+            <Link to="/innovation" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Manufacturing</Link>
+            <Link to="/partners" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Partners</Link>
+            <Link to="/quality" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Quality</Link>
+            <Link to="/about" className="text-sm font-medium transition-colors text-white/90 hover:text-white">About</Link>
           </nav>
 
           {/* Right Actions */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link to="/contact" className={`text-sm font-medium transition-colors ${isScrolled ? "text-slate-700 hover:text-slate-900" : "text-white/90 hover:text-white"}`}>
+            <Link to="/contact" className="text-sm font-medium transition-colors text-white/90 hover:text-white">
               Sign In
             </Link>
             <Link to="/contact" className="bg-slate-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-black transition-colors flex items-center">
@@ -103,7 +92,7 @@ export default function Header() {
 
           {/* Mobile Menu Toggle */}
           <button 
-            className={`lg:hidden p-2 z-50 ${mobileMenuOpen ? "text-slate-900" : (isScrolled ? "text-slate-900" : "text-white")}`}
+            className={`lg:hidden p-2 z-[100] ${mobileMenuOpen ? "text-slate-900" : "text-white"}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

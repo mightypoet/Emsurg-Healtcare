@@ -105,7 +105,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-1">Official Email</div>
-                  <div className="text-base font-bold text-blue-700">[OFFICIAL EMAIL TO BE PROVIDED]</div>
+                  <div className="text-base font-bold text-blue-700">{companyInfo.email}</div>
                 </div>
               </div>
               <div className="flex items-start">
