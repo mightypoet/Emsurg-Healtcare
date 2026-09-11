@@ -14,7 +14,7 @@ export default function Hero() {
         playsInline 
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       >
-        <source src="https://h2urzlmuwdqsab2o.private.blob.vercel-storage.com/10661569-uhd_3840_2160_30fps-compressed%20(1).mp4?vercel-blob-delegation=eyJzdG9yZUlkIjoic3RvcmVfSDJ1cnpMTXVXRFFTQUIybyIsIm93bmVySWQiOiJ0ZWFtX0pOVU5UaW1oM1BYcHh1blY4Q3E4WXRJayIsInBhdGhuYW1lIjoiKiIsIm9wZXJhdGlvbnMiOlsiZ2V0IiwiaGVhZCJdLCJ2YWxpZFVudGlsIjoxNzg4OTgwNzE2Njc5LCJpYXQiOjE3ODg5Mzc1MTc5ODR9.PGjuqnun1cSywaYi-tNeO5P9ZbhnF0YdzRDzFxT2QMg&vercel-blob-signature=cocDt5QXAm57CIZtpMTPm6HV2mJKnCyNJ0AQWuHPEMs" type="video/mp4" />
+        <source src="https://7nc4blpengmbdwii.public.blob.vercel-storage.com/10661569-uhd_3840_2160_30fps-compressed%20%281%29.mp4" type="video/mp4" />
       </video>
       
       <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>

@@ -16,7 +16,7 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 z-[100]">
             <img 
-              src="https://h2urzlmuwdqsab2o.private.blob.vercel-storage.com/logo%20(2).png?vercel-blob-delegation=eyJzdG9yZUlkIjoic3RvcmVfSDJ1cnpMTXVXRFFTQUIybyIsIm93bmVySWQiOiJ0ZWFtX0pOVU5UaW1oM1BYcHh1blY4Q3E4WXRJayIsInBhdGhuYW1lIjoiKiIsIm9wZXJhdGlvbnMiOlsiZ2V0IiwiaGVhZCJdLCJ2YWxpZFVudGlsIjoxNzg4OTc4OTY2MTM5LCJpYXQiOjE3ODg5MzU3NjcwNDZ9.syRRv7KvjF1OWG9FpZ8-A3YDlGkAdeW2-g_jIhtjIhk&vercel-blob-signature=P9rW-0d9rDScwycs76sb1MV5pyNkj7cK4_cuE440kBs" 
+              src="https://7nc4blpengmbdwii.public.blob.vercel-storage.com/logo%20%282%29.png" 
               alt="Emsurg Logo" 
               className="h-10 w-auto brightness-0 invert" 
             />
