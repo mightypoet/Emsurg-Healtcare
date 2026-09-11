@@ -3,6 +3,7 @@ import TrustStrip from "../components/home/TrustStrip";
 import CTACards from "../components/home/CTACards";
 import CategoryExplorer from "../components/home/CategoryExplorer";
 import ManufacturingSection from "../components/home/ManufacturingSection";
+import FeaturedBlogs from "../components/home/FeaturedBlogs";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LiquidButton } from "../components/ui/liquid-glass-button";
@@ -61,6 +62,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <FeaturedBlogs />
 
       {/* Why Emsurg (Simplified) */}
       <section className="py-24 bg-slate-50 border-t border-slate-100">

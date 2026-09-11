@@ -77,6 +77,7 @@ export default function Header() {
             </div>
 
             <Link to="/innovation" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Manufacturing</Link>
+            <Link to="/blogs" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Blogs</Link>
             <Link to="/partners" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Partners</Link>
             <Link to="/quality" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Quality</Link>
             <Link to="/about" className="text-sm font-medium transition-colors text-white/90 hover:text-white">About</Link>
@@ -108,6 +109,7 @@ export default function Header() {
           <nav className="flex flex-col space-y-6 text-xl font-bold text-slate-900 mb-8">
             <Link to="/products" onClick={() => setMobileMenuOpen(false)}>Solutions</Link>
             <Link to="/innovation" onClick={() => setMobileMenuOpen(false)}>Manufacturing</Link>
+            <Link to="/blogs" onClick={() => setMobileMenuOpen(false)}>Blogs</Link>
             <Link to="/partners" onClick={() => setMobileMenuOpen(false)}>Partners</Link>
             <Link to="/quality" onClick={() => setMobileMenuOpen(false)}>Quality</Link>
             <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About Us</Link>

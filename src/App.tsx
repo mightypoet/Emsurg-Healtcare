@@ -4,6 +4,10 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Products from "./pages/Products";
 import Contact from "./pages/Contact";
+import BlogList from "./pages/BlogList";
+import BlogPost from "./pages/BlogPost";
+import Login from "./pages/admin/Login";
+import Dashboard from "./pages/admin/Dashboard";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
 export default function App() {
@@ -15,6 +19,8 @@ export default function App() {
           <Route path="about" element={<About />} />
           <Route path="products" element={<Products />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="blogs" element={<BlogList />} />
+          <Route path="blogs/:slug" element={<BlogPost />} />
           <Route path="innovation" element={<PlaceholderPage title="Innovation & R&D" />} />
           <Route path="partners" element={<PlaceholderPage title="Global Partners" />} />
           <Route path="insights" element={<PlaceholderPage title="Insights & Blog" />} />
@@ -25,6 +31,8 @@ export default function App() {
           <Route path="faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
           <Route path="*" element={<PlaceholderPage title="Page Not Found" />} />
         </Route>
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );
