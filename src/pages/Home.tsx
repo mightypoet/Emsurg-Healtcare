@@ -1,5 +1,6 @@
 import Hero from "../components/home/Hero";
 import TrustStrip from "../components/home/TrustStrip";
+import MetricsStrip from "../components/home/MetricsStrip";
 import CTACards from "../components/home/CTACards";
 import CategoryExplorer from "../components/home/CategoryExplorer";
 import ManufacturingSection from "../components/home/ManufacturingSection";
@@ -15,6 +16,9 @@ export default function Home() {
     <div className="bg-white">
       <Hero />
       <TrustStrip />
+      <div className="pt-12 pb-4 relative z-30">
+        <MetricsStrip />
+      </div>
       <CTACards />
       <CategoryExplorer />
       <ManufacturingSection />

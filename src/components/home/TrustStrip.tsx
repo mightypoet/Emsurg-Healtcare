@@ -10,7 +10,7 @@ const hospitals = [
 
 export default function TrustStrip() {
   return (
-    <div className="bg-slate-50 border-y border-slate-200/80 pt-10 pb-16 mb-16 md:mb-24 relative overflow-hidden z-20">
+    <div className="bg-slate-50 border-y border-slate-200/80 pt-10 pb-16 relative overflow-hidden z-20">
       <div className="max-w-7xl mx-auto px-4 relative">
         <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-10">
           Trusted by leading hospitals, including
