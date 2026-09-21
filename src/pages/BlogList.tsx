@@ -1,95 +1,37 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "../lib/supabase";
 import { format } from "date-fns";
 import { ChevronRight, Clock, Calendar } from "lucide-react";
+import { Post, fetchPublishedPosts, getLocalPosts } from "../lib/postsStore";
 
-export interface Post {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  cover_image: string;
-  category: string;
-  author: string;
-  published: boolean;
-  featured: boolean;
-  created_at: string;
-}
+export type { Post };
 
 const CATEGORIES = ["All", "Orthobiologics", "Wound Care", "Dialysis", "Indigenous Manufacturing"];
 
-const INITIAL_POSTS: Post[] = [
-  {
-    id: "1",
-    title: "Advancements in Nanocrystalline Hydroxyapatite (BoneSurg HA) for Orthopaedic Surgery",
-    slug: "advancements-in-nanocrystalline-hydroxyapatite-bonesurg-ha",
-    excerpt: "Exploring the latest clinical outcomes and surgical techniques utilizing next-generation synthetic bone grafts.",
-    content: "Full content here...",
-    cover_image: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=2070&auto=format&fit=crop",
-    category: "Orthobiologics",
-    author: "Emsurg Medical Team",
-    published: true,
-    featured: true,
-    created_at: new Date(Date.now() - 100000000).toISOString(),
-  },
-  {
-    id: "2",
-    title: "The Role of Negative Pressure Wound Therapy (NPWT) in Managing Complex Surgical Wounds",
-    slug: "role-of-npwt-in-managing-complex-surgical-wounds",
-    excerpt: "A comprehensive review of NPWT protocols, efficacy, and patient recovery metrics in postoperative care.",
-    content: "Full content here...",
-    cover_image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2000&auto=format&fit=crop",
-    category: "Wound Care",
-    author: "Emsurg Medical Team",
-    published: true,
-    featured: false,
-    created_at: new Date(Date.now() - 200000000).toISOString(),
-  },
-  {
-    id: "3",
-    title: "Indigenous Manufacturing of Hemodialysis Fluids: Strengthening India's Nephro Infrastructure",
-    slug: "indigenous-manufacturing-of-hemodialysis-fluids",
-    excerpt: "How domestic production of critical dialysis components is transforming accessibility and cost-efficiency in renal care.",
-    content: "Full content here...",
-    cover_image: "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=2070&auto=format&fit=crop",
-    category: "Indigenous Manufacturing",
-    author: "Emsurg Medical Team",
-    published: true,
-    featured: true,
-    created_at: new Date(Date.now() - 300000000).toISOString(),
-  }
-];
-
 export default function BlogList() {
-  const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
+  const [posts, setPosts] = useState<Post[]>(() => getLocalPosts().filter(p => p.published));
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
+    let isMounted = true;
+    async function loadPosts() {
       try {
-        const { data, error } = await supabase
-          .from("posts")
-          .select("*")
-          .eq("published", true)
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error("Error fetching posts:", error);
-          // Fallback to initial posts if table doesn't exist yet
-        } else if (data && data.length > 0) {
-          setPosts(data);
+        const fetched = await fetchPublishedPosts();
+        if (isMounted && fetched.length > 0) {
+          setPosts(fetched);
         }
       } catch (err) {
-        console.error("Supabase not fully configured, using initial data.", err);
+        console.info("Using local posts fallback:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
-    fetchPosts();
+    loadPosts();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const filteredPosts = activeCategory === "All" 

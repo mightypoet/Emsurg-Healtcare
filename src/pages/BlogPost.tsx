@@ -1,89 +1,48 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "../lib/supabase";
 import { format } from "date-fns";
 import { ChevronRight, Clock, Calendar, ArrowLeft } from "lucide-react";
-import { Post } from "./BlogList";
+import { Post, fetchPostBySlug, getLocalPostBySlug } from "../lib/postsStore";
 
-// Export this so we can reuse the initial data fallback for the detail page too
+// Export this for backwards compatibility
 export const getInitialPostBySlug = (slug: string) => {
-  const INITIAL_POSTS: Post[] = [
-    {
-      id: "1",
-      title: "Advancements in Nanocrystalline Hydroxyapatite (BoneSurg HA) for Orthopaedic Surgery",
-      slug: "advancements-in-nanocrystalline-hydroxyapatite-bonesurg-ha",
-      excerpt: "Exploring the latest clinical outcomes and surgical techniques utilizing next-generation synthetic bone grafts.",
-      content: `## The Evolution of Synthetic Bone Grafts\n\nFor decades, autografts have been considered the gold standard in orthopaedic and maxillofacial bone grafting due to their osteoconductive, osteoinductive, and osteogenic properties. However, donor site morbidity, limited availability, and prolonged surgical times have driven the search for effective alternatives.\n\n### Enter Nanocrystalline Hydroxyapatite (HA)\n\nBoneSurg HA represents a significant leap forward in synthetic grafting. By mimicking the exact mineral composition and nanostructure of natural human bone, it provides an optimal scaffold for new bone ingrowth.\n\n- **High Porosity:** Ensures excellent vascularization and cellular penetration.\n- **Biocompatibility:** Elicits minimal immune response.\n- **Resorption Profile:** Gradually resorbs as it is replaced by natural host bone.\n\n### Clinical Outcomes\n\nRecent multi-center studies indicate that when used in spinal fusion and trauma cases, BoneSurg HA demonstrates fusion rates comparable to autografts, without the associated donor site complications. The handling characteristics—allowing it to be mixed with blood or bone marrow aspirate—make it highly versatile in the operating theater.\n\nAs we continue to advance our manufacturing techniques in India, making these high-grade synthetic materials more accessible will be crucial for improving patient outcomes globally.`,
-      cover_image: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=2070&auto=format&fit=crop",
-      category: "Orthobiologics",
-      author: "Emsurg Medical Team",
-      published: true,
-      featured: true,
-      created_at: new Date(Date.now() - 100000000).toISOString(),
-    },
-    {
-      id: "2",
-      title: "The Role of Negative Pressure Wound Therapy (NPWT) in Managing Complex Surgical Wounds",
-      slug: "role-of-npwt-in-managing-complex-surgical-wounds",
-      excerpt: "A comprehensive review of NPWT protocols, efficacy, and patient recovery metrics in postoperative care.",
-      content: `## Transforming Wound Care\n\nComplex surgical wounds present a significant challenge in postoperative patient care. Negative Pressure Wound Therapy (NPWT) has emerged as a critical modality in accelerating healing.\n\nOur research into optimized pressure settings and advanced dressing materials highlights how maintaining a controlled negative pressure environment promotes angiogenesis, reduces edema, and stimulates granulation tissue formation.`,
-      cover_image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2000&auto=format&fit=crop",
-      category: "Wound Care",
-      author: "Emsurg Medical Team",
-      published: true,
-      featured: false,
-      created_at: new Date(Date.now() - 200000000).toISOString(),
-    },
-    {
-      id: "3",
-      title: "Indigenous Manufacturing of Hemodialysis Fluids: Strengthening India's Nephro Infrastructure",
-      slug: "indigenous-manufacturing-of-hemodialysis-fluids",
-      excerpt: "How domestic production of critical dialysis components is transforming accessibility and cost-efficiency in renal care.",
-      content: `## Building a Self-Reliant Healthcare Ecosystem\n\nThe rising prevalence of chronic kidney disease (CKD) in India necessitates a robust and accessible dialysis infrastructure. Historically, the reliance on imported hemodialysis fluids and consumables has driven up costs for patients.\n\nAt Emsurg, our focus on indigenous manufacturing of high-purity hemodialysis fluids is changing this paradigm. By producing locally under stringent WHO-GMP guidelines, we ensure unbroken supply chains and significant cost reductions for partner hospitals and clinics across the subcontinent.`,
-      cover_image: "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=2070&auto=format&fit=crop",
-      category: "Indigenous Manufacturing",
-      author: "Emsurg Medical Team",
-      published: true,
-      featured: true,
-      created_at: new Date(Date.now() - 300000000).toISOString(),
-    }
-  ];
-  return INITIAL_POSTS.find(p => p.slug === slug);
+  return getLocalPostBySlug(slug);
 };
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<Post | null>(() => slug ? getLocalPostBySlug(slug) || null : null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPost() {
-      if (!slug) return;
+    let isMounted = true;
+    async function loadPost() {
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
       
       try {
-        const { data, error } = await supabase
-          .from("posts")
-          .select("*")
-          .eq("slug", slug)
-          .eq("published", true)
-          .single();
-
-        if (error) {
-          console.error("Error fetching post:", error);
-          setPost(getInitialPostBySlug(slug) || null);
-        } else if (data) {
-          setPost(data);
+        const found = await fetchPostBySlug(slug);
+        if (isMounted) {
+          setPost(found || getLocalPostBySlug(slug) || null);
         }
       } catch (err) {
-        console.error("Supabase error:", err);
-        setPost(getInitialPostBySlug(slug) || null);
+        if (isMounted) {
+          setPost(getLocalPostBySlug(slug) || null);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
-    fetchPost();
+    loadPost();
     window.scrollTo(0, 0);
+    return () => {
+      isMounted = false;
+    };
   }, [slug]);
 
   if (loading) {

@@ -76,10 +76,10 @@ export default function Header() {
               </div>
             </div>
 
-            <Link to="/innovation" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Manufacturing</Link>
+            <Link to="/products" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Products</Link>
             <Link to="/blogs" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Blogs</Link>
             <Link to="/partners" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Partners</Link>
-            <Link to="/quality" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Quality</Link>
+            <Link to="/gallery" className="text-sm font-medium transition-colors text-white/90 hover:text-white">Gallery</Link>
             <Link to="/about" className="text-sm font-medium transition-colors text-white/90 hover:text-white">About</Link>
           </nav>
 
@@ -107,11 +107,10 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-white z-40 pt-32 px-6 overflow-y-auto lg:hidden flex flex-col">
           <nav className="flex flex-col space-y-6 text-xl font-bold text-slate-900 mb-8">
-            <Link to="/products" onClick={() => setMobileMenuOpen(false)}>Solutions</Link>
-            <Link to="/innovation" onClick={() => setMobileMenuOpen(false)}>Manufacturing</Link>
+            <Link to="/products" onClick={() => setMobileMenuOpen(false)}>Products</Link>
             <Link to="/blogs" onClick={() => setMobileMenuOpen(false)}>Blogs</Link>
             <Link to="/partners" onClick={() => setMobileMenuOpen(false)}>Partners</Link>
-            <Link to="/quality" onClick={() => setMobileMenuOpen(false)}>Quality</Link>
+            <Link to="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</Link>
             <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
           </nav>
           <div className="mt-auto pb-8 border-t border-slate-100 pt-6">

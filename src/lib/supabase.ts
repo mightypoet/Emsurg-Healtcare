@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /*
 Supabase SQL Schema Requirements:
 
@@ -37,6 +38,37 @@ CREATE POLICY "Public can view blog-assets" ON storage.objects
 -- Allow authenticated users full access to blog-assets
 CREATE POLICY "Admins have full access to blog-assets" ON storage.objects
   FOR ALL USING (bucket_id = 'blog-assets' AND auth.role() = 'authenticated');
+
+-- Create gallery table
+CREATE TABLE gallery (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT NOT NULL,
+  category TEXT,
+  col_span TEXT DEFAULT 'md:col-span-1',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Setup RLS for gallery
+ALTER TABLE gallery ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view gallery" ON gallery
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admins have full access to gallery" ON gallery
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- Create gallery-assets bucket
+INSERT INTO storage.buckets (id, name, public) VALUES ('gallery-assets', 'gallery-assets', true);
+
+-- Allow public read access to gallery-assets
+CREATE POLICY "Public can view gallery-assets" ON storage.objects
+  FOR SELECT USING (bucket_id = 'gallery-assets');
+
+-- Allow authenticated users full access to gallery-assets
+CREATE POLICY "Admins have full access to gallery-assets" ON storage.objects
+  FOR ALL USING (bucket_id = 'gallery-assets' AND auth.role() = 'authenticated');
 */
 
 import { createClient } from '@supabase/supabase-js';

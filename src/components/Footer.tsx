@@ -25,23 +25,23 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Company</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/about" className="font-semibold text-slate-300 hover:text-white transition-colors">About</Link></li>
+              <li><Link to="/about" className="font-semibold text-slate-300 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Products & Solutions</Link></li>
               <li><Link to="/leaders" className="font-semibold text-slate-300 hover:text-white transition-colors">Leadership</Link></li>
-              <li><Link to="/innovation" className="font-semibold text-slate-300 hover:text-white transition-colors">Innovation</Link></li>
               <li><Link to="/careers" className="font-semibold text-slate-300 hover:text-white transition-colors">Careers</Link></li>
             </ul>
           </div>
 
           {/* Column 3: Solutions */}
           <div>
-            <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Solutions</h4>
+            <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Products</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">BoneSurg</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Nephro Care</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Wound Management</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Biopsy Devices</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Bone Cements</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Sports Medicine</Link></li>
+              <li><Link to="/products/bonesurg-cr" className="font-semibold text-slate-300 hover:text-white transition-colors">BoneSurg CR</Link></li>
+              <li><Link to="/products/bonesurg-ha" className="font-semibold text-slate-300 hover:text-white transition-colors">BoneSurg HA</Link></li>
+              <li><Link to="/products/em-vac-npwt" className="font-semibold text-slate-300 hover:text-white transition-colors">EM-VAC NPWT</Link></li>
+              <li><Link to="/products/hemodialysis-fluids-dry-powders" className="font-semibold text-slate-300 hover:text-white transition-colors">Hemodialysis Fluids</Link></li>
+              <li><Link to="/products/teknimed-opacity-plus-bone-cement" className="font-semibold text-slate-300 hover:text-white transition-colors">Teknimed Cements</Link></li>
+              <li><Link to="/products/mdl-biopsy-devices" className="font-semibold text-slate-300 hover:text-white transition-colors">MDL Biopsy</Link></li>
             </ul>
           </div>
 

@@ -1,48 +1,33 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
 import { format } from "date-fns";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { Post } from "../../pages/BlogList";
-import { getInitialPostBySlug } from "../../pages/BlogPost";
+import { Post, fetchFeaturedPosts, getLocalPosts } from "../../lib/postsStore";
 
 export default function FeaturedBlogs() {
-  const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
+  const [featuredPosts, setFeaturedPosts] = useState<Post[]>(() => {
+    const local = getLocalPosts().filter(p => p.published && p.featured);
+    return local.slice(0, 3);
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchFeatured() {
+    let isMounted = true;
+    async function loadFeatured() {
       try {
-        const { data, error } = await supabase
-          .from("posts")
-          .select("*")
-          .eq("published", true)
-          .eq("featured", true)
-          .order("created_at", { ascending: false })
-          .limit(3);
-
-        if (error || !data || data.length === 0) {
-          // Fallback to initial mock data
-          const p1 = getInitialPostBySlug("advancements-in-nanocrystalline-hydroxyapatite-bonesurg-ha");
-          const p3 = getInitialPostBySlug("indigenous-manufacturing-of-hemodialysis-fluids");
-          const p2 = getInitialPostBySlug("role-of-npwt-in-managing-complex-surgical-wounds");
-          
-          const fallbacks = [p1, p3, p2].filter(Boolean) as Post[];
-          setFeaturedPosts(fallbacks.slice(0, 3));
-        } else {
+        const data = await fetchFeaturedPosts();
+        if (isMounted && data && data.length > 0) {
           setFeaturedPosts(data);
         }
       } catch (err) {
-        // Fallback on error
-        const p1 = getInitialPostBySlug("advancements-in-nanocrystalline-hydroxyapatite-bonesurg-ha");
-        const p3 = getInitialPostBySlug("indigenous-manufacturing-of-hemodialysis-fluids");
-        const p2 = getInitialPostBySlug("role-of-npwt-in-managing-complex-surgical-wounds");
-        const fallbacks = [p1, p3, p2].filter(Boolean) as Post[];
-        setFeaturedPosts(fallbacks.slice(0, 3));
+        console.info("Using local featured posts:", err);
       }
     }
 
-    fetchFeatured();
+    loadFeatured();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (featuredPosts.length === 0) return null;
