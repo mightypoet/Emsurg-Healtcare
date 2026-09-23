@@ -4,6 +4,7 @@ import MetricsStrip from "../components/home/MetricsStrip";
 import SwissProductShowcase from "../components/home/SwissProductShowcase";
 import SwissExpertiseSpotlight from "../components/home/SwissExpertiseSpotlight";
 import SwissNewsSection from "../components/home/SwissNewsSection";
+import FeaturedGallerySection from "../components/home/FeaturedGallerySection";
 import { useNavigate } from "react-router-dom";
 import { LiquidButton } from "../components/ui/liquid-glass-button";
 
@@ -28,6 +29,9 @@ export default function Home() {
 
       {/* Teknimed-Style Minimal 3-Card News & Clinical Insights Grid */}
       <SwissNewsSection />
+
+      {/* Featured Clinical Facilities & Operations Gallery */}
+      <FeaturedGallerySection />
 
       {/* Why Healthcare Partners Choose Emsurg */}
       <section className="py-24 bg-white border-t border-slate-100">

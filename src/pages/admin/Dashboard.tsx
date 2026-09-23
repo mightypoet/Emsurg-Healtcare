@@ -21,6 +21,15 @@ import {
   toggleLocalProductFeatured,
   getLocalInquiries
 } from "../../lib/productsStore";
+import { formatDriveImageUrl } from "../../lib/utils";
+import {
+  getGalleryItems,
+  saveGalleryItem,
+  saveBulkLocalGalleryItems,
+  deleteGalleryItem,
+  toggleGalleryItemFeatured,
+  GalleryItem
+} from "../../lib/galleryStore";
 import { 
   LogOut, 
   Plus, 
@@ -46,24 +55,36 @@ import {
   Phone,
   Mail,
   Building,
-  MapPin
+  MapPin,
+  Layers,
+  Copy,
+  Check,
+  Cloud,
+  Eye,
+  Filter,
+  ArrowRight
 } from "lucide-react";
 import { format } from "date-fns";
+import GalleryTab from "../../components/admin/GalleryTab";
+import GalleryItemModal from "../../components/admin/GalleryItemModal";
+import BulkUploadModal from "../../components/admin/BulkUploadModal";
+import DriveImporterModal from "../../components/admin/DriveImporterModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const prodFileInputRef = useRef<HTMLInputElement>(null);
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   // Active Admin Tab
-  const [activeTab, setActiveTab] = useState<"products" | "articles" | "inquiries">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "articles" | "inquiries" | "gallery">("products");
 
   // Feedback Toast State
   const [toast, setToast] = useState<{ type: "success" | "warning" | "error"; message: string } | null>(null);
 
   // In-App Delete Confirmation Modal State (safe inside sandboxed iframes)
   const [deleteModal, setDeleteModal] = useState<{
-    type: "product" | "article";
+    type: "product" | "article" | "gallery";
     id: string;
     title: string;
   } | null>(null);
@@ -74,6 +95,56 @@ export default function Dashboard() {
       setToast((prev) => (prev?.message === message ? null : prev));
     }, 4000);
   };
+
+  /* ---------------- GALLERY & MEDIA STATE ---------------- */
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [loadingGallery, setLoadingGallery] = useState(true);
+  const [gallerySearch, setGallerySearch] = useState("");
+  const [galleryCategoryFilter, setGalleryCategoryFilter] = useState("All");
+
+  // Gallery Item Modal (for adding single or editing)
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [editingGalleryItem, setEditingGalleryItem] = useState<GalleryItem | null>(null);
+  const [galTitle, setGalTitle] = useState("");
+  const [galDesc, setGalDesc] = useState("");
+  const [galImageUrl, setGalImageUrl] = useState("");
+  const [galCategory, setGalCategory] = useState("Cleanrooms & Sterile Processing");
+  const [galColSpan, setGalColSpan] = useState<"col-span-1" | "md:col-span-2">("col-span-1");
+  const [galIsFeatured, setGalIsFeatured] = useState(true);
+  const [savingGalleryItem, setSavingGalleryItem] = useState(false);
+  const [copiedUrlId, setCopiedUrlId] = useState<string | null>(null);
+
+  // Bulk Upload State
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkFiles, setBulkFiles] = useState<Array<{
+    id: string;
+    file: File;
+    preview: string;
+    title: string;
+    category: string;
+    col_span: "col-span-1" | "md:col-span-2";
+    is_featured: boolean;
+  }>>([]);
+  const [isBulkUploading, setIsBulkUploading] = useState(false);
+
+  // Google Drive Link Importer State
+  const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
+  const [driveLinksInput, setDriveLinksInput] = useState("");
+  const [driveBatchCategory, setDriveBatchCategory] = useState("Cleanrooms & Sterile Processing");
+  const [driveBatchColSpan, setDriveBatchColSpan] = useState<"col-span-1" | "md:col-span-2">("col-span-1");
+  const [driveBatchFeatured, setDriveBatchFeatured] = useState(true);
+  const [importingDrive, setImportingDrive] = useState(false);
+
+  const GALLERY_CATEGORIES = [
+    "Cleanrooms & Sterile Processing",
+    "Dialysis & Fluid Production",
+    "Biomaterials Research & R&D",
+    "Quality Assurance & QA",
+    "Packaging & Logistics",
+    "Clinical Workshops",
+    "Manufacturing Plant",
+    "General Facilities"
+  ];
 
   /* ---------------- ARTICLES STATE ---------------- */
   const [posts, setPosts] = useState<Post[]>([]);
@@ -158,7 +229,7 @@ export default function Dashboard() {
   };
 
   const loadAllData = async () => {
-    await Promise.all([fetchPosts(), loadProducts(), loadInquiries()]);
+    await Promise.all([fetchPosts(), loadProducts(), loadInquiries(), loadGalleryData()]);
   };
 
   /* ---------------- POSTS LOGIC ---------------- */
@@ -398,31 +469,36 @@ export default function Dashboard() {
   };
 
   const handleProdImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    if (!file.type.startsWith("image/")) {
-      showToast("error", "Please upload an image file (JPG, PNG, WebP).");
+    setUploadingProdImage(true);
+    const validFiles = Array.from(files).filter((f) => f.type.startsWith("image/"));
+
+    if (validFiles.length === 0) {
+      showToast("error", "Please upload valid image files (JPG, PNG, WebP).");
+      setUploadingProdImage(false);
       return;
     }
 
-    setUploadingProdImage(true);
     try {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        setProdImages((prev) => [base64, ...prev]);
-        setUploadingProdImage(false);
-        showToast("success", "Product image attached.");
-      };
-      reader.onerror = () => {
-        setUploadingProdImage(false);
-        showToast("error", "Failed to read image file.");
-      };
-      reader.readAsDataURL(file);
+      const readPromises = validFiles.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error("File read error"));
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const images = await Promise.all(readPromises);
+      setProdImages((prev) => [...images, ...prev]);
+      showToast("success", `${images.length} product image${images.length > 1 ? "s" : ""} attached.`);
     } catch {
+      showToast("error", "Error uploading product images.");
+    } finally {
       setUploadingProdImage(false);
-      showToast("error", "Error uploading product image.");
+      if (e.target) e.target.value = "";
     }
   };
 
@@ -456,7 +532,11 @@ export default function Dashboard() {
 
   const addImageFromUrl = () => {
     if (!newImageInput.trim()) return;
-    setProdImages((prev) => [...prev, newImageInput.trim()]);
+    const directUrl = formatDriveImageUrl(newImageInput.trim());
+    setProdImages((prev) => [...prev, directUrl]);
+    if (directUrl !== newImageInput.trim()) {
+      showToast("success", "Google Drive link converted to direct image URL!");
+    }
     setNewImageInput("");
   };
 
@@ -541,8 +621,10 @@ export default function Dashboard() {
 
     if (type === "product") {
       await executeDeleteProduct(id);
-    } else {
+    } else if (type === "article") {
       await executeDeleteArticle(id);
+    } else if (type === "gallery") {
+      await executeDeleteGalleryItem(id);
     }
   };
 
@@ -560,6 +642,226 @@ export default function Dashboard() {
     toggleLocalProductFeatured(product.id);
     await loadProducts();
     showToast("success", `Product ${!product.is_featured ? "marked as Flagship" : "unflagged"}.`);
+  };
+
+  /* ---------------- GALLERY & MEDIA LOGIC ---------------- */
+  const loadGalleryData = async () => {
+    setLoadingGallery(true);
+    try {
+      const data = await getGalleryItems();
+      setGalleryItems(data);
+    } catch (err) {
+      console.error("Failed to load gallery items:", err);
+    } finally {
+      setLoadingGallery(false);
+    }
+  };
+
+  const openGalleryItemEditor = (item?: GalleryItem) => {
+    if (item) {
+      setEditingGalleryItem(item);
+      setGalTitle(item.title);
+      setGalDesc(item.description);
+      setGalImageUrl(item.image_url);
+      setGalCategory(item.category || "Cleanrooms & Sterile Processing");
+      setGalColSpan(item.col_span || "col-span-1");
+      setGalIsFeatured(item.is_featured ?? true);
+    } else {
+      setEditingGalleryItem(null);
+      setGalTitle("");
+      setGalDesc("");
+      setGalImageUrl("");
+      setGalCategory("Cleanrooms & Sterile Processing");
+      setGalColSpan("col-span-1");
+      setGalIsFeatured(true);
+    }
+    setIsGalleryModalOpen(true);
+  };
+
+  const handleSaveGalleryItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!galTitle.trim() || !galImageUrl.trim()) {
+      showToast("warning", "Please provide a Title and Image URL.");
+      return;
+    }
+
+    setSavingGalleryItem(true);
+    try {
+      const directUrl = formatDriveImageUrl(galImageUrl.trim());
+      const payload: Partial<GalleryItem> = {
+        title: galTitle.trim(),
+        description: galDesc.trim(),
+        image_url: directUrl,
+        category: galCategory,
+        col_span: galColSpan,
+        is_featured: galIsFeatured,
+      };
+
+      await saveGalleryItem(payload, editingGalleryItem?.id);
+      await loadGalleryData();
+      setIsGalleryModalOpen(false);
+      showToast("success", `Gallery image ${editingGalleryItem ? "updated" : "added"} successfully!`);
+    } catch (err) {
+      console.error("Failed to save gallery item:", err);
+      showToast("error", "Failed to save gallery item.");
+    } finally {
+      setSavingGalleryItem(false);
+    }
+  };
+
+  const executeDeleteGalleryItem = async (id: string) => {
+    await deleteGalleryItem(id);
+    setGalleryItems((prev) => prev.filter((g) => g.id !== id));
+    showToast("success", "Gallery image removed successfully");
+  };
+
+  const handleDeleteGalleryItem = (id: string, title?: string) => {
+    const item = galleryItems.find((g) => g.id === id);
+    setDeleteModal({
+      type: "gallery",
+      id,
+      title: title || item?.title || "this gallery image",
+    });
+  };
+
+  const handleToggleGalleryItemFeatured = async (item: GalleryItem) => {
+    await toggleGalleryItemFeatured(item.id);
+    setGalleryItems((prev) =>
+      prev.map((g) => (g.id === item.id ? { ...g, is_featured: !g.is_featured } : g))
+    );
+    showToast(
+      "success",
+      `Image ${!item.is_featured ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
+    );
+  };
+
+  const handleCopyImageUrl = (id: string, url: string) => {
+    const directUrl = formatDriveImageUrl(url);
+    navigator.clipboard.writeText(directUrl);
+    setCopiedUrlId(id);
+    setTimeout(() => setCopiedUrlId(null), 2000);
+    showToast("success", "Direct image URL copied to clipboard!");
+  };
+
+  // Bulk File Selection Handler
+  const handleBulkFilesSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (fileList.length === 0) {
+      showToast("error", "No valid image files selected.");
+      return;
+    }
+
+    const newBulkItems = fileList.map((file, idx) => {
+      const cleanTitle = file.name
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+
+      return {
+        id: `bulk-${Date.now()}-${idx}`,
+        file,
+        preview: URL.createObjectURL(file),
+        title: cleanTitle,
+        category: "Cleanrooms & Sterile Processing",
+        col_span: "col-span-1" as const,
+        is_featured: true,
+      };
+    });
+
+    setBulkFiles(newBulkItems);
+    setIsBulkModalOpen(true);
+    if (e.target) e.target.value = "";
+  };
+
+  // Bulk Upload Execution
+  const handleUploadBulkFiles = async () => {
+    if (bulkFiles.length === 0) return;
+    setIsBulkUploading(true);
+
+    try {
+      const readPromises = bulkFiles.map((b) => {
+        return new Promise<Partial<GalleryItem>>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              title: b.title.trim() || "Facility Showcase",
+              description: "High-sterility medical manufacturing and cleanroom operations at Emsurg.",
+              image_url: reader.result as string,
+              category: b.category,
+              col_span: b.col_span,
+              is_featured: b.is_featured,
+            });
+          };
+          reader.onerror = () => {
+            resolve({
+              title: b.title.trim() || "Facility Showcase",
+              description: "High-sterility medical manufacturing and cleanroom operations at Emsurg.",
+              image_url: b.preview,
+              category: b.category,
+              col_span: b.col_span,
+              is_featured: b.is_featured,
+            });
+          };
+          reader.readAsDataURL(b.file);
+        });
+      });
+
+      const itemsToSave = await Promise.all(readPromises);
+      saveBulkLocalGalleryItems(itemsToSave);
+      await loadGalleryData();
+
+      setIsBulkModalOpen(false);
+      setBulkFiles([]);
+      showToast("success", `Successfully added ${itemsToSave.length} images to gallery & homepage!`);
+    } catch (err) {
+      console.error("Bulk upload error:", err);
+      showToast("error", "Error uploading bulk images.");
+    } finally {
+      setIsBulkUploading(false);
+    }
+  };
+
+  // Google Drive Link Importer Execution
+  const handleImportDriveLinks = async () => {
+    const rawLinks = driveLinksInput
+      .split(/[\n,]+/)
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+
+    if (rawLinks.length === 0) {
+      showToast("warning", "Please paste at least one Google Drive link.");
+      return;
+    }
+
+    setImportingDrive(true);
+    try {
+      const itemsToSave: Array<Partial<GalleryItem>> = rawLinks.map((link, idx) => {
+        const directUrl = formatDriveImageUrl(link);
+        return {
+          title: `Facility Image ${galleryItems.length + idx + 1}`,
+          description: "Clinical facility, laboratory research, and medical manufacturing highlight.",
+          image_url: directUrl,
+          category: driveBatchCategory,
+          col_span: driveBatchColSpan,
+          is_featured: driveBatchFeatured,
+        };
+      });
+
+      saveBulkLocalGalleryItems(itemsToSave);
+      await loadGalleryData();
+
+      setIsDriveModalOpen(false);
+      setDriveLinksInput("");
+      showToast("success", `Successfully converted & imported ${itemsToSave.length} Google Drive images!`);
+    } catch (err) {
+      console.error("Google Drive import error:", err);
+      showToast("error", "Failed to import Google Drive links.");
+    } finally {
+      setImportingDrive(false);
+    }
   };
 
   return (
@@ -607,17 +909,17 @@ export default function Dashboard() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-slate-900">
-                  Delete {deleteModal.type === "product" ? "Product" : "Article"}?
+                  Delete {deleteModal.type === "product" ? "Product" : deleteModal.type === "article" ? "Article" : "Gallery Image"}?
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Are you sure you want to delete this {deleteModal.type}?
+                  Are you sure you want to delete this {deleteModal.type === "gallery" ? "gallery image" : deleteModal.type}?
                 </p>
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 mb-6">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                {deleteModal.type === "product" ? "Product" : "Article"}
+                {deleteModal.type === "product" ? "Product" : deleteModal.type === "article" ? "Article" : "Gallery Image"} Title
               </span>
               <p className="text-sm font-bold text-slate-900 line-clamp-2">
                 {deleteModal.title}
@@ -701,16 +1003,39 @@ export default function Dashboard() {
                 >
                   <MessageSquare className="w-4 h-4" /> Inquiries ({inquiries.length})
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("gallery");
+                    loadGalleryData();
+                  }}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                    activeTab === "gallery"
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                >
+                  <ImageIcon className="w-4 h-4" /> Gallery & Media ({galleryItems.length})
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Link
+                to="/gallery"
+                target="_blank"
+                className="text-xs font-bold text-slate-700 hover:text-blue-700 flex items-center gap-1 bg-slate-100 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg transition-colors border border-slate-200"
+              >
+                <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                <span className="hidden sm:inline">Live Gallery</span>
+              </Link>
               <Link
                 to="/products"
                 target="_blank"
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-2.5 py-1.5 rounded-lg transition-colors border border-blue-100"
               >
-                <Globe className="w-3.5 h-3.5" /> View Products
+                <Globe className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Live Products</span>
               </Link>
               <button
                 onClick={handleLogout}
@@ -757,6 +1082,17 @@ export default function Dashboard() {
             }`}
           >
             Inquiries ({inquiries.length})
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("gallery");
+              loadGalleryData();
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 ${
+              activeTab === "gallery" ? "bg-blue-600 text-white" : "bg-white text-slate-700 border border-slate-200"
+            }`}
+          >
+            Gallery ({galleryItems.length})
           </button>
         </div>
       </nav>
@@ -1008,6 +1344,7 @@ export default function Dashboard() {
                             ref={prodFileInputRef}
                             onChange={handleProdImageUpload}
                             accept="image/*"
+                            multiple
                             className="hidden"
                           />
                           <button
@@ -1015,8 +1352,9 @@ export default function Dashboard() {
                             onClick={() => prodFileInputRef.current?.click()}
                             disabled={uploadingProdImage}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm"
+                            title="Select one or multiple images"
                           >
-                            <Upload className="w-3.5 h-3.5" /> Upload File
+                            <Upload className="w-3.5 h-3.5" /> Upload File(s)
                           </button>
                         </div>
                       </div>
@@ -1423,9 +1761,9 @@ export default function Dashboard() {
                       </div>
                       <input
                         type="url"
-                        placeholder="https://images.unsplash.com/..."
+                        placeholder="Paste image URL or Google Drive share link..."
                         value={coverImage}
-                        onChange={(e) => setCoverImage(e.target.value)}
+                        onChange={(e) => setCoverImage(formatDriveImageUrl(e.target.value))}
                         className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm"
                       />
                     </div>
@@ -1600,7 +1938,79 @@ export default function Dashboard() {
             </div>
           </>
         )}
+
+        {/* ======================================================== */}
+        {/* SECTION 4: GALLERY & MEDIA MANAGEMENT TAB               */}
+        {/* ======================================================== */}
+        {activeTab === "gallery" && (
+          <GalleryTab
+            galleryItems={galleryItems}
+            loadingGallery={loadingGallery}
+            gallerySearch={gallerySearch}
+            setGallerySearch={setGallerySearch}
+            galleryCategoryFilter={galleryCategoryFilter}
+            setGalleryCategoryFilter={setGalleryCategoryFilter}
+            onRefresh={loadGalleryData}
+            onOpenEditor={openGalleryItemEditor}
+            onDelete={handleDeleteGalleryItem}
+            onToggleFeatured={handleToggleGalleryItemFeatured}
+            onCopyUrl={handleCopyImageUrl}
+            copiedUrlId={copiedUrlId}
+            onOpenBulkUpload={() => galleryFileInputRef.current?.click()}
+            onOpenDriveImporter={() => setIsDriveModalOpen(true)}
+            categories={GALLERY_CATEGORIES}
+          />
+        )}
       </div>
+
+      {/* Hidden Bulk File Input for Gallery */}
+      <input
+        type="file"
+        ref={galleryFileInputRef}
+        multiple
+        accept="image/*"
+        onChange={handleBulkFilesSelected}
+        className="hidden"
+      />
+
+      {/* Single Gallery Item Modal */}
+      <GalleryItemModal
+        isOpen={isGalleryModalOpen}
+        onClose={() => setIsGalleryModalOpen(false)}
+        onSave={async (payload, id) => {
+          await saveGalleryItem(payload, id);
+          await loadGalleryData();
+          showToast("success", `Gallery image ${id ? "updated" : "added"} successfully!`);
+        }}
+        item={editingGalleryItem}
+        categories={GALLERY_CATEGORIES}
+      />
+
+      {/* Bulk File Upload Modal */}
+      <BulkUploadModal
+        isOpen={isBulkModalOpen}
+        onClose={() => {
+          setIsBulkModalOpen(false);
+          setBulkFiles([]);
+        }}
+        files={bulkFiles}
+        setFiles={setBulkFiles}
+        onUploadAll={handleUploadBulkFiles}
+        isUploading={isBulkUploading}
+        categories={GALLERY_CATEGORIES}
+      />
+
+      {/* Google Drive Link Importer Modal */}
+      <DriveImporterModal
+        isOpen={isDriveModalOpen}
+        onClose={() => setIsDriveModalOpen(false)}
+        onImport={async (items) => {
+          saveBulkLocalGalleryItems(items);
+          await loadGalleryData();
+          showToast("success", `Imported ${items.length} Google Drive images successfully!`);
+        }}
+        categories={GALLERY_CATEGORIES}
+      />
     </div>
   );
 }
