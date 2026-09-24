@@ -73,7 +73,7 @@ CREATE POLICY "Admins have full access to gallery-assets" ON storage.objects
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ulglftaptfvkatzhpmwc.supabase.co';
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_RKnKo4eegUWKp-eqKaBWnQ_EPmimPWm';
+const supabaseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://ulglftaptfvkatzhpmwc.supabase.co';
+const supabaseKey = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY) || 'sb_publishable_RKnKo4eegUWKp-eqKaBWnQ_EPmimPWm';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

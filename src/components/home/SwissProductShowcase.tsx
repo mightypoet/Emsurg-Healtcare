@@ -1,102 +1,168 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  OrthobiologicsPackshot,
-  WoundManagementPackshot,
-  NephroCarePackshot,
-  BoneCementsBiopsyPackshot,
-} from "./SwissProductPackshots";
+import { Bone, Activity, Droplets, Layers, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { ProductHighlightCard } from "../ui/product-card";
 
-interface ShowcaseItem {
+interface ShowcaseProductItem {
   id: string;
   category: string;
-  subheading?: string;
-  packshot: React.ReactNode;
-  link: string;
-  ariaLabel: string;
+  title: string;
+  description: string;
+  imageSrc: string;
+  imageAlt: string;
+  slug: string;
+  categoryIcon: React.ReactNode;
+  accentGlow: string;
+  badge: string;
 }
 
 export default function SwissProductShowcase() {
-  const quadrants: ShowcaseItem[] = [
+  const showcaseProducts: ShowcaseProductItem[] = [
     {
       id: "orthobiologics",
-      category: "ORTHOBIOLOGICS",
-      subheading: "BoneSurg HA / BoneSurg CR Synthetic Substitutes",
-      packshot: <OrthobiologicsPackshot />,
-      link: "/products?category=Orthobiologics",
-      ariaLabel: "Discover Orthobiologics bone graft substitutes",
+      category: "Orthobiologics",
+      title: "BoneSurg CR & HA",
+      description:
+        "100% synthetic bio-absorbable calcium sulphate hemihydrate matrix and nanocrystalline hydroxyapatite bone graft substitutes.",
+      imageSrc:
+        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "BoneSurg Orthobiologics synthetic bone graft substitute",
+      slug: "bonesurg-cr",
+      categoryIcon: <Bone className="w-4 h-4" />,
+      accentGlow: "rgba(56, 189, 248, 0.45)",
+      badge: "CDSCO Class C",
     },
     {
-      id: "wound-management",
-      category: "WOUND MANAGEMENT",
-      subheading: "EM-VAC Digital NPWT System & Sterile Dressing Kits",
-      packshot: <WoundManagementPackshot />,
-      link: "/products?category=Wound%20Management",
-      ariaLabel: "Discover EM-VAC negative pressure wound management",
+      id: "wound-care",
+      category: "Wound Care",
+      title: "EM-VAC Digital NPWT",
+      description:
+        "Microprocessor-regulated negative pressure wound therapy unit with dual pressure monitoring and sterile reticulated foam dressing kits.",
+      imageSrc:
+        "https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "EM-VAC Digital Negative Pressure Wound Therapy System",
+      slug: "em-vac-npwt",
+      categoryIcon: <Activity className="w-4 h-4" />,
+      accentGlow: "rgba(168, 85, 247, 0.45)",
+      badge: "Smart NPWT",
     },
     {
       id: "nephro-care",
-      category: "NEPHRO CARE",
-      subheading: "Hemodialysis Acid Concentrates & Dry Bicarbonate Canisters",
-      packshot: <NephroCarePackshot />,
-      link: "/products?category=Nephro%20Care",
-      ariaLabel: "Discover Nephro Care hemodialysis solutions",
+      category: "Nephro Care",
+      title: "Hemodialysis Fluids",
+      description:
+        "Ultra-pure pharmacopeial liquid acid concentrates and dry sodium bicarbonate cartridges produced with automated multi-stage RO filtration.",
+      imageSrc:
+        "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Hemodialysis acid concentrates and dry bicarbonate cartridges",
+      slug: "hemodialysis-fluids-dry-powders",
+      categoryIcon: <Droplets className="w-4 h-4" />,
+      accentGlow: "rgba(14, 165, 233, 0.45)",
+      badge: "WHO-GMP Certified",
     },
     {
-      id: "bone-cements-biopsy",
-      category: "BONE CEMENTS & BIOPSY",
-      subheading: "Teknimed OPACITY+ PMMA Cements & MDL Precision Needles",
-      packshot: <BoneCementsBiopsyPackshot />,
-      link: "/products?category=Bone%20Cements",
-      ariaLabel: "Discover Teknimed bone cements and MDL precision biopsy devices",
+      id: "bone-cements",
+      category: "Bone Cements",
+      title: "Teknimed OPACITY+",
+      description:
+        "High-radiopacity vertebroplasty PMMA cements, pre-mixed antibiotic cements, and MDL precision soft-tissue & bone marrow biopsy needles.",
+      imageSrc:
+        "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Teknimed OPACITY+ PMMA Bone Cements and MDL Biopsy Devices",
+      slug: "teknimed-opacity-plus-bone-cement",
+      categoryIcon: <Layers className="w-4 h-4" />,
+      accentGlow: "rgba(16, 185, 129, 0.45)",
+      badge: "CE Certified",
     },
   ];
 
   return (
-    <section id="our-products" className="bg-white py-20 md:py-28 select-none">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Minimal Swiss Section Heading */}
-        <div className="text-center mb-16 md:mb-20">
-          <h2 className="text-4xl md:text-5xl font-light text-slate-800 tracking-tight">
-            Our products
-          </h2>
+    <section
+      id="our-products"
+      className="relative bg-slate-950 py-20 sm:py-28 text-white overflow-hidden select-none border-t border-b border-slate-800/80"
+    >
+      {/* Ambient background light gradients */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.12)_0%,rgba(15,23,42,0)_70%)] blur-[120px]" />
+        <div className="absolute -bottom-24 left-10 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]" />
+        <div className="absolute -top-24 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase tracking-widest mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Flagship Clinical Portfolio</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-white leading-[1.15]">
+              Precision-Engineered <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-300 to-indigo-300">Surgical Technologies</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-slate-400 leading-relaxed font-normal">
+              Explore our core medical specializations spanning bio-absorbable orthobiologics, digital NPWT wound systems, WHO-GMP dialysis consumables, and European PMMA bone cements.
+            </p>
+          </div>
+
+          <div className="shrink-0">
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md active:scale-95 group"
+            >
+              <span>View All Products</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
         </div>
 
-        {/* 2x2 Showcase Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 lg:gap-20">
-          {quadrants.map((quadrant) => (
-            <div
-              key={quadrant.id}
-              className="group flex flex-col items-center justify-between text-center transition-all duration-300"
-            >
-              {/* Category Title in Lightweight Crisp Uppercase */}
-              <h3 className="text-xs md:text-sm font-semibold tracking-[0.2em] text-slate-500 uppercase text-center mb-6">
-                {quadrant.category}
-              </h3>
-
-              {/* High-Resolution Isolated Product Packshot */}
-              <Link
-                to={quadrant.link}
-                aria-label={quadrant.ariaLabel}
-                className="w-full flex items-center justify-center my-4 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded-2xl"
-              >
-                {quadrant.packshot}
-              </Link>
-
-              {/* Minimalist Swiss Pill Button */}
-              <div className="mt-6">
-                <Link
-                  to={quadrant.link}
-                  className="inline-flex items-center justify-center gap-2.5 px-6 py-2 rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-900 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-200 group/btn shadow-2xs"
-                >
-                  <span>Discover</span>
-                  <span className="w-5 h-5 rounded-full bg-slate-900 text-white group-hover/btn:bg-white group-hover/btn:text-slate-900 flex items-center justify-center text-[10px] transition-colors">
-                    →
-                  </span>
-                </Link>
-              </div>
-            </div>
+        {/* 3D Liquid Glass Tilt Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 lg:gap-6 items-stretch">
+          {showcaseProducts.map((product) => (
+            <ProductHighlightCard
+              key={product.id}
+              categoryIcon={product.categoryIcon}
+              category={product.category}
+              badge={product.badge}
+              title={product.title}
+              description={product.description}
+              imageSrc={product.imageSrc}
+              imageAlt={product.imageAlt}
+              slug={product.slug}
+              accentGlow={product.accentGlow}
+            />
           ))}
+        </div>
+
+        {/* Bottom Hospital Procurement Strip */}
+        <div className="mt-14 sm:mt-18 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/90 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 items-center justify-center text-sky-400 shrink-0">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-white tracking-tight">
+                Hospital Procurement & Institutional Tenders
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                Full technical documentation, CDSCO/CE certifications, and sample evaluation kits available upon verified clinical request.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+            <Link
+              to="/contact"
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md active:scale-95"
+            >
+              Request Specs
+            </Link>
+            <Link
+              to="/products"
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-bold tracking-wide uppercase transition-all active:scale-95"
+            >
+              All Categories
+            </Link>
+          </div>
         </div>
       </div>
     </section>

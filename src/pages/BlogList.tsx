@@ -41,24 +41,24 @@ export default function BlogList() {
   return (
     <div className="bg-slate-50 min-h-screen">
       {/* Page Header */}
-      <div className="pt-40 pb-16 bg-[#0F172A]">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Clinical Insights & Medical Technology Updates</h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+      <div className="pt-28 sm:pt-40 pb-10 sm:pb-16 bg-[#0F172A]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight">Clinical Insights & Medical Technology Updates</h1>
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto px-2 font-normal">
             Explore the latest advancements, research, and perspectives from the Emsurg medical team and our industry partners.
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* Category Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
+        {/* Category Filter - Responsive Horizontal Scroll on Mobile */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 sm:flex-wrap sm:justify-center mb-10 sm:mb-16 px-1">
           {CATEGORIES.map(category => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 transition-all ${
                 activeCategory === category 
                   ? "bg-blue-600 text-white shadow-md shadow-blue-600/20" 
                   : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"

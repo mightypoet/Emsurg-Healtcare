@@ -61,32 +61,32 @@ export default function BlogPost() {
   return (
     <div className="bg-slate-50 min-h-screen">
       {/* Article Hero */}
-      <div className="pt-32 pb-12 bg-[#0F172A] border-b border-slate-800 text-white">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center text-sm text-slate-400 mb-8 font-medium">
-            <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4 mx-2 opacity-50" />
-            <Link to="/blogs" className="hover:text-blue-400 transition-colors">Blogs</Link>
-            <ChevronRight className="w-4 h-4 mx-2 opacity-50" />
-            <span className="text-slate-200 line-clamp-1">{post.title}</span>
+      <div className="pt-24 sm:pt-32 pb-8 sm:pb-12 bg-[#0F172A] border-b border-slate-800 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-wrap items-center text-xs sm:text-sm text-slate-400 mb-6 font-medium gap-1">
+            <Link to="/" className="hover:text-blue-400 transition-colors py-1">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
+            <Link to="/blogs" className="hover:text-blue-400 transition-colors py-1">Blogs</Link>
+            <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
+            <span className="text-slate-200 truncate max-w-[140px] sm:max-w-xs py-1">{post.title}</span>
           </div>
           
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex flex-wrap items-center gap-3 mb-4 sm:mb-6">
             <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase border border-blue-500/30">
               {post.category}
             </span>
-            <span className="flex items-center gap-1.5 text-slate-400 text-sm font-medium">
+            <span className="flex items-center gap-1.5 text-slate-400 text-xs sm:text-sm font-medium">
               <Calendar className="w-4 h-4" />
               {format(new Date(post.created_at), "MMMM d, yyyy")}
             </span>
           </div>
           
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mb-4 sm:mb-6 leading-tight">
             {post.title}
           </h1>
           
-          <div className="flex items-center gap-4 text-sm font-medium text-slate-300">
-            <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 font-bold border-2 border-slate-700 shadow-sm">
+          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-medium text-slate-300">
+            <div className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 font-bold border-2 border-slate-700 shadow-sm shrink-0">
               EM
             </div>
             <div>
@@ -100,7 +100,7 @@ export default function BlogPost() {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
         {/* Article Body */}
         <article className="lg:w-2/3 max-w-4xl">
           <img 

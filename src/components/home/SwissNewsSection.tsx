@@ -1,28 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { format } from "date-fns";
-import { Post, fetchFeaturedPosts, getLocalPosts } from "../../lib/postsStore";
+import { Post, fetchPublishedPosts, getLocalPosts } from "../../lib/postsStore";
 import { formatDriveImageUrl } from "../../lib/utils";
-import { ArticleCardGrid, Article } from "../ui/card-grid";
+import { ArgentLoopInfiniteSlider, SliderArticle } from "../ui/argent-loop-infinite-slider";
 
 export default function SwissNewsSection() {
   const [posts, setPosts] = useState<Post[]>(() => {
     const local = getLocalPosts().filter((p) => p.published);
-    const featured = local.filter((p) => p.featured);
-    return featured.length > 0 ? featured.slice(0, 3) : local.slice(0, 3);
+    return local;
   });
 
   const loadPosts = async () => {
     try {
-      const data = await fetchFeaturedPosts();
+      const data = await fetchPublishedPosts();
       if (data && data.length > 0) {
-        setPosts(data.slice(0, 3));
+        setPosts(data);
       } else {
         const local = getLocalPosts().filter((p) => p.published);
-        const featured = local.filter((p) => p.featured);
-        setPosts(featured.length > 0 ? featured.slice(0, 3) : local.slice(0, 3));
+        setPosts(local);
       }
     } catch (err) {
       console.info("Using local posts fallback:", err);
+      const local = getLocalPosts().filter((p) => p.published);
+      setPosts(local);
     }
   };
 
@@ -33,38 +32,44 @@ export default function SwissNewsSection() {
     return () => window.removeEventListener("emsurg_posts_updated", handleUpdate);
   }, []);
 
-  if (posts.length === 0) return null;
+  if (!posts || posts.length === 0) return null;
 
-  const articles: Article[] = posts.map((post) => {
-    let dateStr: string | undefined = undefined;
+  const sliderArticles: SliderArticle[] = posts.map((post) => {
+    let year = "2025";
     if (post.created_at) {
       try {
-        dateStr = format(new Date(post.created_at), "MMM d, yyyy");
+        year = new Date(post.created_at).getFullYear().toString();
       } catch {
-        dateStr = undefined;
+        year = "2025";
       }
+    }
+
+    // Clean excerpt without markdown headings
+    let cleanDescription = post.excerpt;
+    if (!cleanDescription && post.content) {
+      cleanDescription = post.content.replace(/^#+\s+/gm, "").slice(0, 140) + "...";
     }
 
     return {
       id: post.id,
-      imageSrc: formatDriveImageUrl(post.cover_image),
+      slug: post.slug,
       title: post.title,
-      category: post.category || "Clinical Practice",
-      date: dateStr,
-      excerpt: post.excerpt,
-      linkText: "Read Article",
-      linkHref: `/blogs/${post.slug}`,
+      image:
+        formatDriveImageUrl(post.cover_image) ||
+        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1800&q=85",
+      category: post.category || "Clinical Research",
+      year: year,
+      description: cleanDescription || "Read clinical insights and surgical updates from Emsurg Healthcare.",
     };
   });
 
   return (
-    <div id="news-section">
-      <ArticleCardGrid
-        title="Clinical Insights & News"
+    <section id="news-section" className="relative w-full bg-[#090e17] overflow-hidden border-t border-slate-800">
+      <ArgentLoopInfiniteSlider
+        articles={sliderArticles}
+        title="Clinical Insights & Research"
         subtitle="Original clinical research, surgical protocols, and regulatory advancements in orthobiologics, hemodialysis fluids, and active wound management."
-        articles={articles}
-        viewAllHref="/blogs"
       />
-    </div>
+    </section>
   );
 }

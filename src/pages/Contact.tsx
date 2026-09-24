@@ -6,54 +6,54 @@ export default function Contact() {
     <div className="bg-white min-h-screen">
       
       {/* Hero Section */}
-      <div className="bg-blue-600 py-32 md:py-48 text-center relative overflow-hidden text-white">
+      <div className="bg-blue-600 py-24 sm:py-32 md:py-44 text-center relative overflow-hidden text-white">
         {/* Vibrant Gradient Background */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 right-0 w-[120%] h-[120%] -translate-y-1/4 translate-x-1/4 bg-[radial-gradient(circle_at_center,rgba(236,72,153,0.5)_0%,rgba(139,92,246,0.5)_25%,rgba(37,99,235,0)_60%)] blur-[100px]" />
           <div className="absolute bottom-0 left-0 w-[100%] h-[100%] translate-y-1/4 -translate-x-1/4 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.6)_0%,rgba(37,99,235,0)_50%)] blur-[100px]" />
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 relative z-10">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-8 text-white leading-[1.1]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-4 sm:mb-8 text-white leading-[1.12]">
             Let's Connect Healthcare Innovation to Clinical Need
           </h1>
-          <p className="text-xl text-white/90 font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium leading-relaxed max-w-2xl mx-auto px-2">
             Contact our team for product information, distribution partnerships, or clinical inquiries.
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
         
         {/* Contact Form */}
         <div className="lg:col-span-7">
-          <div className="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm">
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Product Information Request</h2>
-            <p className="text-slate-500 text-sm mb-10">Fill out the form below and our clinical team will get back to you promptly.</p>
+          <div className="bg-white p-6 sm:p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Product Information Request</h2>
+            <p className="text-slate-500 text-xs sm:text-sm mb-8 sm:mb-10">Fill out the form below and our clinical team will get back to you promptly.</p>
             
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Name</label>
-                  <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Name</label>
+                  <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Organization</label>
-                  <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Organization</label>
+                  <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Email</label>
-                  <input type="email" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Email</label>
+                  <input type="email" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Phone</label>
-                  <input type="tel" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Phone</label>
+                  <input type="tel" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" required />
                 </div>
               </div>
               
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Product / Category Interest</label>
-                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Product / Category Interest</label>
+                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                   <option>Orthobiologics</option>
                   <option>Wound Management</option>
                   <option>Nephro Care</option>
@@ -65,11 +65,11 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Message</label>
-                <textarea rows={5} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors resize-none" required></textarea>
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Message</label>
+                <textarea rows={4} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors resize-none" required></textarea>
               </div>
 
-              <button type="submit" className="bg-blue-900 text-white font-bold px-8 py-4 rounded-xl hover:bg-blue-800 transition-colors w-full sm:w-auto shadow-sm">
+              <button type="submit" className="bg-blue-900 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-blue-800 transition-colors w-full sm:w-auto min-h-[48px] shadow-sm">
                 Submit Request
               </button>
             </form>

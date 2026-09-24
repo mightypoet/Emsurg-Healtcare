@@ -135,18 +135,18 @@ export default function ProductDetail() {
       )}
 
       {/* Top Breadcrumb Header */}
-      <div className="pt-32 pb-6 bg-[#0B1120] text-white border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap items-center text-xs font-medium text-slate-400 gap-2">
-            <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <Link to="/products" className="hover:text-white transition-colors">Products Catalog</Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="text-blue-400 hover:text-blue-300 transition-colors">
+      <div className="pt-24 sm:pt-32 pb-4 sm:pb-6 bg-[#0B1120] text-white border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-wrap items-center text-xs font-medium text-slate-400 gap-1.5 sm:gap-2">
+            <Link to="/" className="hover:text-white transition-colors py-1">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
+            <Link to="/products" className="hover:text-white transition-colors py-1">Products</Link>
+            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
+            <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="text-blue-400 hover:text-blue-300 transition-colors py-1 truncate max-w-[120px] sm:max-w-none">
               {product.category}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-            <span className="text-slate-200 truncate max-w-xs">{product.title}</span>
+            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
+            <span className="text-slate-200 truncate max-w-[130px] sm:max-w-xs py-1">{product.title}</span>
           </div>
         </div>
       </div>

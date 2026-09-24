@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
 import RootLayout from "./layouts/RootLayout";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -14,29 +15,31 @@ import PlaceholderPage from "./pages/PlaceholderPage";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<RootLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="products" element={<Products />} />
-          <Route path="products/:slug" element={<ProductDetail />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="blogs" element={<BlogList />} />
-          <Route path="blogs/:slug" element={<BlogPost />} />
-          <Route path="gallery" element={<Gallery />} />
-          <Route path="innovation" element={<PlaceholderPage title="Innovation & R&D" />} />
-          <Route path="partners" element={<PlaceholderPage title="Global Partners" />} />
-          <Route path="insights" element={<PlaceholderPage title="Insights & Blog" />} />
-          <Route path="careers" element={<PlaceholderPage title="Careers at Emsurg" />} />
-          <Route path="locations" element={<PlaceholderPage title="Our Locations" />} />
-          <Route path="leaders" element={<PlaceholderPage title="Leadership" />} />
-          <Route path="faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
-          <Route path="*" element={<PlaceholderPage title="Page Not Found" />} />
-        </Route>
-        <Route path="/admin/login" element={<Login />} />
-        <Route path="/admin" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="products" element={<Products />} />
+            <Route path="products/:slug" element={<ProductDetail />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="blogs" element={<BlogList />} />
+            <Route path="blogs/:slug" element={<BlogPost />} />
+            <Route path="gallery" element={<Gallery />} />
+            <Route path="innovation" element={<PlaceholderPage title="Innovation & R&D" />} />
+            <Route path="partners" element={<PlaceholderPage title="Global Partners" />} />
+            <Route path="insights" element={<PlaceholderPage title="Insights & Blog" />} />
+            <Route path="careers" element={<PlaceholderPage title="Careers at Emsurg" />} />
+            <Route path="locations" element={<PlaceholderPage title="Our Locations" />} />
+            <Route path="leaders" element={<PlaceholderPage title="Leadership" />} />
+            <Route path="faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
+            <Route path="*" element={<PlaceholderPage title="Page Not Found" />} />
+          </Route>
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin" element={<Dashboard />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

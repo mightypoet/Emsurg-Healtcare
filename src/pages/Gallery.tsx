@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { LayoutGrid, Card } from "../components/ui/layout-grid";
 import { getGalleryItems, GalleryItem } from "../lib/galleryStore";
 import { formatDriveImageUrl } from "../lib/utils";
@@ -63,10 +61,8 @@ export default function Gallery() {
 
   return (
     <div className="bg-slate-50 min-h-screen flex flex-col">
-      <Header />
-      
       {/* Page Header */}
-      <div className="pt-36 pb-16 bg-[#0F172A] relative overflow-hidden">
+      <div className="pt-32 sm:pt-36 pb-12 sm:pb-16 bg-[#0F172A] relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
         </div>
@@ -74,19 +70,19 @@ export default function Gallery() {
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase text-blue-300 bg-blue-950/60 border border-blue-800/60 mb-4">
             <Layers className="w-3.5 h-3.5 text-blue-400" /> Clinical Infrastructure & Operations
           </span>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Our Facilities & Operations</h1>
-          <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-normal">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Our Facilities & Operations</h1>
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-normal px-2">
             A glimpse into the cleanrooms, biomaterials R&D suites, and advanced manufacturing lines driving Emsurg's clinical innovation.
           </p>
 
           {/* Category Tabs */}
           {categories.length > 1 && (
-            <div className="flex flex-wrap justify-center items-center gap-2 mt-8">
+            <div className="flex items-center gap-2 mt-8 overflow-x-auto no-scrollbar pb-2 sm:flex-wrap sm:justify-center px-2">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                     selectedCategory === cat
                       ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
                       : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700"
@@ -101,7 +97,7 @@ export default function Gallery() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 w-full flex-grow">
         {loading ? (
           <div className="h-96 flex items-center justify-center">
             <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
@@ -113,13 +109,11 @@ export default function Gallery() {
             <p className="text-sm text-slate-500">Select another filter or check back soon.</p>
           </div>
         ) : (
-          <div className="min-h-[600px] py-4 w-full">
+          <div className="min-h-[500px] py-4 w-full">
             <LayoutGrid cards={cards} />
           </div>
         )}
       </div>
-      
-      <Footer />
     </div>
   );
 }

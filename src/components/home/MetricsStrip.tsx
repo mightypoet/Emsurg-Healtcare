@@ -25,20 +25,20 @@ export default function MetricsStrip() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 relative z-20">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 md:gap-12">
         {metrics.map((metric, idx) => (
           <div 
             key={idx}
-            className="text-center flex flex-col items-center justify-center p-4 group"
+            className="text-center flex flex-col items-center justify-center p-2 sm:p-4 group"
           >
-            <div className="text-3xl md:text-5xl font-light text-slate-800 tracking-tight mb-2 group-hover:text-blue-600 transition-colors">
+            <div className="text-2xl sm:text-4xl md:text-5xl font-light text-slate-800 tracking-tight mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors">
               {metric.value}
             </div>
-            <div className="text-xs uppercase tracking-widest font-semibold text-slate-500 mb-1">
+            <div className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold text-slate-600 mb-1">
               {metric.label}
             </div>
-            <div className="text-xs text-slate-400">
+            <div className="text-[10px] sm:text-xs text-slate-400">
               {metric.subtext}
             </div>
           </div>

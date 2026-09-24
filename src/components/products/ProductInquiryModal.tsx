@@ -76,21 +76,21 @@ export default function ProductInquiryModal({
       />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-xl overflow-hidden z-10 my-8 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[90vh] overflow-y-auto z-10 my-auto animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="bg-slate-900 text-white p-6 sm:p-8 relative">
+        <div className="bg-slate-900 text-white p-5 sm:p-8 relative">
           <button 
             type="button"
             onClick={onClose}
-            className="absolute top-6 right-6 text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors"
+            className="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
           >
             <X className="w-5 h-5" />
           </button>
           
-          <div className="inline-block text-[11px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800 px-3 py-1 rounded-full mb-3">
+          <div className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800 px-3 py-1 rounded-full mb-3">
             Institutional & Clinical Procurement
           </div>
-          <h3 className="text-2xl font-bold tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
             Request Quotation & Product Dossier
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
@@ -106,16 +106,16 @@ export default function ProductInquiryModal({
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
-                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block">{product.category}</span>
-                <span className="text-sm font-bold text-white leading-tight block">{product.title}</span>
+              <div className="min-w-0">
+                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block truncate">{product.category}</span>
+                <span className="text-sm font-bold text-white leading-tight block truncate">{product.title}</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-6 sm:p-8">
+        <div className="p-5 sm:p-8">
           {submitted ? (
             <div className="py-8 text-center">
               <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-100">
@@ -168,7 +168,7 @@ export default function ProductInquiryModal({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Dr. / Mr. / Ms." 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function ProductInquiryModal({
                       value={institution}
                       onChange={(e) => setInstitution(e.target.value)}
                       placeholder="e.g. Apollo, Fortis, etc." 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function ProductInquiryModal({
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210" 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function ProductInquiryModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="doctor@hospital.org" 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function ProductInquiryModal({
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="e.g. Kolkata, Mumbai" 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>
@@ -254,7 +254,7 @@ export default function ProductInquiryModal({
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                       placeholder="e.g. 50 kits / monthly tender" 
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                     />
                   </div>
                 </div>

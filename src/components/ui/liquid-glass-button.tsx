@@ -59,32 +59,32 @@ Button.displayName = "Button"
 export { Button, buttonVariants, liquidbuttonVariants, LiquidButton }
 
 const liquidbuttonVariants = cva(
-  "inline-flex items-center transition-colors justify-center cursor-pointer gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center transition-all justify-center cursor-pointer gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-[color,box-shadow,transform] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 active:scale-95",
   {
     variants: {
       variant: {
-        default: "bg-transparent hover:scale-105 duration-300 transition text-white",
+        default: "bg-white/15 hover:bg-white/25 text-white border border-white/25 shadow-lg backdrop-blur-xl hover:shadow-cyan-500/20",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          "bg-destructive text-white hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-white/20 bg-black/20 hover:bg-white/10 text-white",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-slate-800/80 text-white hover:bg-slate-800 border border-slate-700",
+        ghost: "hover:bg-white/10 text-white",
+        link: "text-sky-400 underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 text-xs gap-1.5 px-4 has-[>svg]:px-4",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        xl: "h-12 rounded-md px-8 has-[>svg]:px-6",
-        xxl: "h-14 rounded-md px-10 has-[>svg]:px-8",
-        icon: "size-9",
+        default: "h-10 px-5 py-2 has-[>svg]:px-4",
+        sm: "h-8 text-xs gap-1.5 px-4 has-[>svg]:px-3.5",
+        lg: "h-12 rounded-full px-7 has-[>svg]:px-5 text-sm",
+        xl: "h-14 rounded-full px-8 has-[>svg]:px-6 text-base",
+        xxl: "h-16 rounded-full px-10 has-[>svg]:px-8 text-base",
+        icon: "size-10 rounded-full",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "xxl",
+      size: "lg",
     },
   }
 )
