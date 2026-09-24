@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { formatDriveImageUrl } from "./utils";
 
 export interface Post {
   id: string;
@@ -115,12 +116,18 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
   const current = getLocalPosts();
   let updatedPost: Post;
 
+  const sanitizedCover = postData.cover_image ? formatDriveImageUrl(postData.cover_image) : postData.cover_image;
+  const sanitizedData = {
+    ...postData,
+    ...(sanitizedCover !== undefined ? { cover_image: sanitizedCover } : {}),
+  };
+
   if (existingId) {
     const index = current.findIndex(p => p.id === existingId);
     if (index !== -1) {
       updatedPost = {
         ...current[index],
-        ...postData,
+        ...sanitizedData,
         id: existingId,
       } as Post;
       current[index] = updatedPost;
@@ -132,7 +139,7 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
         published: true,
         featured: false,
         cover_image: "",
-        ...postData,
+        ...sanitizedData,
       } as Post;
       current.unshift(updatedPost);
     }
@@ -144,13 +151,14 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
       published: true,
       featured: false,
       cover_image: "",
-      ...postData,
+      ...sanitizedData,
     } as Post;
     current.unshift(updatedPost);
   }
 
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(current));
+    window.dispatchEvent(new Event("emsurg_posts_updated"));
   } catch (err) {
     console.warn("Could not save to localStorage:", err);
   }
@@ -163,6 +171,7 @@ export function deleteLocalPost(id: string): void {
   const filtered = current.filter(p => p.id !== id);
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
+    window.dispatchEvent(new Event("emsurg_posts_updated"));
   } catch (err) {
     console.warn("Could not delete from localStorage:", err);
   }
@@ -188,6 +197,7 @@ export function toggleLocalFeatured(id: string): Post | null {
   post.featured = !post.featured;
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(current));
+    window.dispatchEvent(new Event("emsurg_posts_updated"));
   } catch (err) {
     console.warn("Could not toggle featured in localStorage:", err);
   }

@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { formatDriveImageUrl } from "./utils";
 
 export interface GalleryItem {
   id: string;
@@ -11,7 +12,8 @@ export interface GalleryItem {
   created_at: string;
 }
 
-const GALLERY_STORAGE_KEY = "emsurg_gallery_items_v1";
+const GALLERY_STORAGE_KEY = "emsurg_gallery_items";
+const LEGACY_STORAGE_KEY = "emsurg_gallery_items_v1";
 
 export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
   {
@@ -76,16 +78,32 @@ export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
   },
 ];
 
+/**
+ * Reads all gallery items directly from localStorage.
+ * If empty, seeds with the initial default clinical items.
+ * Ensures all image URLs are sanitized through formatDriveImageUrl.
+ */
 export function getLocalGalleryItems(): GalleryItem[] {
   try {
-    const raw = localStorage.getItem(GALLERY_STORAGE_KEY);
+    let raw = localStorage.getItem(GALLERY_STORAGE_KEY);
+    if (!raw) {
+      // Migrate from legacy key if present
+      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacyRaw) {
+        raw = legacyRaw;
+        localStorage.setItem(GALLERY_STORAGE_KEY, legacyRaw);
+      }
+    }
     if (!raw) {
       localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(INITIAL_GALLERY_ITEMS));
       return INITIAL_GALLERY_ITEMS;
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      return parsed.map((item: any) => ({
+        ...item,
+        image_url: formatDriveImageUrl(item.image_url || ""),
+      }));
     }
   } catch (err) {
     console.warn("Failed to load local gallery items:", err);
@@ -93,6 +111,9 @@ export function getLocalGalleryItems(): GalleryItem[] {
   return INITIAL_GALLERY_ITEMS;
 }
 
+/**
+ * Persists gallery items to localStorage and dispatches the update event.
+ */
 export function saveLocalGalleryItems(items: GalleryItem[]): void {
   try {
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(items));
@@ -102,26 +123,32 @@ export function saveLocalGalleryItems(items: GalleryItem[]): void {
   }
 }
 
+/**
+ * Inserts or updates a single gallery item locally, with Drive URL sanitization.
+ */
 export function saveLocalGalleryItem(itemData: Partial<GalleryItem>, editId?: string): GalleryItem {
   const current = getLocalGalleryItems();
+  const idToUse = editId || itemData.id;
+  const sanitizedUrl = itemData.image_url ? formatDriveImageUrl(itemData.image_url) : "";
   let updatedItem: GalleryItem;
 
-  if (editId) {
-    const idx = current.findIndex((g) => g.id === editId);
+  if (idToUse) {
+    const idx = current.findIndex((g) => g.id === idToUse);
     if (idx !== -1) {
       updatedItem = {
         ...current[idx],
         ...itemData,
-        id: editId,
+        id: idToUse,
+        image_url: sanitizedUrl || current[idx].image_url,
       };
       current[idx] = updatedItem;
     } else {
       updatedItem = {
-        id: editId,
-        title: itemData.title || "Facility Highlight",
-        description: itemData.description || "",
-        image_url: itemData.image_url || "",
-        category: itemData.category || "Cleanrooms & Facilities",
+        id: idToUse,
+        title: itemData.title?.trim() || "Facility Highlight",
+        description: itemData.description?.trim() || "",
+        image_url: sanitizedUrl,
+        category: itemData.category || "Cleanrooms & Sterile Processing",
         col_span: itemData.col_span || "col-span-1",
         is_featured: itemData.is_featured ?? true,
         created_at: itemData.created_at || new Date().toISOString(),
@@ -131,10 +158,10 @@ export function saveLocalGalleryItem(itemData: Partial<GalleryItem>, editId?: st
   } else {
     updatedItem = {
       id: `gal-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      title: itemData.title || "Facility Highlight",
-      description: itemData.description || "",
-      image_url: itemData.image_url || "",
-      category: itemData.category || "Cleanrooms & Facilities",
+      title: itemData.title?.trim() || "Facility Highlight",
+      description: itemData.description?.trim() || "",
+      image_url: sanitizedUrl,
+      category: itemData.category || "Cleanrooms & Sterile Processing",
       col_span: itemData.col_span || "col-span-1",
       is_featured: itemData.is_featured ?? true,
       created_at: new Date().toISOString(),
@@ -146,18 +173,22 @@ export function saveLocalGalleryItem(itemData: Partial<GalleryItem>, editId?: st
   return updatedItem;
 }
 
+/**
+ * Bulk saves items locally with Drive URL sanitization.
+ */
 export function saveBulkLocalGalleryItems(itemsData: Array<Partial<GalleryItem>>): GalleryItem[] {
   const current = getLocalGalleryItems();
   const created: GalleryItem[] = [];
 
   for (let i = 0; i < itemsData.length; i++) {
     const data = itemsData[i];
+    const sanitizedUrl = data.image_url ? formatDriveImageUrl(data.image_url) : "";
     const newItem: GalleryItem = {
-      id: `gal-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-      title: data.title || `Facility Highlight ${current.length + i + 1}`,
-      description: data.description || "High-precision biomedical manufacturing and clinical operations at Emsurg.",
-      image_url: data.image_url || "",
-      category: data.category || "Cleanrooms & Facilities",
+      id: data.id || `gal-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+      title: data.title?.trim() || `Facility Highlight ${current.length + i + 1}`,
+      description: data.description?.trim() || "High-precision biomedical manufacturing and clinical operations at Emsurg.",
+      image_url: sanitizedUrl,
+      category: data.category || "Cleanrooms & Sterile Processing",
       col_span: data.col_span || (i % 3 === 0 ? "md:col-span-2" : "col-span-1"),
       is_featured: data.is_featured ?? true,
       created_at: new Date().toISOString(),
@@ -167,9 +198,31 @@ export function saveBulkLocalGalleryItems(itemsData: Array<Partial<GalleryItem>>
 
   current.unshift(...created);
   saveLocalGalleryItems(current);
+
+  // Optional non-blocking Supabase sync
+  try {
+    if (created.length > 0) {
+      const payloads = created.map((c) => ({
+        title: c.title,
+        description: c.description,
+        image_url: c.image_url,
+        category: c.category,
+        col_span: c.col_span,
+        is_featured: c.is_featured,
+      }));
+      Promise.resolve(supabase.from("gallery").insert(payloads))
+        .catch(() => {});
+    }
+  } catch (err) {
+    // Non-blocking
+  }
+
   return created;
 }
 
+/**
+ * Removes an item from localStorage and fires update event.
+ */
 export function deleteLocalGalleryItem(id: string): boolean {
   const current = getLocalGalleryItems();
   const filtered = current.filter((g) => g.id !== id);
@@ -177,6 +230,9 @@ export function deleteLocalGalleryItem(id: string): boolean {
   return true;
 }
 
+/**
+ * Toggles featured state locally and dispatches update event.
+ */
 export function toggleLocalGalleryFeatured(id: string): GalleryItem | null {
   const current = getLocalGalleryItems();
   const item = current.find((g) => g.id === id);
@@ -186,52 +242,24 @@ export function toggleLocalGalleryFeatured(id: string): GalleryItem | null {
   return item;
 }
 
+/**
+ * Unified getter: Reads immediately from localStorage.
+ * If empty, seeds with default clinical items.
+ */
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  try {
-    const promise = Promise.resolve(
-      supabase.from("gallery").select("*").order("created_at", { ascending: false })
-    );
-
-    const { data, error } = (await Promise.race([
-      promise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000)),
-    ])) as any;
-
-    if (!error && Array.isArray(data) && data.length > 0) {
-      // Merge with local items (local items take priority if added recently)
-      const local = getLocalGalleryItems();
-      const localOnly = local.filter((l) => l.id.startsWith("gal-"));
-      
-      const remoteFormatted: GalleryItem[] = data.map((d: any) => ({
-        id: String(d.id),
-        title: d.title || "Facility Showcase",
-        description: d.description || "",
-        image_url: d.image_url,
-        category: d.category || "Cleanrooms & Facilities",
-        col_span: d.col_span || "col-span-1",
-        is_featured: d.is_featured ?? true,
-        created_at: d.created_at || new Date().toISOString(),
-      }));
-
-      const mergedMap = new Map<string, GalleryItem>();
-      remoteFormatted.forEach((item) => mergedMap.set(item.id, item));
-      localOnly.forEach((item) => mergedMap.set(item.id, item));
-      
-      const combined = Array.from(mergedMap.values()).sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      saveLocalGalleryItems(combined);
-      return combined;
-    }
-  } catch (err) {
-    console.info("Supabase gallery load graceful fallback to local storage:", err);
-  }
-
   return getLocalGalleryItems();
 }
 
+/**
+ * Unified saver: Sanitizes image_url via formatDriveImageUrl(),
+ * saves locally, dispatches emsurg_gallery_updated, and syncs
+ * non-blocking to Supabase in a try/catch.
+ */
 export async function saveGalleryItem(itemData: Partial<GalleryItem>, editId?: string): Promise<GalleryItem> {
-  const localItem = saveLocalGalleryItem(itemData, editId);
+  const idToUse = editId || itemData.id;
+  const localItem = saveLocalGalleryItem(itemData, idToUse);
+
+  // Non-blocking sync to Supabase
   try {
     const payload = {
       title: localItem.title,
@@ -242,34 +270,27 @@ export async function saveGalleryItem(itemData: Partial<GalleryItem>, editId?: s
       is_featured: localItem.is_featured,
     };
 
-    if (editId && !editId.startsWith("gal-")) {
-      const promise = Promise.resolve(supabase.from("gallery").update(payload).eq("id", editId));
-      await Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000)),
-      ]);
+    if (idToUse && !idToUse.startsWith("gal-")) {
+      Promise.resolve(supabase.from("gallery").update(payload).eq("id", idToUse)).catch(() => {});
     } else {
-      const promise = Promise.resolve(supabase.from("gallery").insert([payload]));
-      await Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000)),
-      ]);
+      Promise.resolve(supabase.from("gallery").insert([payload])).catch(() => {});
     }
   } catch (err) {
     console.info("Supabase gallery sync bypassed:", err);
   }
+
   return localItem;
 }
 
+/**
+ * Unified deleter: Removes from localStorage, dispatches event,
+ * and non-blocking syncs to Supabase.
+ */
 export async function deleteGalleryItem(id: string): Promise<boolean> {
   deleteLocalGalleryItem(id);
   try {
     if (!id.startsWith("gal-")) {
-      const promise = Promise.resolve(supabase.from("gallery").delete().eq("id", id));
-      await Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000)),
-      ]);
+      Promise.resolve(supabase.from("gallery").delete().eq("id", id)).catch(() => {});
     }
   } catch (err) {
     console.info("Supabase gallery delete bypassed:", err);
@@ -277,17 +298,17 @@ export async function deleteGalleryItem(id: string): Promise<boolean> {
   return true;
 }
 
+/**
+ * Unified toggle featured: Updates locally, dispatches event,
+ * and non-blocking syncs to Supabase.
+ */
 export async function toggleGalleryItemFeatured(id: string): Promise<GalleryItem | null> {
   const updated = toggleLocalGalleryFeatured(id);
   if (updated && !id.startsWith("gal-")) {
     try {
-      const promise = Promise.resolve(
+      Promise.resolve(
         supabase.from("gallery").update({ is_featured: updated.is_featured }).eq("id", id)
-      );
-      await Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000)),
-      ]);
+      ).catch(() => {});
     } catch (err) {
       console.info("Supabase toggle featured bypassed:", err);
     }
