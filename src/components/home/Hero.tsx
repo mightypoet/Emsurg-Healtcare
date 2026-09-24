@@ -15,7 +15,7 @@ export default function Hero() {
         poster="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920&q=80"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
       >
-        <source src="https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurg-video-oshot.mp4" type="video/mp4" />
+        <source src="https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurgvideo-opshot.mp4" type="video/mp4" />
       </video>
       
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80 pointer-events-none z-10"></div>

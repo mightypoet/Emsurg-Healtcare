@@ -201,6 +201,8 @@ export default function DriveImporterModal({
                       <img
                         src={item.convertedUrl}
                         alt={item.title}
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLElement;

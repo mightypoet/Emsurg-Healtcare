@@ -81,6 +81,8 @@ const ImageComponent = ({ card }: { card: Card }) => {
       <motion.img
         layoutId={`image-${card.id}-image`}
         src={card.thumbnail}
+        referrerPolicy="no-referrer"
+        loading="lazy"
         className="object-cover object-center absolute inset-0 h-full w-full transition duration-500 group-hover:scale-105"
         alt="Emsurg Healthcare operations"
         onError={(e) => {

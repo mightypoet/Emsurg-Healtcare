@@ -242,6 +242,7 @@ export default function GalleryTab({
                   src={formatDriveImageUrl(item.image_url)}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
                   loading="lazy"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =

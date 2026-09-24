@@ -37,6 +37,8 @@ export default function Gallery() {
     id: item.id || idx,
     className: item.col_span || (idx % 3 === 0 ? "md:col-span-2" : "col-span-1"),
     thumbnail: formatDriveImageUrl(item.image_url),
+    title: item.title,
+    category: item.category,
     content: (
       <div>
         <div className="flex items-center gap-2 mb-2">

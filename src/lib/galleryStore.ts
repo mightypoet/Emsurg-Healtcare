@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { formatDriveImageUrl } from "./utils";
+import { DEFAULT_GALLERY_ITEMS } from "./defaultGallery";
 
 export interface GalleryItem {
   id: string;
@@ -13,102 +14,57 @@ export interface GalleryItem {
 }
 
 const GALLERY_STORAGE_KEY = "emsurg_gallery_items";
-const LEGACY_STORAGE_KEY = "emsurg_gallery_items_v1";
+const GALLERY_VERSION_KEY = "emsurg_gallery_60_seeded_v2";
 
-export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
-  {
-    id: "gal-1",
-    title: "State-of-the-Art Cleanrooms",
-    description: "Our ISO-certified cleanrooms ensure the highest level of sterility for the manufacturing of critical orthobiologics and wound care solutions.",
-    image_url: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop",
-    category: "Cleanrooms & Sterile Processing",
-    col_span: "md:col-span-2",
-    is_featured: true,
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-  },
-  {
-    id: "gal-2",
-    title: "Precision Dialysis Manufacturing",
-    description: "Advanced indigenous production lines for high-purity hemodialysis fluids, ensuring supply chain resilience across India.",
-    image_url: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2000&auto=format&fit=crop",
-    category: "Dialysis & Fluid Production",
-    col_span: "col-span-1",
-    is_featured: true,
-    created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
-  },
-  {
-    id: "gal-3",
-    title: "R&D Laboratories",
-    description: "Our scientists pushing the boundaries of biomaterials, continually testing and developing the next generation of synthetic bone grafts.",
-    image_url: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=2070&auto=format&fit=crop",
-    category: "Biomaterials Research & R&D",
-    col_span: "col-span-1",
-    is_featured: true,
-    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-  },
-  {
-    id: "gal-4",
-    title: "Quality Assurance & Batch Testing",
-    description: "Every batch undergoes rigorous quality control checks in our in-house testing facility before reaching healthcare providers.",
-    image_url: "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=2070&auto=format&fit=crop",
-    category: "Quality Assurance & QA",
-    col_span: "md:col-span-2",
-    is_featured: true,
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: "gal-5",
-    title: "Sterile Packaging & Robotic Sealing",
-    description: "Automated medical barrier packaging lines ensuring integrity, shelf-life, and complete traceability of all sterile clinical units.",
-    image_url: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop",
-    category: "Packaging & Logistics",
-    col_span: "col-span-1",
-    is_featured: false,
-    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-  },
-  {
-    id: "gal-6",
-    title: "Surgeon Training & Clinical Workshop",
-    description: "Hands-on orthobiologics application workshops and surgical theater simulations conducted in partnership with premier hospitals.",
-    image_url: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=2000&auto=format&fit=crop",
-    category: "Clinical Workshops",
-    col_span: "col-span-1",
-    is_featured: true,
-    created_at: new Date().toISOString(),
-  },
-];
+export const INITIAL_GALLERY_ITEMS: GalleryItem[] = DEFAULT_GALLERY_ITEMS;
 
 /**
  * Reads all gallery items directly from localStorage.
- * If empty, seeds with the initial default clinical items.
+ * If empty or outdated (< 10 items, e.g. legacy placeholder), seeds with the complete 60-image clinical dataset.
  * Ensures all image URLs are sanitized through formatDriveImageUrl.
  */
 export function getLocalGalleryItems(): GalleryItem[] {
   try {
-    let raw = localStorage.getItem(GALLERY_STORAGE_KEY);
-    if (!raw) {
-      // Migrate from legacy key if present
-      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
-      if (legacyRaw) {
-        raw = legacyRaw;
-        localStorage.setItem(GALLERY_STORAGE_KEY, legacyRaw);
-      }
+    const isSeeded = localStorage.getItem(GALLERY_VERSION_KEY);
+    const raw = localStorage.getItem(GALLERY_STORAGE_KEY);
+
+    // If completely empty or not yet upgraded to the full 60-image dataset
+    if (!raw || !isSeeded) {
+      localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(DEFAULT_GALLERY_ITEMS));
+      localStorage.setItem(GALLERY_VERSION_KEY, "true");
+      return DEFAULT_GALLERY_ITEMS;
     }
-    if (!raw) {
-      localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(INITIAL_GALLERY_ITEMS));
-      return INITIAL_GALLERY_ITEMS;
-    }
+
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.map((item: any) => ({
-        ...item,
-        image_url: formatDriveImageUrl(item.image_url || ""),
-      }));
+    if (!Array.isArray(parsed) || parsed.length < 10) {
+      // Outdated previous store with only 6 placeholder items
+      localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(DEFAULT_GALLERY_ITEMS));
+      localStorage.setItem(GALLERY_VERSION_KEY, "true");
+      return DEFAULT_GALLERY_ITEMS;
     }
+
+    return parsed.map((item: any) => ({
+      ...item,
+      image_url: formatDriveImageUrl(item.image_url || ""),
+    }));
   } catch (err) {
     console.warn("Failed to load local gallery items:", err);
   }
-  return INITIAL_GALLERY_ITEMS;
+  return DEFAULT_GALLERY_ITEMS;
+}
+
+/**
+ * Resets local gallery storage back to the pristine 60-photo dataset.
+ */
+export function resetToDefaultGallery(): GalleryItem[] {
+  try {
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(DEFAULT_GALLERY_ITEMS));
+    localStorage.setItem(GALLERY_VERSION_KEY, "true");
+    window.dispatchEvent(new Event("emsurg_gallery_updated"));
+  } catch (err) {
+    console.warn("Failed to reset gallery:", err);
+  }
+  return DEFAULT_GALLERY_ITEMS;
 }
 
 /**
@@ -117,6 +73,7 @@ export function getLocalGalleryItems(): GalleryItem[] {
 export function saveLocalGalleryItems(items: GalleryItem[]): void {
   try {
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(GALLERY_VERSION_KEY, "true");
     window.dispatchEvent(new Event("emsurg_gallery_updated"));
   } catch (err) {
     console.warn("Failed to save local gallery items:", err);
@@ -207,8 +164,6 @@ export function saveBulkLocalGalleryItems(itemsData: Array<Partial<GalleryItem>>
         description: c.description,
         image_url: c.image_url,
         category: c.category,
-        col_span: c.col_span,
-        is_featured: c.is_featured,
       }));
       Promise.resolve(supabase.from("gallery").insert(payloads))
         .catch(() => {});
@@ -244,7 +199,7 @@ export function toggleLocalGalleryFeatured(id: string): GalleryItem | null {
 
 /**
  * Unified getter: Reads immediately from localStorage.
- * If empty, seeds with default clinical items.
+ * If empty or outdated, seeds with the 60 cleanroom dataset.
  */
 export async function getGalleryItems(): Promise<GalleryItem[]> {
   return getLocalGalleryItems();
@@ -266,11 +221,9 @@ export async function saveGalleryItem(itemData: Partial<GalleryItem>, editId?: s
       description: localItem.description,
       image_url: localItem.image_url,
       category: localItem.category,
-      col_span: localItem.col_span,
-      is_featured: localItem.is_featured,
     };
 
-    if (idToUse && !idToUse.startsWith("gal-")) {
+    if (idToUse && !idToUse.startsWith("gal-") && !idToUse.startsWith("fac-")) {
       Promise.resolve(supabase.from("gallery").update(payload).eq("id", idToUse)).catch(() => {});
     } else {
       Promise.resolve(supabase.from("gallery").insert([payload])).catch(() => {});
@@ -289,7 +242,7 @@ export async function saveGalleryItem(itemData: Partial<GalleryItem>, editId?: s
 export async function deleteGalleryItem(id: string): Promise<boolean> {
   deleteLocalGalleryItem(id);
   try {
-    if (!id.startsWith("gal-")) {
+    if (!id.startsWith("gal-") && !id.startsWith("fac-")) {
       Promise.resolve(supabase.from("gallery").delete().eq("id", id)).catch(() => {});
     }
   } catch (err) {
@@ -299,19 +252,8 @@ export async function deleteGalleryItem(id: string): Promise<boolean> {
 }
 
 /**
- * Unified toggle featured: Updates locally, dispatches event,
- * and non-blocking syncs to Supabase.
+ * Unified toggle featured: Updates locally, dispatches event.
  */
 export async function toggleGalleryItemFeatured(id: string): Promise<GalleryItem | null> {
-  const updated = toggleLocalGalleryFeatured(id);
-  if (updated && !id.startsWith("gal-")) {
-    try {
-      Promise.resolve(
-        supabase.from("gallery").update({ is_featured: updated.is_featured }).eq("id", id)
-      ).catch(() => {});
-    } catch (err) {
-      console.info("Supabase toggle featured bypassed:", err);
-    }
-  }
-  return updated;
+  return toggleLocalGalleryFeatured(id);
 }

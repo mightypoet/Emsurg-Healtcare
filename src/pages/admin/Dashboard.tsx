@@ -1155,6 +1155,8 @@ export default function Dashboard() {
                                     <img
                                       src={thumb}
                                       alt={p.title}
+                                      referrerPolicy="no-referrer"
+                                      loading="lazy"
                                       className="w-12 h-10 rounded-lg object-cover border border-slate-200 shrink-0"
                                     />
                                     <div>
@@ -1380,7 +1382,7 @@ export default function Dashboard() {
                         <div className="flex flex-wrap gap-3">
                           {prodImages.map((img, idx) => (
                             <div key={idx} className="relative w-24 h-20 rounded-xl overflow-hidden border border-slate-300 group bg-white">
-                              <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                              <img src={img} alt={`Preview ${idx}`} referrerPolicy="no-referrer" loading="lazy" className="w-full h-full object-cover" />
                               <button
                                 type="button"
                                 onClick={() => removeImage(idx)}
@@ -1598,6 +1600,8 @@ export default function Dashboard() {
                                     <img
                                       src={post.cover_image}
                                       alt={post.title}
+                                      referrerPolicy="no-referrer"
+                                      loading="lazy"
                                       className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0"
                                     />
                                   )}

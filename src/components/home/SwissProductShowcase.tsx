@@ -29,7 +29,7 @@ export default function SwissProductShowcase() {
       imageAlt: "BoneSurg Orthobiologics synthetic bone graft substitute",
       slug: "bonesurg-cr",
       categoryIcon: <Bone className="w-4 h-4" />,
-      accentGlow: "rgba(56, 189, 248, 0.45)",
+      accentGlow: "rgba(56, 189, 248, 0.35)",
       badge: "CDSCO Class C",
     },
     {
@@ -43,7 +43,7 @@ export default function SwissProductShowcase() {
       imageAlt: "EM-VAC Digital Negative Pressure Wound Therapy System",
       slug: "em-vac-npwt",
       categoryIcon: <Activity className="w-4 h-4" />,
-      accentGlow: "rgba(168, 85, 247, 0.45)",
+      accentGlow: "rgba(168, 85, 247, 0.35)",
       badge: "Smart NPWT",
     },
     {
@@ -57,7 +57,7 @@ export default function SwissProductShowcase() {
       imageAlt: "Hemodialysis acid concentrates and dry bicarbonate cartridges",
       slug: "hemodialysis-fluids-dry-powders",
       categoryIcon: <Droplets className="w-4 h-4" />,
-      accentGlow: "rgba(14, 165, 233, 0.45)",
+      accentGlow: "rgba(14, 165, 233, 0.35)",
       badge: "WHO-GMP Certified",
     },
     {
@@ -71,7 +71,7 @@ export default function SwissProductShowcase() {
       imageAlt: "Teknimed OPACITY+ PMMA Bone Cements and MDL Biopsy Devices",
       slug: "teknimed-opacity-plus-bone-cement",
       categoryIcon: <Layers className="w-4 h-4" />,
-      accentGlow: "rgba(16, 185, 129, 0.45)",
+      accentGlow: "rgba(16, 185, 129, 0.35)",
       badge: "CE Certified",
     },
   ];
@@ -79,27 +79,30 @@ export default function SwissProductShowcase() {
   return (
     <section
       id="our-products"
-      className="relative bg-slate-950 py-20 sm:py-28 text-white overflow-hidden select-none border-t border-b border-slate-800/80"
+      className="relative bg-white py-20 sm:py-28 text-slate-900 overflow-hidden select-none border-t border-b border-slate-100"
     >
-      {/* Ambient background light gradients */}
+      {/* Subtle ambient light accents */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.12)_0%,rgba(15,23,42,0)_70%)] blur-[120px]" />
-        <div className="absolute -bottom-24 left-10 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]" />
-        <div className="absolute -top-24 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.06)_0%,rgba(255,255,255,0)_75%)] blur-[100px]" />
+        <div className="absolute -bottom-24 left-10 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]" />
+        <div className="absolute -top-24 right-10 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase tracking-widest mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200/80 text-sky-700 text-xs font-bold uppercase tracking-widest mb-3">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Flagship Clinical Portfolio</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-white leading-[1.15]">
-              Precision-Engineered <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-300 to-indigo-300">Surgical Technologies</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 leading-[1.15]">
+              Precision-Engineered{" "}
+              <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600">
+                Surgical Technologies
+              </span>
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-slate-400 leading-relaxed font-normal">
+            <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               Explore our core medical specializations spanning bio-absorbable orthobiologics, digital NPWT wound systems, WHO-GMP dialysis consumables, and European PMMA bone cements.
             </p>
           </div>
@@ -107,7 +110,7 @@ export default function SwissProductShowcase() {
           <div className="shrink-0">
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md active:scale-95 group"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md active:scale-95 group"
             >
               <span>View All Products</span>
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -115,11 +118,12 @@ export default function SwissProductShowcase() {
           </div>
         </div>
 
-        {/* 3D Liquid Glass Tilt Cards Grid */}
+        {/* 3D Liquid Glass Tilt Cards Grid in Light Mode */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 lg:gap-6 items-stretch">
           {showcaseProducts.map((product) => (
             <ProductHighlightCard
               key={product.id}
+              variant="light"
               categoryIcon={product.categoryIcon}
               category={product.category}
               badge={product.badge}
@@ -134,16 +138,16 @@ export default function SwissProductShowcase() {
         </div>
 
         {/* Bottom Hospital Procurement Strip */}
-        <div className="mt-14 sm:mt-18 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/90 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+        <div className="mt-14 sm:mt-18 p-6 sm:p-8 rounded-3xl bg-slate-50/90 border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 items-center justify-center text-sky-400 shrink-0">
+            <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-sky-100 border border-sky-200 items-center justify-center text-sky-600 shrink-0 shadow-xs">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-base font-bold text-white tracking-tight">
+              <h4 className="text-base font-bold text-slate-900 tracking-tight">
                 Hospital Procurement & Institutional Tenders
               </h4>
-              <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                 Full technical documentation, CDSCO/CE certifications, and sample evaluation kits available upon verified clinical request.
               </p>
             </div>
@@ -158,7 +162,7 @@ export default function SwissProductShowcase() {
             </Link>
             <Link
               to="/products"
-              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-bold tracking-wide uppercase transition-all active:scale-95"
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold tracking-wide uppercase transition-all shadow-xs active:scale-95"
             >
               All Categories
             </Link>

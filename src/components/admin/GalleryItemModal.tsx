@@ -234,6 +234,8 @@ export default function GalleryItemModal({
                 <img
                   src={formatDriveImageUrl(imageUrl)}
                   alt="Preview"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.currentTarget as HTMLElement).style.display = "none";
