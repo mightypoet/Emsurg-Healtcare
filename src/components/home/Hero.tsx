@@ -8,7 +8,7 @@ export default function Hero() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   return (
-    <section className="relative min-h-[90vh] sm:min-h-screen flex flex-col justify-center text-white pt-28 sm:pt-36 pb-12 sm:pb-20 overflow-hidden bg-[#030712]">
+    <section className="relative min-h-[90vh] sm:min-h-screen flex flex-col justify-center text-white pt-28 sm:pt-36 pb-12 sm:pb-20 overflow-hidden bg-slate-950">
       {/* Background Video with Smooth Fade-In */}
       <video
         autoPlay
@@ -27,11 +27,23 @@ export default function Hero() {
         />
       </video>
 
-      {/* Ambient Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/70 via-[#030712]/40 to-[#030712]/80 pointer-events-none z-10" />
+      {/* Airy Surgical Ambient Gradient & Radials */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-sky-950/30 to-slate-950/75 pointer-events-none z-10" />
+      <div 
+        className="absolute inset-0 pointer-events-none z-10 opacity-70"
+        style={{
+          background: "radial-gradient(circle at 50% 30%, rgba(14, 165, 233, 0.2), transparent 70%)"
+        }}
+      />
 
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 w-full flex flex-col items-center text-center">
         <div className="max-w-4xl mx-auto mt-4 sm:mt-12">
+          {/* Luminous Surgical Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-semibold uppercase tracking-[0.25em] mb-5 backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            INDIGENOUS MEDTECH & SURGICAL INNOVATION
+          </div>
+
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12] text-white mb-4 sm:mb-6">
             Advance reliable and<br className="hidden sm:inline" /> trustworthy healthcare.
           </h1>
@@ -40,8 +52,14 @@ export default function Hero() {
           </p>
 
           <div className="flex justify-center mb-6 sm:mb-16">
-            <LiquidButton size="lg" className="shadow-xl" onClick={() => navigate("/contact")}>
-              Schedule A Call <ArrowRight className="w-4 h-4 ml-2" />
+            <LiquidButton
+              variant="primary"
+              size="lg"
+              onClick={() => navigate("/contact")}
+              className="gap-2.5 shadow-xl shadow-sky-500/30"
+            >
+              <span>Schedule A Call</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </LiquidButton>
           </div>
         </div>

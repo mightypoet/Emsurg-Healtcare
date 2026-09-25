@@ -53,12 +53,12 @@ export default function Home() {
             ].map((item, idx) => (
               <div 
                 key={idx} 
-                className="flex flex-col items-center justify-center p-5 sm:p-8 bg-slate-50/60 rounded-2xl border border-slate-100 hover:border-slate-300 transition-all text-center group"
+                className="flex flex-col items-center justify-center p-5 sm:p-8 bg-sky-50/40 rounded-2xl border border-sky-100 hover:border-sky-300 hover:bg-sky-50/80 transition-all text-center group"
               >
-                <span className="text-xs font-semibold tracking-[0.15em] text-slate-700 uppercase mb-2 group-hover:text-blue-700 transition-colors">
+                <span className="text-xs font-semibold tracking-[0.15em] text-slate-700 uppercase mb-2 group-hover:text-sky-600 transition-colors">
                   {item.label}
                 </span>
-                <span className="text-xs text-slate-400 font-normal leading-relaxed">
+                <span className="text-xs text-slate-500 font-normal leading-relaxed">
                   {item.desc}
                 </span>
               </div>
@@ -67,25 +67,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-16 sm:py-28 bg-[#0F172A] text-center relative overflow-hidden">
-        {/* Subtle radial ambient light */}
+      {/* Final CTA - Luminous Airy Surgical Theme */}
+      <section className="py-16 sm:py-28 bg-gradient-to-b from-sky-50/80 via-white to-sky-100/60 border-t border-sky-100 text-center relative overflow-hidden">
+        {/* Soft cyan radial ambient light */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute bottom-0 right-0 w-[80%] h-[120%] translate-y-1/4 translate-x-1/4 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.15)_0%,rgba(37,99,235,0)_50%)] blur-[80px]" />
+          <div className="absolute bottom-0 right-0 w-[80%] h-[120%] translate-y-1/4 translate-x-1/4 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.12)_0%,rgba(6,182,212,0)_50%)] blur-[90px]" />
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08)_0%,transparent_70%)] blur-[80px]" />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-light text-white tracking-tight mb-4 sm:mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100/80 border border-sky-200/70 text-sky-700 text-xs font-bold tracking-[0.25em] uppercase mb-4 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+            PARTNERSHIP & PROCUREMENT
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-light text-slate-900 tracking-tight mb-4 sm:mb-6">
             Advancing Healthcare Together
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-slate-300 mb-8 sm:mb-10 font-normal max-w-xl mx-auto px-2">
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 mb-8 sm:mb-10 font-normal max-w-xl mx-auto px-2 leading-relaxed">
             Connect with Emsurg for medical technology specifications, distribution partnerships, and hospital procurement.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 max-w-md mx-auto sm:max-w-none">
-            <LiquidButton size="lg" className="w-full sm:w-auto" onClick={() => navigate('/contact')}>
+            <LiquidButton
+              variant="primary"
+              size="lg"
+              onClick={() => navigate('/contact')}
+              className="w-full sm:w-auto"
+            >
               Talk to Emsurg
             </LiquidButton>
-            <LiquidButton size="lg" className="w-full sm:w-auto" onClick={() => navigate('/products')}>
+            <LiquidButton
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/products')}
+              className="w-full sm:w-auto"
+            >
               Explore Products
             </LiquidButton>
           </div>

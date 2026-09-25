@@ -2,6 +2,8 @@ import { supabase } from "./supabase";
 import { formatDriveImageUrl } from "./utils";
 import { DEFAULT_GALLERY_ITEMS } from "./defaultGallery";
 
+export { formatDriveImageUrl };
+
 export interface GalleryItem {
   id: string;
   title: string;
@@ -14,7 +16,7 @@ export interface GalleryItem {
 }
 
 const GALLERY_STORAGE_KEY = "emsurg_gallery_items";
-const GALLERY_VERSION_KEY = "emsurg_gallery_60_seeded_v2";
+const GALLERY_VERSION_KEY = "emsurg_gallery_60_seeded_v4";
 
 export const INITIAL_GALLERY_ITEMS: GalleryItem[] = DEFAULT_GALLERY_ITEMS;
 

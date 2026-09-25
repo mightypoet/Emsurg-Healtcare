@@ -163,7 +163,7 @@ export function ArgentLoopInfiniteSlider({
     >
       {/* Top Header & Tag */}
       <div className="absolute top-6 sm:top-8 left-4 sm:left-8 z-30 pointer-events-none flex flex-col gap-1 max-w-sm sm:max-w-lg">
-        <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-blue-400 uppercase drop-shadow-sm">
+        <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-sky-400 uppercase drop-shadow-sm">
           CLINICAL PERSPECTIVES & RESEARCH
         </span>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-white tracking-tight drop-shadow-md">
@@ -177,10 +177,10 @@ export function ArgentLoopInfiniteSlider({
       {/* Top Right "All Articles" Link */}
       <div className="absolute top-6 sm:top-8 right-4 sm:right-8 z-30">
         <Link
-          className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-semibold text-white uppercase tracking-wider transition-all shadow-lg active:scale-95"
+          className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 hover:border-sky-300 text-[11px] sm:text-xs font-semibold text-white uppercase tracking-wider transition-all shadow-lg active:scale-95"
           to="/blogs"
         >
-          All Articles <ArrowUpRight className="w-3.5 h-3.5" />
+          All Articles <ArrowUpRight className="w-3.5 h-3.5 text-sky-300" />
         </Link>
       </div>
 
@@ -211,8 +211,8 @@ export function ArgentLoopInfiniteSlider({
                 }}
               />
               {/* High-Contrast Silver & Dark Vignette Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090e17] via-[#090e17]/50 to-[#090e17]/60" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(37,99,235,0.18)_0%,transparent_60%)]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-950/60" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(14,165,233,0.18)_0%,transparent_60%)]" />
             </div>
           );
         })}
@@ -230,14 +230,14 @@ export function ArgentLoopInfiniteSlider({
             <div
               className={`h-6 rounded-full transition-all duration-300 ${
                 idx === activeIndex
-                  ? "w-1.5 bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]"
+                  ? "w-1.5 bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"
                   : "w-1 bg-white/20 group-hover:bg-white/50"
               }`}
             />
             <span
               className={`text-[10px] font-mono tracking-wider transition-colors ${
                 idx === activeIndex
-                  ? "text-blue-300 font-bold opacity-100"
+                  ? "text-sky-300 font-bold opacity-100"
                   : "text-white/40 group-hover:text-white/70 opacity-0 group-hover:opacity-100"
               }`}
             >
@@ -250,7 +250,7 @@ export function ArgentLoopInfiniteSlider({
       {/* Floating Interactive Minimap Card with Step Controls */}
       {/* Positioned on desktop to lg:right-60 / xl:right-64 so it never collides with fixed floating pill dock (right-6) */}
       <div className="absolute bottom-4 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 lg:right-64 xl:right-72 z-25 max-w-sm sm:max-w-md lg:max-w-xl w-auto">
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/60 overflow-hidden flex flex-row h-[230px] sm:h-[250px]">
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-sky-100/90 shadow-[0_8px_30px_rgba(2,132,199,0.08)] overflow-hidden flex flex-row h-[230px] sm:h-[250px]">
           {/* Thumbnail Preview Column */}
           <div className="w-28 sm:w-44 h-full relative overflow-hidden bg-slate-900 border-r border-slate-100 shrink-0">
             <div
@@ -284,7 +284,7 @@ export function ArgentLoopInfiniteSlider({
             {/* Top Bar: Category Pill & Step Navigation Buttons */}
             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-100 px-2 sm:px-2.5 py-0.5 rounded-full truncate">
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 bg-sky-50 border border-sky-200/80 px-2 sm:px-2.5 py-0.5 rounded-full truncate">
                   {boundedArticles[activeIndex]?.category || boundedArticles[0]?.category || "Clinical Insights"}
                 </span>
                 <span className="text-[10px] text-slate-400 font-semibold hidden sm:inline">
@@ -304,7 +304,7 @@ export function ArgentLoopInfiniteSlider({
                   type="button"
                   onClick={goToPrev}
                   disabled={activeIndex === 0}
-                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-all border border-slate-200/80 active:scale-95"
+                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-all border border-slate-200/80 active:scale-95"
                   aria-label="Previous clinical insight"
                   title="Previous insight"
                 >
@@ -315,7 +315,7 @@ export function ArgentLoopInfiniteSlider({
                   type="button"
                   onClick={goToNext}
                   disabled={activeIndex === maxIndex}
-                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-all border border-slate-200/80 active:scale-95"
+                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-all border border-slate-200/80 active:scale-95"
                   aria-label="Next clinical insight"
                   title="Next insight"
                 >
@@ -335,7 +335,7 @@ export function ArgentLoopInfiniteSlider({
                 {boundedArticles.map((article, idx) => (
                   <div key={idx} className="h-full flex flex-col justify-center shrink-0 py-1">
                     <h3
-                      className="text-xs sm:text-sm font-bold text-slate-900 leading-snug line-clamp-2 hover:text-blue-700 transition-colors"
+                      className="text-xs sm:text-sm font-bold text-slate-900 leading-snug line-clamp-2 hover:text-sky-600 transition-colors"
                       title={article.title}
                     >
                       {article.title}

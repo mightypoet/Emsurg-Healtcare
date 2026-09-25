@@ -25,10 +25,10 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Company</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/about" className="font-semibold text-slate-300 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-white transition-colors">Products & Solutions</Link></li>
-              <li><Link to="/leaders" className="font-semibold text-slate-300 hover:text-white transition-colors">Leadership</Link></li>
-              <li><Link to="/careers" className="font-semibold text-slate-300 hover:text-white transition-colors">Careers</Link></li>
+              <li><Link to="/about" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">About Us</Link></li>
+              <li><Link to="/products" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Products & Solutions</Link></li>
+              <li><Link to="/leaders" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Leadership</Link></li>
+              <li><Link to="/careers" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Careers</Link></li>
             </ul>
           </div>
 
@@ -36,12 +36,12 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Products</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/products/bonesurg-cr" className="font-semibold text-slate-300 hover:text-white transition-colors">BoneSurg CR</Link></li>
-              <li><Link to="/products/bonesurg-ha" className="font-semibold text-slate-300 hover:text-white transition-colors">BoneSurg HA</Link></li>
-              <li><Link to="/products/em-vac-npwt" className="font-semibold text-slate-300 hover:text-white transition-colors">EM-VAC NPWT</Link></li>
-              <li><Link to="/products/hemodialysis-fluids-dry-powders" className="font-semibold text-slate-300 hover:text-white transition-colors">Hemodialysis Fluids</Link></li>
-              <li><Link to="/products/teknimed-opacity-plus-bone-cement" className="font-semibold text-slate-300 hover:text-white transition-colors">Teknimed Cements</Link></li>
-              <li><Link to="/products/mdl-biopsy-devices" className="font-semibold text-slate-300 hover:text-white transition-colors">MDL Biopsy</Link></li>
+              <li><Link to="/products/bonesurg-cr" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">BoneSurg CR</Link></li>
+              <li><Link to="/products/bonesurg-ha" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">BoneSurg HA</Link></li>
+              <li><Link to="/products/em-vac-npwt" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">EM-VAC NPWT</Link></li>
+              <li><Link to="/products/hemodialysis-fluids-dry-powders" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Hemodialysis Fluids</Link></li>
+              <li><Link to="/products/teknimed-opacity-plus-bone-cement" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Teknimed Cements</Link></li>
+              <li><Link to="/products/mdl-biopsy-devices" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">MDL Biopsy</Link></li>
             </ul>
           </div>
 
@@ -49,10 +49,10 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">Resources</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/insights" className="font-semibold text-slate-300 hover:text-white transition-colors">Insights</Link></li>
-              <li><Link to="/gallery" className="font-semibold text-slate-300 hover:text-white transition-colors">Gallery</Link></li>
-              <li><Link to="/faq" className="font-semibold text-slate-300 hover:text-white transition-colors">FAQs</Link></li>
-              <li><Link to="/contact" className="font-semibold text-slate-300 hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/insights" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Insights</Link></li>
+              <li><Link to="/gallery" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Gallery</Link></li>
+              <li><Link to="/faq" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">FAQs</Link></li>
+              <li><Link to="/contact" className="font-semibold text-slate-300 hover:text-sky-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
 

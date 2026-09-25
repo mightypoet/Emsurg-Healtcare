@@ -78,10 +78,10 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
             transformStyle: "preserve-3d",
           }}
           className={cn(
-            "relative h-[420px] w-full rounded-3xl p-3 select-none transition-shadow duration-300",
+            "relative h-[420px] w-full rounded-3xl p-3 select-none transition-all duration-300",
             isLight
-              ? "bg-gradient-to-b from-white via-slate-50 to-slate-100/90 border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(14,165,233,0.16)] hover:border-sky-300/80"
-              : "bg-gradient-to-b from-slate-900/95 via-slate-900/98 to-slate-950 border border-white/10 backdrop-blur-2xl shadow-2xl hover:shadow-[0_20px_50px_rgba(14,165,233,0.25)] hover:border-white/20",
+              ? "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.14)] hover:border-sky-300/80"
+              : "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.14)] hover:border-sky-300/80",
             className
           )}
           {...props}
@@ -89,8 +89,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
           {/* Dynamic Interactive Cursor Glow */}
           <motion.div
             className={cn(
-              "pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 will-change-transform",
-              isLight ? "mix-blend-multiply" : ""
+              "pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 will-change-transform mix-blend-multiply"
             )}
             style={{
               background: glowBackground,
@@ -100,10 +99,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
           {/* Ambient Top Light Line */}
           <div
             className={cn(
-              "absolute top-0 inset-x-8 h-[1px] pointer-events-none",
-              isLight
-                ? "bg-gradient-to-r from-transparent via-white to-transparent"
-                : "bg-gradient-to-r from-transparent via-white/25 to-transparent"
+              "absolute top-0 inset-x-8 h-[1px] pointer-events-none bg-gradient-to-r from-transparent via-sky-200/60 to-transparent"
             )}
           />
 
@@ -111,10 +107,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
           <div
             style={{ transform: "translateZ(25px)", transformStyle: "preserve-3d" }}
             className={cn(
-              "relative h-full w-full rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-md",
-              isLight
-                ? "bg-white/80 border border-slate-200/60"
-                : "bg-white/[0.03] border border-white/10"
+              "relative h-full w-full rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-md bg-white/85 border border-sky-100/60"
             )}
           >
             {/* Top Row: Category Badge & Icon */}
@@ -125,18 +118,14 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "w-8 h-8 rounded-xl flex items-center justify-center shadow-xs backdrop-blur-md",
-                    isLight
-                      ? "bg-sky-50 border border-sky-100 text-sky-600"
-                      : "bg-white/10 border border-white/15 text-sky-400"
+                    "w-8 h-8 rounded-xl flex items-center justify-center shadow-xs backdrop-blur-md bg-sky-50 border border-sky-100 text-sky-600"
                   )}
                 >
                   {categoryIcon}
                 </span>
                 <span
                   className={cn(
-                    "text-[11px] font-bold uppercase tracking-widest",
-                    isLight ? "text-slate-500" : "text-slate-300"
+                    "text-[11px] font-bold uppercase tracking-widest text-slate-600"
                   )}
                 >
                   {category}
@@ -145,10 +134,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
               {badge && (
                 <span
                   className={cn(
-                    "text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border",
-                    isLight
-                      ? "text-emerald-700 bg-emerald-50 border-emerald-200"
-                      : "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                    "text-[10px] font-mono font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full border text-sky-700 bg-sky-50 border-sky-200/70"
                   )}
                 >
                   {badge}
@@ -160,10 +146,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
             <div
               style={{ transform: "translateZ(45px)", transformStyle: "preserve-3d" }}
               className={cn(
-                "relative w-full h-[175px] my-2 flex items-center justify-center overflow-hidden rounded-xl group/img",
-                isLight
-                  ? "bg-slate-50 border border-slate-100"
-                  : "bg-gradient-to-b from-white/5 to-transparent border border-white/5"
+                "relative w-full h-[175px] my-2 flex items-center justify-center overflow-hidden rounded-xl group/img bg-sky-50/40 border border-sky-100/70"
               )}
             >
               <img
@@ -177,10 +160,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
               />
               <div
                 className={cn(
-                  "absolute inset-0 pointer-events-none",
-                  isLight
-                    ? "bg-gradient-to-t from-black/10 via-transparent to-transparent"
-                    : "bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"
+                  "absolute inset-0 pointer-events-none bg-gradient-to-t from-sky-950/20 via-transparent to-transparent"
                 )}
               />
             </div>
@@ -192,18 +172,14 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
             >
               <h3
                 className={cn(
-                  "text-base sm:text-lg font-bold tracking-tight leading-snug line-clamp-1 transition-colors",
-                  isLight
-                    ? "text-slate-900 group-hover:text-sky-600"
-                    : "text-white group-hover:text-sky-300"
+                  "text-base sm:text-lg font-bold tracking-tight leading-snug line-clamp-1 transition-colors text-slate-900 group-hover:text-sky-600"
                 )}
               >
                 {title}
               </h3>
               <p
                 className={cn(
-                  "text-xs line-clamp-2 leading-relaxed",
-                  isLight ? "text-slate-600" : "text-slate-400"
+                  "text-xs line-clamp-2 leading-relaxed text-slate-600"
                 )}
               >
                 {description}
@@ -211,17 +187,13 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
 
               <div
                 className={cn(
-                  "pt-3 mt-1 border-t flex items-center justify-between",
-                  isLight ? "border-slate-100" : "border-white/10"
+                  "pt-3 mt-1 border-t flex items-center justify-between border-sky-100"
                 )}
               >
                 <Link
                   to={productHref}
                   className={cn(
-                    "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider group/link transition-colors",
-                    isLight
-                      ? "text-sky-600 hover:text-sky-700"
-                      : "text-sky-400 hover:text-sky-300"
+                    "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider group/link transition-colors text-sky-600 hover:text-sky-700"
                   )}
                 >
                   <span>Clinical Specs</span>
@@ -231,10 +203,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
                 <Link
                   to={productHref}
                   className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center transition-all active:scale-95",
-                    isLight
-                      ? "bg-slate-100 hover:bg-sky-50 hover:text-sky-600 border border-slate-200 text-slate-600"
-                      : "bg-white/10 hover:bg-sky-500/20 hover:text-sky-300 border border-white/15 text-slate-300"
+                    "w-7 h-7 rounded-full flex items-center justify-center transition-all active:scale-95 bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200/70"
                   )}
                   aria-label={`View details for ${title}`}
                 >

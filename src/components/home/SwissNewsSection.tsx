@@ -64,7 +64,7 @@ export default function SwissNewsSection() {
   });
 
   return (
-    <section id="news-section" className="relative w-full bg-[#090e17] overflow-hidden border-t border-slate-800">
+    <section id="news-section" className="relative w-full bg-slate-950 overflow-hidden border-t border-sky-100/20">
       <ArgentLoopInfiniteSlider
         articles={sliderArticles}
         title="Clinical Insights & Research"

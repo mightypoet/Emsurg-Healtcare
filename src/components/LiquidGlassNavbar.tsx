@@ -13,6 +13,7 @@ import {
   Layers 
 } from "lucide-react";
 import { companyInfo } from "../data/content";
+import { LiquidButton } from "./ui/liquid-glass-button";
 
 export default function LiquidGlassNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -121,23 +122,23 @@ export default function LiquidGlassNavbar() {
               {/* Liquid Glass Dropdown Menu */}
               {solutionsHovered && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[580px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="bg-slate-950/90 backdrop-blur-3xl rounded-3xl border border-white/20 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] grid grid-cols-2 gap-4 text-left">
+                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-sky-100 p-5 shadow-xl shadow-sky-900/5 grid grid-cols-2 gap-4 text-left">
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-400 px-2 block">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-600 px-2 block">
                         Indigenous Manufacturing
                       </span>
                       <Link
                         to="/products?category=Orthobiologics"
-                        className="flex items-start gap-2.5 p-2 rounded-2xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-sky-500/20 border border-sky-500/30 text-sky-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-sky-50 border border-sky-200/70 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
                           <Bone className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white group-hover/item:text-sky-300 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
                             Orthobiologics
                           </div>
-                          <div className="text-[11px] text-slate-300">
+                          <div className="text-xs text-slate-500">
                             BoneSurg CR & BoneSurg HA
                           </div>
                         </div>
@@ -145,16 +146,16 @@ export default function LiquidGlassNavbar() {
 
                       <Link
                         to="/products?category=Wound%20Management"
-                        className="flex items-start gap-2.5 p-2 rounded-2xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-purple-50 border border-purple-200/70 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
                           <Activity className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white group-hover/item:text-purple-300 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
                             Wound Management
                           </div>
-                          <div className="text-[11px] text-slate-300">
+                          <div className="text-xs text-slate-500">
                             EM-VAC Digital NPWT System
                           </div>
                         </div>
@@ -162,38 +163,38 @@ export default function LiquidGlassNavbar() {
 
                       <Link
                         to="/products?category=Nephro%20Care"
-                        className="flex items-start gap-2.5 p-2 rounded-2xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-cyan-50 border border-cyan-200/70 text-cyan-600 flex items-center justify-center shrink-0 mt-0.5">
                           <Droplets className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white group-hover/item:text-cyan-300 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
                             Nephro Care
                           </div>
-                          <div className="text-[11px] text-slate-300">
+                          <div className="text-xs text-slate-500">
                             Dialysis Concentrates & Powders
                           </div>
                         </div>
                       </Link>
                     </div>
 
-                    <div className="space-y-2 border-l border-white/10 pl-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 block">
+                    <div className="space-y-2 border-l border-sky-100 pl-4">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-600 px-2 block">
                         European Partnerships
                       </span>
                       <Link
                         to="/products?category=Bone%20Cements"
-                        className="flex items-start gap-2.5 p-2 rounded-2xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/70 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                           <Layers className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white group-hover/item:text-emerald-300 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
                             Bone Cements
                           </div>
-                          <div className="text-[11px] text-slate-300">
+                          <div className="text-xs text-slate-500">
                             Teknimed OPACITY+® PMMA
                           </div>
                         </div>
@@ -201,25 +202,25 @@ export default function LiquidGlassNavbar() {
 
                       <Link
                         to="/products?category=Biopsy%20Devices"
-                        className="flex items-start gap-2.5 p-2 rounded-2xl hover:bg-white/10 transition-colors group/item"
+                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-200/70 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
                           <ShieldCheck className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white group-hover/item:text-indigo-300 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
                             Biopsy Devices
                           </div>
-                          <div className="text-[11px] text-slate-300">
+                          <div className="text-xs text-slate-500">
                             MDL Precision Trocar Needles
                           </div>
                         </div>
                       </Link>
 
-                      <div className="pt-2 mt-2 border-t border-white/10">
+                      <div className="pt-2 mt-2 border-t border-sky-100">
                         <Link
                           to="/products"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline px-2 py-1"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline px-2 py-1"
                         >
                           <span>Explore Complete Catalog</span>
                           <ArrowUpRight className="w-3 h-3" />
@@ -267,14 +268,18 @@ export default function LiquidGlassNavbar() {
 
           {/* 3. Call-to-Action (Right) - Admin Removed, Clean CTA Retained */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              to="/contact"
-              className="bg-white/90 hover:bg-white text-slate-950 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            <LiquidButton
+              variant="primary"
+              size="sm"
+              asChild
+              className="gap-1.5 px-4 py-1.5 sm:px-5 sm:py-2 text-xs font-semibold uppercase tracking-wider"
             >
-              <span className="hidden sm:inline">Inquire / Procurement</span>
-              <span className="sm:hidden">Inquire</span>
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+              <Link to="/contact">
+                <span className="hidden sm:inline">Inquire / Procurement</span>
+                <span className="sm:hidden">Inquire</span>
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </LiquidButton>
 
             {/* Mobile Hamburger Button */}
             <button
@@ -294,31 +299,42 @@ export default function LiquidGlassNavbar() {
         <>
           {/* Subtle Backdrop Blur */}
           <div
-            className="fixed inset-0 bg-slate-950/50 backdrop-blur-md z-45 lg:hidden animate-in fade-in duration-200"
+            className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-45 lg:hidden animate-in fade-in duration-200"
             onClick={() => setMobileMenuOpen(false)}
           />
 
           {/* Frosted Floating Mobile Drawer */}
           <div
-            className="fixed inset-x-4 top-20 z-50 max-h-[82vh] overflow-y-auto bg-slate-950/85 backdrop-blur-2xl border border-white/20 text-white rounded-3xl p-6 shadow-2xl lg:hidden animate-in fade-in slide-in-from-top-4 duration-200 flex flex-col justify-between gap-6"
+            className="fixed inset-x-4 top-20 z-50 max-h-[82vh] overflow-y-auto bg-white/85 backdrop-blur-2xl border border-sky-100/90 shadow-[0_20px_50px_rgba(2,132,199,0.12)] text-slate-800 rounded-3xl p-6 lg:hidden animate-in fade-in slide-in-from-top-4 duration-200 flex flex-col justify-between gap-6"
           >
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <span className="text-xs font-bold uppercase tracking-wider text-white/50">
+              <div className="flex items-center justify-between pb-3 border-b border-sky-100">
+                <span className="text-xs font-bold uppercase tracking-widest text-sky-600">
                   Navigation
                 </span>
-                <span className="text-[10px] font-semibold text-white bg-white/10 border border-white/20 px-2.5 py-0.5 rounded-full">
-                  Emsurg Healthcare
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-sky-700 bg-sky-50 border border-sky-200/70 px-2.5 py-0.5 rounded-full">
+                    Emsurg Healthcare
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-7 h-7 rounded-full bg-sky-50 text-slate-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/60 flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+                    aria-label="Close navigation drawer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col space-y-1">
                 <Link
                   to="/products"
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Products Catalog</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
                 <a
@@ -327,63 +343,74 @@ export default function LiquidGlassNavbar() {
                     handleExpertiseClick(e);
                     setMobileMenuOpen(false);
                   }}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Clinical Expertise</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </a>
 
                 <Link
                   to="/blogs"
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Research & Insights</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
                 <Link
                   to="/gallery"
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Infrastructure & Facilities</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
                 <Link
                   to="/partners"
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Global Partnerships</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
                 <Link
                   to="/about"
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 text-base font-bold text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>About Emsurg</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/50" />
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
               </div>
             </div>
 
             {/* Quick Actions in Mobile Drawer */}
-            <div className="pt-4 border-t border-white/10 space-y-2.5">
-              <Link
-                to="/contact"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white hover:bg-white/90 text-slate-950 font-bold text-sm tracking-wide shadow-lg active:scale-95 transition-all"
+            <div className="pt-4 border-t border-sky-100 space-y-2.5">
+              <LiquidButton
+                variant="primary"
+                size="default"
+                asChild
+                className="w-full py-3 h-auto rounded-2xl"
               >
-                <span>Inquire / Procurement</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
+                <Link
+                  to="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Inquire / Procurement</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </LiquidButton>
 
               <a
                 href={`https://wa.me/${companyInfo.whatsapp.replace(/[^0-9]/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs border border-white/20 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100/80 font-medium text-xs transition-colors"
               >
-                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <Phone className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Direct WhatsApp Clinical Support</span>
               </a>
             </div>

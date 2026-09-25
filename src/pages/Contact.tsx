@@ -1,5 +1,6 @@
 import { companyInfo, locations } from "../data/content";
 import { MessageSquare, Phone, Mail, Clock } from "lucide-react";
+import { LiquidButton } from "../components/ui/liquid-glass-button";
 
 export default function Contact() {
   return (
@@ -69,9 +70,14 @@ export default function Contact() {
                 <textarea rows={4} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors resize-none" required></textarea>
               </div>
 
-              <button type="submit" className="bg-blue-900 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-blue-800 transition-colors w-full sm:w-auto min-h-[48px] shadow-sm">
+              <LiquidButton
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto"
+              >
                 Submit Request
-              </button>
+              </LiquidButton>
             </form>
           </div>
         </div>

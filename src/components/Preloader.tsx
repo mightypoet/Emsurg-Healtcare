@@ -62,13 +62,13 @@ export default function Preloader({ onComplete }: PreloaderProps) {
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#030712] select-none pointer-events-auto overflow-hidden"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(14, 165, 233, 0.12) 0%, rgba(3, 7, 18, 0.95) 55%, #030712 100%)",
+              "radial-gradient(circle at center, rgba(14, 165, 233, 0.22) 0%, rgba(6, 182, 212, 0.12) 35%, rgba(3, 7, 18, 0.98) 75%, #030712 100%)",
           }}
         >
-          {/* Subtle Ambient Surgical Grid / Glow Accents */}
-          <div className="absolute inset-0 pointer-events-none opacity-20">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[120px]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-blue-600/10 rounded-full blur-[60px]" />
+          {/* Bright Surgical Ambient Glow Accents */}
+          <div className="absolute inset-0 pointer-events-none opacity-40">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-sky-400/15 rounded-full blur-[140px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] bg-cyan-400/20 rounded-full blur-[70px]" />
           </div>
 
           <div className="relative z-10 flex flex-col items-center px-6 text-center">
@@ -78,8 +78,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{
-                  opacity: [0, 0.6, 0.4],
-                  scale: [0.85, 1.05, 1],
+                  opacity: [0, 0.7, 0.45],
+                  scale: [0.85, 1.08, 1],
                 }}
                 transition={{
                   duration: 1.8,
@@ -87,7 +87,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                   repeat: Infinity,
                   repeatType: "reverse",
                 }}
-                className="absolute inset-0 -m-4 bg-sky-400/20 rounded-full blur-xl pointer-events-none"
+                className="absolute inset-0 -m-5 bg-cyan-400/25 rounded-full blur-2xl pointer-events-none"
               />
 
               {/* Logo with scale, blur, and opacity animation */}
@@ -108,7 +108,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 <img
                   src="/emsurg-logo.png"
                   alt="Emsurg Healthcare"
-                  className="h-16 sm:h-20 w-auto object-contain brightness-0 invert drop-shadow-[0_0_25px_rgba(56,189,248,0.4)]"
+                  className="h-16 sm:h-20 w-auto object-contain brightness-0 invert drop-shadow-[0_0_30px_rgba(14,165,233,0.6)]"
                   onError={(e) => {
                     // Fallback to remote blob asset
                     (e.target as HTMLImageElement).src =
@@ -126,7 +126,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                     delay: 0.3,
                     ease: "easeInOut",
                   }}
-                  className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-25deg] pointer-events-none"
+                  className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-cyan-100/40 to-transparent skew-x-[-25deg] pointer-events-none"
                 />
               </motion.div>
             </div>
@@ -144,7 +144,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 delay: 0.25,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="text-white font-bold text-lg sm:text-xl uppercase drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)] ml-[0.32em]"
+              className="text-white font-bold text-lg sm:text-xl uppercase drop-shadow-[0_2px_12px_rgba(14,165,233,0.35)] ml-[0.32em]"
             >
               EMSURG
             </motion.div>
@@ -158,7 +158,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 delay: 0.45,
                 ease: "easeOut",
               }}
-              className="mt-2 text-sky-400/80 text-[9px] sm:text-[10px] font-semibold tracking-[0.3em] uppercase ml-[0.3em]"
+              className="mt-2 text-cyan-300/90 text-[9px] sm:text-[10px] font-semibold tracking-[0.3em] uppercase ml-[0.3em]"
             >
               Advancing Healthcare with Innovation
             </motion.div>
@@ -166,7 +166,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             {/* Minimal Clean Precision Medical Progress Bar */}
             <div className="w-48 sm:w-56 h-[2px] bg-slate-800/80 rounded-full overflow-hidden mt-6 relative shadow-inner">
               <motion.div
-                className="h-full bg-gradient-to-r from-sky-400 via-sky-500 to-blue-600 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.7)]"
+                className="h-full bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-600 rounded-full shadow-[0_0_12px_rgba(6,182,212,0.9)]"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.1, ease: "linear" }}

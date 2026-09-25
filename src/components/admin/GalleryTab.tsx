@@ -237,7 +237,7 @@ export default function GalleryTab({
               className="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-200 flex flex-col"
             >
               {/* Image Thumbnail with Overlay Badges */}
-              <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
+              <div className="relative aspect-video w-full bg-slate-100 overflow-hidden">
                 <img
                   src={formatDriveImageUrl(item.image_url)}
                   alt={item.title}
@@ -245,8 +245,11 @@ export default function GalleryTab({
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1000&q=80";
+                    const img = e.target as HTMLImageElement;
+                    if (!img.src.includes("unsplash.com")) {
+                      img.src =
+                        "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1000&q=80";
+                    }
                   }}
                 />
 

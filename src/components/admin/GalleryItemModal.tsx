@@ -230,7 +230,7 @@ export default function GalleryItemModal({
 
             {/* Preview */}
             {imageUrl && (
-              <div className="mt-3 relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50 h-44 flex items-center justify-center">
+              <div className="mt-3 relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 h-44 flex items-center justify-center">
                 <img
                   src={formatDriveImageUrl(imageUrl)}
                   alt="Preview"
@@ -238,9 +238,16 @@ export default function GalleryItemModal({
                   loading="lazy"
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    (e.currentTarget as HTMLElement).style.display = "none";
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.src.includes("unsplash.com")) {
+                      target.src = "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80";
+                    }
                   }}
                 />
+                <div className="absolute bottom-2 left-2 right-2 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[11px] text-white flex items-center justify-between pointer-events-none">
+                  <span className="truncate">{formatDriveImageUrl(imageUrl)}</span>
+                  <span className="text-emerald-400 font-bold text-[10px] shrink-0 ml-2">CDN Formatted</span>
+                </div>
               </div>
             )}
           </div>

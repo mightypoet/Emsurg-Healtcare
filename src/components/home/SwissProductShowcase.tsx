@@ -110,7 +110,7 @@ export default function SwissProductShowcase() {
           <div className="shrink-0">
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md active:scale-95 group"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md shadow-sky-500/25 active:scale-95 group"
             >
               <span>View All Products</span>
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -138,7 +138,7 @@ export default function SwissProductShowcase() {
         </div>
 
         {/* Bottom Hospital Procurement Strip */}
-        <div className="mt-14 sm:mt-18 p-6 sm:p-8 rounded-3xl bg-slate-50/90 border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="mt-14 sm:mt-18 p-6 sm:p-8 rounded-3xl bg-sky-50/50 border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="flex items-center gap-4 text-center sm:text-left">
             <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-sky-100 border border-sky-200 items-center justify-center text-sky-600 shrink-0 shadow-xs">
               <ShieldCheck className="w-6 h-6" />
@@ -156,13 +156,13 @@ export default function SwissProductShowcase() {
           <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
             <Link
               to="/contact"
-              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md active:scale-95"
+              className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md shadow-sky-500/25 active:scale-95"
             >
               Request Specs
             </Link>
             <Link
               to="/products"
-              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold tracking-wide uppercase transition-all shadow-xs active:scale-95"
+              className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-white hover:bg-sky-50 border border-sky-200 text-slate-700 hover:text-sky-700 text-xs font-bold tracking-wide uppercase transition-all shadow-xs active:scale-95"
             >
               All Categories
             </Link>
