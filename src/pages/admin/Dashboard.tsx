@@ -589,15 +589,22 @@ export default function Dashboard() {
     }
 
     setSavingProduct(true);
-    const productPayload: Partial<Product> = {
+    const primaryImage = prodImages && prodImages.length > 0 
+      ? prodImages[0] 
+      : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
+
+    const productPayload: any = {
       title: prodTitle.trim(),
       slug: prodSlug.trim(),
       category: prodCategory,
+      division: currentProduct?.division || "Manufacturing",
+      partnerBrand: currentProduct?.partnerBrand || undefined,
       short_description: prodShortDesc.trim(),
       full_description: prodFullDesc.trim() || prodShortDesc.trim(),
       features: prodFeatures,
       specifications: prodSpecs,
-      images: prodImages.length > 0 ? prodImages : ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"],
+      image: primaryImage,
+      images: prodImages.length > 0 ? prodImages : [primaryImage],
       is_featured: prodIsFeatured,
       featured: prodIsFeatured,
       brochure_url: prodBrochureUrl.trim() || "#"
@@ -607,7 +614,7 @@ export default function Dashboard() {
       await saveProduct(productPayload, currentProduct?.id);
       await loadProducts();
       setIsEditingProduct(false);
-      showToast("success", "Product details saved successfully to Supabase!");
+      showToast("success", "Product details and images saved successfully to Supabase!");
     } catch (err) {
       console.error("Save product error:", err);
       showToast("error", "Error saving product.");

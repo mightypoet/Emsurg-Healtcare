@@ -1160,6 +1160,14 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
   const current = getLocalProducts();
   const isFeat = productData.is_featured ?? productData.featured ?? true;
   
+  const primaryImage = (productData.images && productData.images.length > 0)
+    ? productData.images[0]
+    : ((productData as any).image || "");
+
+  const allImages = (productData.images && productData.images.length > 0)
+    ? productData.images
+    : (primaryImage ? [primaryImage] : []);
+  
   let targetProduct: Product;
   let isNew = false;
 
@@ -1172,6 +1180,7 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
         id: existingId,
         is_featured: isFeat,
         featured: isFeat,
+        images: allImages.length > 0 ? allImages : current[index].images,
       };
       current[index] = targetProduct;
     } else {
@@ -1180,6 +1189,8 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
         id: existingId,
         is_featured: isFeat,
         featured: isFeat,
+        images: allImages,
+        image: primaryImage,
       }, current.length);
       current.push(targetProduct);
       isNew = true;
@@ -1190,6 +1201,8 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
       id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       is_featured: isFeat,
       featured: isFeat,
+      images: allImages,
+      image: primaryImage,
     }, current.length);
     current.push(targetProduct);
     isNew = true;
@@ -1207,6 +1220,10 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
 
   // Persist directly to Supabase
   try {
+    const finalPrimaryImage = targetProduct.images && targetProduct.images.length > 0
+      ? targetProduct.images[0]
+      : (primaryImage || "");
+
     const dbPayload: any = {
       title: targetProduct.title,
       slug: targetProduct.slug,
@@ -1218,20 +1235,39 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
       full_description: targetProduct.full_description,
       features: targetProduct.features,
       specifications: targetProduct.specifications,
-      image: targetProduct.images[0] || "",
-      images: targetProduct.images,
+      image: finalPrimaryImage,
+      images: targetProduct.images && targetProduct.images.length > 0 ? targetProduct.images : (finalPrimaryImage ? [finalPrimaryImage] : []),
       is_featured: isFeat,
       featured: isFeat,
       order_index: targetProduct.orderIndex ?? current.indexOf(targetProduct),
       brochure_url: targetProduct.brochure_url,
     };
 
-    if (!isNew && existingId && !existingId.startsWith("prod-") && !existingId.startsWith("m-") && !existingId.startsWith("cp-")) {
-      await supabase.from("products").update(dbPayload).eq("id", existingId);
+    if (existingId) {
+      const { data: updateData, error: updateError } = await supabase
+        .from("products")
+        .update(dbPayload)
+        .or(`id.eq.${existingId},slug.eq.${targetProduct.slug}`)
+        .select();
+
+      if (updateError || !updateData || updateData.length === 0) {
+        const { data: upsertData } = await supabase
+          .from("products")
+          .upsert([dbPayload], { onConflict: "slug" })
+          .select();
+        if (upsertData && upsertData[0]) {
+          targetProduct.id = upsertData[0].id;
+        }
+      } else if (updateData && updateData[0]) {
+        targetProduct.id = updateData[0].id;
+      }
     } else {
-      const { data } = await supabase.from("products").upsert([dbPayload], { onConflict: "slug" }).select();
-      if (data && data[0]) {
-        targetProduct.id = data[0].id;
+      const { data: upsertData } = await supabase
+        .from("products")
+        .upsert([dbPayload], { onConflict: "slug" })
+        .select();
+      if (upsertData && upsertData[0]) {
+        targetProduct.id = upsertData[0].id;
       }
     }
   } catch (err) {
