@@ -874,27 +874,77 @@ INITIAL_PRODUCTS.forEach((p, idx) => {
 let inMemoryProductsCache: Product[] | null = null;
 let isSeedingProducts = false;
 
-// Normalize product payload helper
-function normalizeProduct(p: any, idx?: number): Product {
-  const order = typeof p.orderIndex === "number" 
-    ? p.orderIndex 
-    : typeof p.order_index === "number" 
+/**
+ * Universal Database-to-Frontend Product Mapper:
+ * Normalizes all database columns (is_featured, order_index, partner_brand, etc.)
+ * to frontend Product and ProductItem compatible fields.
+ */
+export function mapDbToProduct(rowOrRows: any): any {
+  if (Array.isArray(rowOrRows)) {
+    const list = rowOrRows.map((r, idx) => mapSingleDbProduct(r, idx));
+    list.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+    return list;
+  }
+  return mapSingleDbProduct(rowOrRows);
+}
+
+function mapSingleDbProduct(p: any, idx?: number): Product {
+  const order = typeof p.order_index === "number" 
     ? p.order_index 
+    : typeof p.orderIndex === "number" 
+    ? p.orderIndex 
     : (typeof idx === "number" ? idx : 0);
   
-  const isFeat = p.is_featured ?? p.featured ?? false;
+  const isFeat = p.is_featured ?? p.featured ?? (typeof idx === "number" ? idx < 7 : false);
+  const brand = p.partner_brand ?? p.partnerBrand ?? undefined;
+  const desc = p.short_description ?? p.description ?? p.shortDescription ?? "";
+  const fullDesc = p.full_description ?? p.fullDescription ?? p.description ?? desc;
+  
+  let featList: string[] = [];
+  if (Array.isArray(p.features)) {
+    featList = p.features;
+  } else if (typeof p.features === "string") {
+    try {
+      const parsed = JSON.parse(p.features);
+      if (Array.isArray(parsed)) featList = parsed;
+    } catch {
+      featList = [p.features];
+    }
+  }
+
+  let specMap: Record<string, string> = {};
+  if (p.specifications && typeof p.specifications === "object") {
+    specMap = p.specifications;
+  } else if (typeof p.specifications === "string") {
+    try {
+      specMap = JSON.parse(p.specifications);
+    } catch {}
+  }
+
+  let imgList: string[] = [];
+  if (Array.isArray(p.images) && p.images.length > 0) {
+    imgList = p.images;
+  } else if (p.image) {
+    imgList = [p.image];
+  } else {
+    imgList = ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"];
+  }
 
   const product: Product = {
-    ...p,
     id: p.id || `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     title: p.title || "Medical Product",
     slug: p.slug || (p.title ? p.title.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-") : "product"),
+    division: (p.division === "Channel Partner" ? "Channel Partner" : "Manufacturing"),
     category: p.category || "Orthobiologics",
-    short_description: p.short_description || p.shortDescription || "",
-    full_description: p.full_description || p.fullDescription || p.short_description || "",
-    features: Array.isArray(p.features) ? p.features : (typeof p.features === "string" ? JSON.parse(p.features || "[]") : []),
-    specifications: (p.specifications && typeof p.specifications === "object") ? p.specifications : (typeof p.specifications === "string" ? JSON.parse(p.specifications || "{}") : {}),
-    images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [p.image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"],
+    subCategory: p.sub_category || p.subCategory,
+    partnerBrand: brand,
+    short_description: desc,
+    full_description: fullDesc,
+    features: featList,
+    specifications: specMap,
+    images: imgList,
+    certifications: p.certifications || undefined,
+    isUpcoming: p.is_upcoming ?? p.isUpcoming ?? false,
     is_featured: isFeat,
     featured: isFeat,
     orderIndex: order,
@@ -909,6 +959,8 @@ function normalizeProduct(p: any, idx?: number): Product {
   return product;
 }
 
+export const normalizeProduct = mapSingleDbProduct;
+
 /**
  * Returns products from in-memory cache or localStorage as synchronous fallback.
  */
@@ -921,8 +973,7 @@ export function getLocalProducts(): Product[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const normalized = parsed.map((p, idx) => normalizeProduct(p, idx));
-        normalized.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+        const normalized = mapDbToProduct(parsed);
         inMemoryProductsCache = normalized;
         return normalized;
       }
@@ -931,7 +982,7 @@ export function getLocalProducts(): Product[] {
     console.warn("Error reading local product cache:", err);
   }
 
-  const initial = INITIAL_PRODUCTS.map((p, idx) => normalizeProduct(p, idx));
+  const initial = mapDbToProduct(INITIAL_PRODUCTS);
   inMemoryProductsCache = initial;
   return initial;
 }
@@ -941,32 +992,49 @@ export const getProducts = getLocalProducts;
 /**
  * Seeds initial products catalog to Supabase if table is empty
  */
-export async function seedProductsToSupabase(): Promise<void> {
-  if (isSeedingProducts) return;
+export async function seedProductsToSupabase(): Promise<Product[]> {
+  if (isSeedingProducts) return getLocalProducts();
   isSeedingProducts = true;
   try {
-    const payloads = INITIAL_PRODUCTS.map((p, idx) => ({
-      title: p.title,
+    console.log("Supabase products table is empty. Seeding initial catalog...");
+    const recordsToInsert = EMSURG_CATALOG.map((p, idx) => ({
+      id: p.id,
       slug: p.slug,
+      title: p.title,
+      division: p.division,
       category: p.category,
-      short_description: p.short_description,
-      full_description: p.full_description,
-      features: p.features,
-      specifications: p.specifications,
-      images: p.images,
-      is_featured: p.is_featured ?? p.featured ?? false,
-      featured: p.featured ?? p.is_featured ?? false,
-      order_index: idx,
-      brochure_url: p.brochure_url,
-      created_at: p.created_at,
+      partner_brand: p.partnerBrand || null,
+      description: p.description,
+      certifications: p.certifications || null,
+      image: p.image,
+      is_featured: p.featured ?? (idx < 7),
+      featured: p.featured ?? (idx < 7),
+      order_index: p.orderIndex ?? idx,
     }));
 
-    await supabase.from("products").upsert(payloads, { onConflict: "slug" });
+    const { data: insertedData, error } = await supabase
+      .from("products")
+      .upsert(recordsToInsert, { onConflict: "slug" })
+      .select();
+
+    if (!error && insertedData && insertedData.length > 0) {
+      const mapped = mapDbToProduct(insertedData);
+      inMemoryProductsCache = mapped;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(mapped));
+      } catch {}
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("products-updated", { detail: mapped }));
+      }
+      return mapped;
+    }
   } catch (err) {
     console.info("Supabase seeding products notice:", err);
   } finally {
     isSeedingProducts = false;
   }
+
+  return getLocalProducts();
 }
 
 /**
@@ -978,12 +1046,14 @@ export async function fetchProducts(): Promise<Product[]> {
     const { data, error } = await supabase
       .from("products")
       .select("*")
-      .order("order_index", { ascending: true, nullsFirst: false });
+      .order("order_index", { ascending: true });
+
+    if (!error && (!data || data.length === 0)) {
+      return await seedProductsToSupabase();
+    }
 
     if (!error && Array.isArray(data) && data.length > 0) {
-      const mapped = data.map((item, idx) => normalizeProduct(item, idx));
-      mapped.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
-      
+      const mapped: Product[] = mapDbToProduct(data);
       inMemoryProductsCache = mapped;
       try {
         localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(mapped));
@@ -994,16 +1064,61 @@ export async function fetchProducts(): Promise<Product[]> {
       }
       return mapped;
     }
-
-    // If Supabase returned empty table or error (e.g. table not populated yet)
-    if (!error && Array.isArray(data) && data.length === 0) {
-      await seedProductsToSupabase();
-    }
   } catch (err) {
     console.info("Supabase products fetch fallback:", err);
   }
 
   return getLocalProducts();
+}
+
+/**
+ * Updates a product's attributes (featured flag, image, orderIndex, etc.) directly in Supabase
+ */
+export async function updateProduct(id: string, updates: Partial<ProductItem> | Partial<Product>): Promise<void> {
+  const dbUpdates: any = { ...updates };
+  if (updates.featured !== undefined) {
+    dbUpdates.is_featured = updates.featured;
+    dbUpdates.featured = updates.featured;
+  }
+  if ((updates as any).is_featured !== undefined) {
+    dbUpdates.is_featured = (updates as any).is_featured;
+    dbUpdates.featured = (updates as any).is_featured;
+  }
+  if ((updates as any).partnerBrand !== undefined) {
+    dbUpdates.partner_brand = (updates as any).partnerBrand;
+  }
+  if ((updates as any).orderIndex !== undefined) {
+    dbUpdates.order_index = (updates as any).orderIndex;
+  }
+  if ((updates as any).short_description !== undefined) {
+    dbUpdates.description = (updates as any).short_description;
+  }
+  if ((updates as any).images !== undefined && Array.isArray((updates as any).images) && (updates as any).images.length > 0) {
+    dbUpdates.image = (updates as any).images[0];
+  }
+
+  // Update in-memory cache immediately
+  if (inMemoryProductsCache) {
+    const idx = inMemoryProductsCache.findIndex((p) => p.id === id || p.slug === id);
+    if (idx !== -1) {
+      inMemoryProductsCache[idx] = mapSingleDbProduct({ ...inMemoryProductsCache[idx], ...dbUpdates });
+      try {
+        localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(inMemoryProductsCache));
+      } catch {}
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("products-updated", { detail: inMemoryProductsCache }));
+      }
+    }
+  }
+
+  try {
+    const { error } = await supabase.from("products").update(dbUpdates).or(`id.eq.${id},slug.eq.${id}`);
+    if (error) {
+      console.error("Failed to update product in Supabase:", error);
+    }
+  } catch (err) {
+    console.info("Supabase updateProduct bypassed:", err);
+  }
 }
 
 /**
@@ -1021,7 +1136,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
       .maybeSingle();
 
     if (!error && data) {
-      return normalizeProduct(data);
+      return mapSingleDbProduct(data);
     }
   } catch (err) {
     console.info("Supabase fetchProductBySlug notice:", err);
@@ -1060,7 +1175,7 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
       };
       current[index] = targetProduct;
     } else {
-      targetProduct = normalizeProduct({
+      targetProduct = mapSingleDbProduct({
         ...productData,
         id: existingId,
         is_featured: isFeat,
@@ -1070,7 +1185,7 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
       isNew = true;
     }
   } else {
-    targetProduct = normalizeProduct({
+    targetProduct = mapSingleDbProduct({
       ...productData,
       id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       is_featured: isFeat,
@@ -1095,11 +1210,15 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
     const dbPayload: any = {
       title: targetProduct.title,
       slug: targetProduct.slug,
+      division: targetProduct.division,
       category: targetProduct.category,
+      partner_brand: targetProduct.partnerBrand || null,
+      description: targetProduct.short_description,
       short_description: targetProduct.short_description,
       full_description: targetProduct.full_description,
       features: targetProduct.features,
       specifications: targetProduct.specifications,
+      image: targetProduct.images[0] || "",
       images: targetProduct.images,
       is_featured: isFeat,
       featured: isFeat,
@@ -1110,7 +1229,6 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
     if (!isNew && existingId && !existingId.startsWith("prod-") && !existingId.startsWith("m-") && !existingId.startsWith("cp-")) {
       await supabase.from("products").update(dbPayload).eq("id", existingId);
     } else {
-      // Upsert by slug to avoid conflicts
       const { data } = await supabase.from("products").upsert([dbPayload], { onConflict: "slug" }).select();
       if (data && data[0]) {
         targetProduct.id = data[0].id;
@@ -1154,7 +1272,7 @@ export async function deleteProduct(id: string): Promise<boolean> {
         await supabase.from("products").delete().eq("id", id);
       }
     } else {
-      await supabase.from("products").delete().eq("id", id);
+      await supabase.from("products").delete().or(`id.eq.${id},slug.eq.${id}`);
     }
   } catch (err) {
     console.info("Supabase deleteProduct error:", err);
@@ -1186,14 +1304,10 @@ export async function toggleFeatured(id: string): Promise<Product | null> {
     window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
   }
 
-  try {
-    await supabase.from("products").update({
-      is_featured: nextVal,
-      featured: nextVal,
-    }).eq("slug", prod.slug);
-  } catch (err) {
-    console.info("Supabase toggleFeatured error:", err);
-  }
+  await updateProduct(prod.id || prod.slug, {
+    featured: nextVal,
+    is_featured: nextVal,
+  });
 
   return prod;
 }
