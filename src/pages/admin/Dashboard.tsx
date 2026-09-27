@@ -15,23 +15,26 @@ import {
   ProductInquiry,
   fetchProducts,
   getLocalProducts,
-  saveLocalProduct,
-  deleteLocalProduct,
+  saveProduct,
   deleteProduct,
-  toggleLocalProductFeatured,
   toggleFeatured,
   reorderProducts,
   updateProductsOrder,
+  fetchInquiries,
   getLocalInquiries,
-  deleteLocalInquiry
+  deleteInquiry,
+  subscribeToProducts,
+  subscribeToInquiries
 } from "../../lib/productsStore";
 import { formatDriveImageUrl } from "../../lib/utils";
 import {
-  getGalleryItems,
+  fetchGalleryItems,
   saveGalleryItem,
-  saveBulkLocalGalleryItems,
+  saveBulkGalleryItems,
   deleteGalleryItem,
   toggleGalleryItemFeatured,
+  resetToDefaultGallery,
+  subscribeToGallery,
   GalleryItem
 } from "../../lib/galleryStore";
 import { 
@@ -208,14 +211,20 @@ export default function Dashboard() {
     checkAuth();
     loadAllData();
 
-    const handleInquiriesUpdated = () => {
-      setInquiries(getLocalInquiries());
-    };
-    window.addEventListener("emsurg-inquiries-updated", handleInquiriesUpdated);
-    window.addEventListener("storage", handleInquiriesUpdated);
+    const unsubProducts = subscribeToProducts((refreshedProducts) => {
+      setProducts(refreshedProducts);
+    });
+    const unsubInquiries = subscribeToInquiries((refreshedInquiries) => {
+      setInquiries(refreshedInquiries);
+    });
+    const unsubGallery = subscribeToGallery((refreshedGallery) => {
+      setGalleryItems(refreshedGallery);
+    });
+
     return () => {
-      window.removeEventListener("emsurg-inquiries-updated", handleInquiriesUpdated);
-      window.removeEventListener("storage", handleInquiriesUpdated);
+      unsubProducts();
+      unsubInquiries();
+      unsubGallery();
     };
   }, []);
 
@@ -428,13 +437,19 @@ export default function Dashboard() {
     }
   };
 
-  const loadInquiries = () => {
-    setInquiries(getLocalInquiries());
+  const loadInquiries = async () => {
+    try {
+      const data = await fetchInquiries();
+      setInquiries(data);
+    } catch {
+      setInquiries(getLocalInquiries());
+    }
   };
 
-  const handleDeleteInquiry = (id: string) => {
-    deleteLocalInquiry(id);
-    setInquiries(getLocalInquiries());
+  const handleDeleteInquiry = async (id: string) => {
+    await deleteInquiry(id);
+    const updated = await fetchInquiries();
+    setInquiries(updated);
     showToast("success", "Inquiry lead deleted.");
   };
 
@@ -566,7 +581,7 @@ export default function Dashboard() {
     setProdImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const saveProduct = async (e: React.FormEvent) => {
+  const saveProductHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prodTitle.trim() || !prodSlug.trim() || !prodShortDesc.trim()) {
       showToast("warning", "Please provide Title, Slug, and Short Summary.");
@@ -584,46 +599,31 @@ export default function Dashboard() {
       specifications: prodSpecs,
       images: prodImages.length > 0 ? prodImages : ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"],
       is_featured: prodIsFeatured,
+      featured: prodIsFeatured,
       brochure_url: prodBrochureUrl.trim() || "#"
     };
 
-    // Save locally
-    saveLocalProduct(productPayload, currentProduct?.id);
-
-    // Optional Supabase sync with timeout
     try {
-      if (currentProduct && !currentProduct.id.startsWith("prod-")) {
-        await withTimeout(
-          Promise.resolve(supabase.from("products").update(productPayload).eq("id", currentProduct.id)),
-          3000
-        );
-      } else {
-        await withTimeout(
-          Promise.resolve(supabase.from("products").insert([productPayload])),
-          3000
-        );
-      }
+      await saveProduct(productPayload, currentProduct?.id);
+      await loadProducts();
+      setIsEditingProduct(false);
+      showToast("success", "Product details saved successfully to Supabase!");
     } catch (err) {
-      console.info("Supabase products sync skipped:", err);
+      console.error("Save product error:", err);
+      showToast("error", "Error saving product.");
+    } finally {
+      setSavingProduct(false);
     }
-
-    await loadProducts();
-    setIsEditingProduct(false);
-    setSavingProduct(false);
-    showToast("success", "Product details saved successfully!");
   };
 
   const executeDeleteProduct = async (id: string) => {
-    deleteLocalProduct(id);
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    showToast("success", "Product removed successfully");
-
     try {
-      if (!id.startsWith("prod-")) {
-        await withTimeout(Promise.resolve(supabase.from("products").delete().eq("id", id)), 3000);
-      }
+      await deleteProduct(id);
+      await loadProducts();
+      showToast("success", "Product removed successfully from Supabase.");
     } catch (err) {
-      console.info("Supabase delete bypassed:", err);
+      console.error("Delete product error:", err);
+      showToast("error", "Failed to delete product.");
     }
   };
 
@@ -650,36 +650,24 @@ export default function Dashboard() {
     }
   };
 
-  const handleProductReorder = (sourceIndex: number, destinationIndex: number) => {
-    const updated = reorderProducts(sourceIndex, destinationIndex);
+  const handleProductReorder = async (sourceIndex: number, destinationIndex: number) => {
+    const updated = await reorderProducts(sourceIndex, destinationIndex);
     setProducts([...updated]);
-    showToast("success", "Product catalog order updated");
+    showToast("success", "Product catalog order updated and saved to Supabase.");
   };
 
   const handleToggleProductFeatured = async (product: Product) => {
     const isCurrentlyFeatured = product.featured ?? product.is_featured ?? false;
-    toggleFeatured(product.id);
-    const updated = getLocalProducts();
-    setProducts([...updated]);
+    await toggleFeatured(product.id);
+    await loadProducts();
     showToast("success", `Product ${!isCurrentlyFeatured ? "featured on homepage" : "unfeatured from homepage"}.`);
-
-    try {
-      if (!product.id.startsWith("prod-") && !product.id.startsWith("m-") && !product.id.startsWith("cp-")) {
-        await withTimeout(
-          Promise.resolve(supabase.from("products").update({ is_featured: !isCurrentlyFeatured, featured: !isCurrentlyFeatured }).eq("id", product.id)),
-          2500
-        );
-      }
-    } catch (err) {
-      console.info("Supabase update featured bypassed:", err);
-    }
   };
 
   /* ---------------- GALLERY & MEDIA LOGIC ---------------- */
   const loadGalleryData = async () => {
     setLoadingGallery(true);
     try {
-      const data = await getGalleryItems();
+      const data = await fetchGalleryItems();
       setGalleryItems(data);
     } catch (err) {
       console.error("Failed to load gallery items:", err);
@@ -731,7 +719,7 @@ export default function Dashboard() {
       await saveGalleryItem(payload, editingGalleryItem?.id);
       await loadGalleryData();
       setIsGalleryModalOpen(false);
-      showToast("success", `Gallery image ${editingGalleryItem ? "updated" : "added"} successfully!`);
+      showToast("success", `Gallery image ${editingGalleryItem ? "updated" : "added"} successfully in Supabase!`);
     } catch (err) {
       console.error("Failed to save gallery item:", err);
       showToast("error", "Failed to save gallery item.");
@@ -742,8 +730,8 @@ export default function Dashboard() {
 
   const executeDeleteGalleryItem = async (id: string) => {
     await deleteGalleryItem(id);
-    setGalleryItems((prev) => prev.filter((g) => g.id !== id));
-    showToast("success", "Gallery image removed successfully");
+    await loadGalleryData();
+    showToast("success", "Gallery image removed successfully from Supabase.");
   };
 
   const handleDeleteGalleryItem = (id: string, title?: string) => {
@@ -757,13 +745,24 @@ export default function Dashboard() {
 
   const handleToggleGalleryItemFeatured = async (item: GalleryItem) => {
     await toggleGalleryItemFeatured(item.id);
-    setGalleryItems((prev) =>
-      prev.map((g) => (g.id === item.id ? { ...g, is_featured: !g.is_featured } : g))
-    );
+    await loadGalleryData();
     showToast(
       "success",
       `Image ${!item.is_featured ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
     );
+  };
+
+  const handleResetGallery = async () => {
+    setLoadingGallery(true);
+    try {
+      const resetItems = await resetToDefaultGallery();
+      setGalleryItems(resetItems);
+      showToast("success", "Gallery restored to standard 60 cleanroom dataset in Supabase!");
+    } catch {
+      showToast("error", "Failed to reset gallery.");
+    } finally {
+      setLoadingGallery(false);
+    }
   };
 
   const handleCopyImageUrl = (id: string, url: string) => {
@@ -841,12 +840,12 @@ export default function Dashboard() {
       });
 
       const itemsToSave = await Promise.all(readPromises);
-      saveBulkLocalGalleryItems(itemsToSave);
+      await saveBulkGalleryItems(itemsToSave);
       await loadGalleryData();
 
       setIsBulkModalOpen(false);
       setBulkFiles([]);
-      showToast("success", `Successfully added ${itemsToSave.length} images to gallery & homepage!`);
+      showToast("success", `Successfully added ${itemsToSave.length} images to Supabase gallery & homepage!`);
     } catch (err) {
       console.error("Bulk upload error:", err);
       showToast("error", "Error uploading bulk images.");
@@ -881,12 +880,12 @@ export default function Dashboard() {
         };
       });
 
-      saveBulkLocalGalleryItems(itemsToSave);
+      await saveBulkGalleryItems(itemsToSave);
       await loadGalleryData();
 
       setIsDriveModalOpen(false);
       setDriveLinksInput("");
-      showToast("success", `Successfully converted & imported ${itemsToSave.length} Google Drive images!`);
+      showToast("success", `Successfully converted & imported ${itemsToSave.length} Google Drive images to Supabase!`);
     } catch (err) {
       console.error("Google Drive import error:", err);
       showToast("error", "Failed to import Google Drive links.");
@@ -1166,7 +1165,7 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                <form onSubmit={saveProduct} className="space-y-6">
+                <form onSubmit={saveProductHandler} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
@@ -1830,7 +1829,7 @@ export default function Dashboard() {
         isOpen={isDriveModalOpen}
         onClose={() => setIsDriveModalOpen(false)}
         onImport={async (items) => {
-          saveBulkLocalGalleryItems(items);
+          await saveBulkGalleryItems(items);
           await loadGalleryData();
           showToast("success", `Imported ${items.length} Google Drive images successfully!`);
         }}

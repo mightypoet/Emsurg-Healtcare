@@ -851,7 +851,7 @@ const LOCAL_STORAGE_INQUIRIES_KEY = "emsurg_inquiries";
 const LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY = "emsurg_product_inquiries";
 
 // Map old slug aliases to new slugs
-const SLUG_ALIAS_MAP: Record<string, string> = {
+export const SLUG_ALIAS_MAP: Record<string, string> = {
   "em-vac-npwt": "npwt-machine-kits",
   "hemodialysis-fluids-dry-powders": "dialysis-fluid-drycitrate",
   "teknimed-opacity-plus-bone-cement": "teknimed-opacity-plus",
@@ -871,60 +871,341 @@ INITIAL_PRODUCTS.forEach((p, idx) => {
   }
 });
 
+let inMemoryProductsCache: Product[] | null = null;
+let isSeedingProducts = false;
+
+// Normalize product payload helper
+function normalizeProduct(p: any, idx?: number): Product {
+  const order = typeof p.orderIndex === "number" 
+    ? p.orderIndex 
+    : typeof p.order_index === "number" 
+    ? p.order_index 
+    : (typeof idx === "number" ? idx : 0);
+  
+  const isFeat = p.is_featured ?? p.featured ?? false;
+
+  const product: Product = {
+    ...p,
+    id: p.id || `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    title: p.title || "Medical Product",
+    slug: p.slug || (p.title ? p.title.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-") : "product"),
+    category: p.category || "Orthobiologics",
+    short_description: p.short_description || p.shortDescription || "",
+    full_description: p.full_description || p.fullDescription || p.short_description || "",
+    features: Array.isArray(p.features) ? p.features : (typeof p.features === "string" ? JSON.parse(p.features || "[]") : []),
+    specifications: (p.specifications && typeof p.specifications === "object") ? p.specifications : (typeof p.specifications === "string" ? JSON.parse(p.specifications || "{}") : {}),
+    images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [p.image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"],
+    is_featured: isFeat,
+    featured: isFeat,
+    orderIndex: order,
+    brochure_url: p.brochure_url || p.brochureUrl || "#",
+    created_at: p.created_at || new Date().toISOString(),
+  };
+
+  if (!product.faqs || product.faqs.length === 0) {
+    product.faqs = getProductFAQs(product);
+  }
+
+  return product;
+}
+
+/**
+ * Returns products from in-memory cache or localStorage as synchronous fallback.
+ */
 export function getLocalProducts(): Product[] {
+  if (inMemoryProductsCache && inMemoryProductsCache.length > 0) {
+    return inMemoryProductsCache;
+  }
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_PRODUCTS_KEY);
-    let items: Product[];
-    if (!raw) {
-      items = INITIAL_PRODUCTS.map((p, idx) => ({ 
-        ...p, 
-        orderIndex: typeof p.orderIndex === "number" ? p.orderIndex : idx, 
-        featured: p.is_featured ?? p.featured ?? false 
-      }));
-      localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(items));
-    } else {
+    if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length >= INITIAL_PRODUCTS.length) {
-        items = parsed;
-      } else {
-        items = INITIAL_PRODUCTS.map((p, idx) => ({ 
-          ...p, 
-          orderIndex: typeof p.orderIndex === "number" ? p.orderIndex : idx, 
-          featured: p.is_featured ?? p.featured ?? false 
-        }));
-        localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(items));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const normalized = parsed.map((p, idx) => normalizeProduct(p, idx));
+        normalized.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+        inMemoryProductsCache = normalized;
+        return normalized;
       }
     }
-
-    const normalized = items.map((p: Product, idx: number) => {
-      if (!p.faqs || p.faqs.length === 0) {
-        p.faqs = getProductFAQs(p);
-      }
-      if (typeof p.orderIndex !== "number") {
-        p.orderIndex = idx;
-      }
-      if (p.featured === undefined) {
-        p.featured = p.is_featured ?? false;
-      }
-      if (p.is_featured === undefined) {
-        p.is_featured = p.featured ?? false;
-      }
-      return p;
-    });
-
-    // Sort by orderIndex ascending
-    normalized.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
-    return normalized;
   } catch (err) {
-    console.info("Reading local products fallback:", err);
-    return INITIAL_PRODUCTS;
+    console.warn("Error reading local product cache:", err);
   }
+
+  const initial = INITIAL_PRODUCTS.map((p, idx) => normalizeProduct(p, idx));
+  inMemoryProductsCache = initial;
+  return initial;
 }
 
 export const getProducts = getLocalProducts;
 
-export function reorderProducts(sourceIndex: number, destinationIndex: number): Product[] {
+/**
+ * Seeds initial products catalog to Supabase if table is empty
+ */
+export async function seedProductsToSupabase(): Promise<void> {
+  if (isSeedingProducts) return;
+  isSeedingProducts = true;
+  try {
+    const payloads = INITIAL_PRODUCTS.map((p, idx) => ({
+      title: p.title,
+      slug: p.slug,
+      category: p.category,
+      short_description: p.short_description,
+      full_description: p.full_description,
+      features: p.features,
+      specifications: p.specifications,
+      images: p.images,
+      is_featured: p.is_featured ?? p.featured ?? false,
+      featured: p.featured ?? p.is_featured ?? false,
+      order_index: idx,
+      brochure_url: p.brochure_url,
+      created_at: p.created_at,
+    }));
+
+    await supabase.from("products").upsert(payloads, { onConflict: "slug" });
+  } catch (err) {
+    console.info("Supabase seeding products notice:", err);
+  } finally {
+    isSeedingProducts = false;
+  }
+}
+
+/**
+ * Primary product fetcher: Queries Supabase directly.
+ * Auto-seeds on empty remote database and updates memory cache.
+ */
+export async function fetchProducts(): Promise<Product[]> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("order_index", { ascending: true, nullsFirst: false });
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      const mapped = data.map((item, idx) => normalizeProduct(item, idx));
+      mapped.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+      
+      inMemoryProductsCache = mapped;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(mapped));
+      } catch {}
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("products-updated", { detail: mapped }));
+      }
+      return mapped;
+    }
+
+    // If Supabase returned empty table or error (e.g. table not populated yet)
+    if (!error && Array.isArray(data) && data.length === 0) {
+      await seedProductsToSupabase();
+    }
+  } catch (err) {
+    console.info("Supabase products fetch fallback:", err);
+  }
+
+  return getLocalProducts();
+}
+
+/**
+ * Fetches a single product by slug from Supabase
+ */
+export async function fetchProductBySlug(slug: string): Promise<Product | null> {
+  const normalized = slug.toLowerCase().trim();
+  const targetSlug = SLUG_ALIAS_MAP[normalized] || normalized;
+
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", targetSlug)
+      .maybeSingle();
+
+    if (!error && data) {
+      return normalizeProduct(data);
+    }
+  } catch (err) {
+    console.info("Supabase fetchProductBySlug notice:", err);
+  }
+
+  const local = getLocalProducts().find((p) => p.slug === targetSlug);
+  return local || null;
+}
+
+export function getLocalProductBySlug(slug: string): Product | undefined {
+  const normalized = slug.toLowerCase().trim();
+  const targetSlug = SLUG_ALIAS_MAP[normalized] || normalized;
   const current = getLocalProducts();
+  return current.find((p) => p.slug === targetSlug);
+}
+
+/**
+ * Saves/Upserts a product directly to Supabase
+ */
+export async function saveProduct(productData: Partial<Product>, existingId?: string): Promise<Product> {
+  const current = getLocalProducts();
+  const isFeat = productData.is_featured ?? productData.featured ?? true;
+  
+  let targetProduct: Product;
+  let isNew = false;
+
+  if (existingId) {
+    const index = current.findIndex((p) => p.id === existingId || p.slug === productData.slug);
+    if (index !== -1) {
+      targetProduct = {
+        ...current[index],
+        ...productData,
+        id: existingId,
+        is_featured: isFeat,
+        featured: isFeat,
+      };
+      current[index] = targetProduct;
+    } else {
+      targetProduct = normalizeProduct({
+        ...productData,
+        id: existingId,
+        is_featured: isFeat,
+        featured: isFeat,
+      }, current.length);
+      current.push(targetProduct);
+      isNew = true;
+    }
+  } else {
+    targetProduct = normalizeProduct({
+      ...productData,
+      id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      is_featured: isFeat,
+      featured: isFeat,
+    }, current.length);
+    current.push(targetProduct);
+    isNew = true;
+  }
+
+  // Update in-memory & local cache
+  inMemoryProductsCache = current;
+  try {
+    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
+  } catch {}
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
+  }
+
+  // Persist directly to Supabase
+  try {
+    const dbPayload: any = {
+      title: targetProduct.title,
+      slug: targetProduct.slug,
+      category: targetProduct.category,
+      short_description: targetProduct.short_description,
+      full_description: targetProduct.full_description,
+      features: targetProduct.features,
+      specifications: targetProduct.specifications,
+      images: targetProduct.images,
+      is_featured: isFeat,
+      featured: isFeat,
+      order_index: targetProduct.orderIndex ?? current.indexOf(targetProduct),
+      brochure_url: targetProduct.brochure_url,
+    };
+
+    if (!isNew && existingId && !existingId.startsWith("prod-") && !existingId.startsWith("m-") && !existingId.startsWith("cp-")) {
+      await supabase.from("products").update(dbPayload).eq("id", existingId);
+    } else {
+      // Upsert by slug to avoid conflicts
+      const { data } = await supabase.from("products").upsert([dbPayload], { onConflict: "slug" }).select();
+      if (data && data[0]) {
+        targetProduct.id = data[0].id;
+      }
+    }
+  } catch (err) {
+    console.info("Supabase saveProduct error:", err);
+  }
+
+  return targetProduct;
+}
+
+export const saveLocalProduct = saveProduct;
+
+/**
+ * Deletes a product directly from Supabase and local cache
+ */
+export async function deleteProduct(id: string): Promise<boolean> {
+  const current = getLocalProducts();
+  const productToDelete = current.find((p) => p.id === id || p.slug === id);
+  
+  const filtered = current.filter((p) => p.id !== id && p.slug !== id);
+  filtered.forEach((p, idx) => {
+    p.orderIndex = idx;
+  });
+
+  inMemoryProductsCache = filtered;
+  try {
+    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(filtered));
+  } catch {}
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("products-updated", { detail: filtered }));
+  }
+
+  // Delete from Supabase
+  try {
+    if (productToDelete) {
+      await supabase.from("products").delete().eq("slug", productToDelete.slug);
+      if (id && !id.startsWith("prod-")) {
+        await supabase.from("products").delete().eq("id", id);
+      }
+    } else {
+      await supabase.from("products").delete().eq("id", id);
+    }
+  } catch (err) {
+    console.info("Supabase deleteProduct error:", err);
+  }
+
+  return true;
+}
+
+export const deleteLocalProduct = deleteProduct;
+
+/**
+ * Toggles featured state for a product directly in Supabase
+ */
+export async function toggleFeatured(id: string): Promise<Product | null> {
+  const current = getLocalProducts();
+  const prod = current.find((p) => p.id === id || p.slug === id);
+  if (!prod) return null;
+
+  const nextVal = !(prod.featured ?? prod.is_featured ?? false);
+  prod.featured = nextVal;
+  prod.is_featured = nextVal;
+
+  inMemoryProductsCache = current;
+  try {
+    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
+  } catch {}
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
+  }
+
+  try {
+    await supabase.from("products").update({
+      is_featured: nextVal,
+      featured: nextVal,
+    }).eq("slug", prod.slug);
+  } catch (err) {
+    console.info("Supabase toggleFeatured error:", err);
+  }
+
+  return prod;
+}
+
+export const toggleLocalProductFeatured = toggleFeatured;
+
+/**
+ * Reorders products by moving from sourceIndex to destinationIndex
+ * and persists the updated order_index values directly to Supabase.
+ */
+export async function reorderProducts(sourceIndex: number, destinationIndex: number): Promise<Product[]> {
+  const current = [...getLocalProducts()];
   if (
     sourceIndex < 0 ||
     sourceIndex >= current.length ||
@@ -942,19 +1223,33 @@ export function reorderProducts(sourceIndex: number, destinationIndex: number): 
     item.orderIndex = idx;
   });
 
+  inMemoryProductsCache = current;
   try {
     localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("products-updated"));
+  } catch {}
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
+  }
+
+  // Persist order directly to Supabase
+  try {
+    const updates = current.map((p, idx) => ({
+      slug: p.slug,
+      order_index: idx,
+    }));
+
+    for (const item of updates) {
+      supabase.from("products").update({ order_index: item.order_index }).eq("slug", item.slug).then(() => {});
     }
   } catch (err) {
-    console.info("Reordering products error:", err);
+    console.info("Supabase reorderProducts update error:", err);
   }
 
   return current;
 }
 
-export function updateProductsOrder(orderedIds: string[]): Product[] {
+export async function updateProductsOrder(orderedIds: string[]): Promise<Product[]> {
   const current = getLocalProducts();
   const idMap = new Map<string, Product>();
   current.forEach((p) => idMap.set(p.id, p));
@@ -974,268 +1269,209 @@ export function updateProductsOrder(orderedIds: string[]): Product[] {
     ordered.push(item);
   });
 
+  inMemoryProductsCache = ordered;
   try {
     localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(ordered));
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("products-updated"));
+  } catch {}
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("products-updated", { detail: ordered }));
+  }
+
+  // Sync to Supabase
+  try {
+    for (let idx = 0; idx < ordered.length; idx++) {
+      const p = ordered[idx];
+      supabase.from("products").update({ order_index: idx }).eq("slug", p.slug).then(() => {});
     }
   } catch (err) {
-    console.info("Updating product order error:", err);
+    console.info("Supabase updateProductsOrder error:", err);
   }
 
   return ordered;
 }
 
-export function saveLocalProduct(productData: Partial<Product>, existingId?: string): Product {
-  const current = getLocalProducts();
-  let updatedProduct: Product;
+/**
+ * Real-time Supabase subscription for Products
+ */
+export function subscribeToProducts(callback: (products: Product[]) => void): () => void {
+  const channel = supabase
+    .channel("public:products-live-sync")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "products" },
+      async () => {
+        const refreshed = await fetchProducts();
+        callback(refreshed);
+      }
+    )
+    .subscribe();
 
-  if (existingId) {
-    const index = current.findIndex(p => p.id === existingId);
-    if (index !== -1) {
-      updatedProduct = {
-        ...current[index],
-        ...productData,
-        featured: productData.featured ?? productData.is_featured ?? current[index].featured,
-        is_featured: productData.is_featured ?? productData.featured ?? current[index].is_featured,
-        id: existingId,
-      } as Product;
-      current[index] = updatedProduct;
+  const handleCustomEvent = (e: any) => {
+    if (e.detail) {
+      callback(e.detail);
     } else {
-      updatedProduct = {
-        id: existingId,
-        created_at: new Date().toISOString(),
-        is_featured: productData.is_featured ?? productData.featured ?? true,
-        featured: productData.featured ?? productData.is_featured ?? true,
-        orderIndex: typeof productData.orderIndex === "number" ? productData.orderIndex : current.length,
-        features: [],
-        specifications: {},
-        images: [],
-        ...productData,
-      } as Product;
-      current.push(updatedProduct);
+      callback(getLocalProducts());
     }
-  } else {
-    updatedProduct = {
-      id: "prod-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7),
-      created_at: new Date().toISOString(),
-      is_featured: productData.is_featured ?? productData.featured ?? true,
-      featured: productData.featured ?? productData.is_featured ?? true,
-      orderIndex: typeof productData.orderIndex === "number" ? productData.orderIndex : current.length,
-      features: [],
-      specifications: {},
-      images: [],
-      ...productData,
-    } as Product;
-    current.push(updatedProduct);
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("products-updated", handleCustomEvent);
   }
 
-  // Ensure items maintain sequential orderIndex
-  current.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
-  current.forEach((item, idx) => {
-    item.orderIndex = idx;
-  });
-
-  try {
-    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
+  return () => {
+    supabase.removeChannel(channel);
     if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("products-updated"));
+      window.removeEventListener("products-updated", handleCustomEvent);
+    }
+  };
+}
+
+/* =========================================================================
+   INQUIRIES MANAGEMENT
+   ========================================================================= */
+
+let inMemoryInquiriesCache: ProductInquiry[] | null = null;
+
+export async function fetchInquiries(): Promise<ProductInquiry[]> {
+  try {
+    const { data, error } = await supabase
+      .from("inquiries")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && Array.isArray(data)) {
+      inMemoryInquiriesCache = data;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(data));
+      } catch {}
+      return data;
+    }
+
+    // Fallback table name product_inquiries
+    const res2 = await supabase
+      .from("product_inquiries")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!res2.error && Array.isArray(res2.data)) {
+      inMemoryInquiriesCache = res2.data;
+      try {
+        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(res2.data));
+      } catch {}
+      return res2.data;
     }
   } catch (err) {
-    console.info("Saving product locally error:", err);
+    console.info("Supabase fetchInquiries fallback:", err);
   }
 
-  return updatedProduct;
+  return getLocalInquiries();
 }
 
-export function deleteLocalProduct(id: string): void {
-  const current = getLocalProducts();
-  const filtered = current.filter(p => p.id !== id);
-  filtered.forEach((p, idx) => {
-    p.orderIndex = idx;
-  });
-  try {
-    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(filtered));
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("products-updated"));
-    }
-  } catch (err) {
-    console.info("Deleting product locally error:", err);
-  }
-}
-
-export async function deleteProduct(id: string): Promise<boolean> {
-  deleteLocalProduct(id);
-  try {
-    if (!id.startsWith("prod-") && !id.startsWith("m-") && !id.startsWith("cp-")) {
-      const promise = Promise.resolve(supabase.from("products").delete().eq("id", id));
-      await Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
-      ]);
-    }
-    return true;
-  } catch (err) {
-    console.info("Supabase product delete graceful fallback:", err);
-    return true;
-  }
-}
-
-export function toggleFeatured(id: string): Product | null {
-  const current = getLocalProducts();
-  const prod = current.find(p => p.id === id);
-  if (!prod) return null;
-  const nextVal = !(prod.featured ?? prod.is_featured ?? false);
-  prod.featured = nextVal;
-  prod.is_featured = nextVal;
-  try {
-    localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("products-updated"));
-    }
-  } catch (err) {
-    console.info("Toggling featured error:", err);
-  }
-
-  try {
-    if (!id.startsWith("prod-") && !id.startsWith("m-") && !id.startsWith("cp-")) {
-      supabase.from("products").update({ is_featured: nextVal, featured: nextVal }).eq("id", id);
-    }
-  } catch {}
-
-  return prod;
-}
-
-export const toggleLocalProductFeatured = toggleFeatured;
-
-export function getLocalProductBySlug(slug: string): Product | undefined {
-  const normalized = slug.toLowerCase().trim();
-  const targetSlug = SLUG_ALIAS_MAP[normalized] || normalized;
-  const current = getLocalProducts();
-  return current.find(p => p.slug === targetSlug);
-}
-
-// Supabase fetching with safe timeout fallback
-export async function fetchProducts(): Promise<Product[]> {
-  const local = getLocalProducts();
-  try {
-    const promise = Promise.resolve(
-      supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false })
-    );
-
-    const { data, error } = (await Promise.race([
-      promise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
-    ])) as any;
-
-    if (error) {
-      return local;
-    }
-
-    if (data && Array.isArray(data) && data.length > 0) {
-      const map = new Map<string, Product>();
-      local.forEach(p => map.set(p.slug, p));
-      data.forEach((p: Product) => map.set(p.slug, { ...map.get(p.slug), ...p }));
-      const result = Array.from(map.values());
-      result.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
-      return result;
-    }
-    return local;
-  } catch {
-    return local;
-  }
-}
-
-export async function fetchProductBySlug(slug: string): Promise<Product | null> {
-  const local = getLocalProductBySlug(slug);
-  const normalized = slug.toLowerCase().trim();
-  const targetSlug = SLUG_ALIAS_MAP[normalized] || normalized;
-
-  try {
-    const promise = Promise.resolve(
-      supabase
-        .from("products")
-        .select("*")
-        .eq("slug", targetSlug)
-        .maybeSingle()
-    );
-
-    const { data, error } = (await Promise.race([
-      promise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
-    ])) as any;
-
-    if (!error && data) {
-      return { ...local, ...data } as Product;
-    }
-    return local || null;
-  } catch {
-    return local || null;
-  }
-}
-
-// Inquiries handling
 export function getLocalInquiries(): ProductInquiry[] {
+  if (inMemoryInquiriesCache) return inMemoryInquiriesCache;
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_INQUIRIES_KEY) || localStorage.getItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const arr = Array.isArray(parsed) ? parsed : [];
+    inMemoryInquiriesCache = arr;
+    return arr;
   } catch {
     return [];
   }
 }
 
-export function deleteLocalInquiry(id: string): void {
+export async function deleteInquiry(id: string): Promise<void> {
+  const current = getLocalInquiries().filter((inq) => inq.id !== id);
+  inMemoryInquiriesCache = current;
   try {
-    const current = getLocalInquiries().filter((inq) => inq.id !== id);
     localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(current));
     localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(current));
-    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated"));
+    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated", { detail: current }));
+  } catch {}
+
+  try {
+    await supabase.from("inquiries").delete().eq("id", id);
+    await supabase.from("product_inquiries").delete().eq("id", id);
   } catch (err) {
-    console.info("Could not delete inquiry locally:", err);
+    console.info("Supabase delete inquiry notice:", err);
   }
 }
+
+export const deleteLocalInquiry = deleteInquiry;
 
 export async function submitProductInquiry(inquiry: Omit<ProductInquiry, "id" | "created_at">): Promise<ProductInquiry> {
   const newInquiry: ProductInquiry = {
     ...inquiry,
-    id: "inq-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7),
+    id: `inq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     created_at: new Date().toISOString(),
   };
 
-  const current = getLocalInquiries();
-  current.unshift(newInquiry);
+  const current = [newInquiry, ...getLocalInquiries()];
+  inMemoryInquiriesCache = current;
   try {
     localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(current));
     localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(current));
-    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated"));
-  } catch (err) {
-    console.info("Could not save inquiry locally:", err);
-  }
+    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated", { detail: current }));
+  } catch {}
 
-  // Attempt Supabase insert if table exists
+  // Direct Supabase insert
   try {
-    const promise = Promise.resolve(
-      supabase.from("inquiries").insert([newInquiry]).then((res) => {
-        if (res.error) {
-          return supabase.from("product_inquiries").insert([newInquiry]);
-        }
-        return res;
-      })
-    );
-    await Promise.race([
-      promise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500))
-    ]);
+    const payload = {
+      product_name: newInquiry.product_name,
+      name: newInquiry.name,
+      email: newInquiry.email || "",
+      phone: newInquiry.phone,
+      institution: newInquiry.institution || "",
+      city: newInquiry.city || "",
+      role: newInquiry.role || "Surgeon",
+      notes: newInquiry.notes || "",
+      created_at: newInquiry.created_at,
+    };
+
+    const { error } = await supabase.from("inquiries").insert([payload]);
+    if (error) {
+      await supabase.from("product_inquiries").insert([payload]);
+    }
   } catch (err) {
-    console.info("Supabase inquiry insert skipped:", err);
+    console.info("Supabase inquiry insert fallback:", err);
   }
 
   return newInquiry;
+}
+
+export function subscribeToInquiries(callback: (inquiries: ProductInquiry[]) => void): () => void {
+  const channel = supabase
+    .channel("public:inquiries-live-sync")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "inquiries" },
+      async () => {
+        const refreshed = await fetchInquiries();
+        callback(refreshed);
+      }
+    )
+    .subscribe();
+
+  const handleCustomEvent = (e: any) => {
+    if (e.detail) {
+      callback(e.detail);
+    } else {
+      callback(getLocalInquiries());
+    }
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("emsurg-inquiries-updated", handleCustomEvent);
+  }
+
+  return () => {
+    supabase.removeChannel(channel);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("emsurg-inquiries-updated", handleCustomEvent);
+    }
+  };
 }
 
 /**
@@ -1287,3 +1523,4 @@ export function getWhatsAppNumberForProduct(
   // 1. Nephrology, Trading Cements, Spine (Default) -> +91 74397 57452
   return "917439757452";
 }
+

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { LayoutGrid, Card } from "../components/ui/layout-grid";
-import { getGalleryItems, GalleryItem } from "../lib/galleryStore";
+import { fetchGalleryItems, subscribeToGallery, GalleryItem } from "../lib/galleryStore";
 import { formatDriveImageUrl } from "../lib/utils";
 import { Sparkles, Layers, RefreshCw } from "lucide-react";
 
@@ -11,7 +11,7 @@ export default function Gallery() {
 
   const loadGallery = async () => {
     try {
-      const data = await getGalleryItems();
+      const data = await fetchGalleryItems();
       setItems(data);
     } catch (err) {
       console.error("Failed to load gallery:", err);
@@ -22,9 +22,12 @@ export default function Gallery() {
 
   useEffect(() => {
     loadGallery();
-    const handleUpdate = () => loadGallery();
-    window.addEventListener("emsurg_gallery_updated", handleUpdate);
-    return () => window.removeEventListener("emsurg_gallery_updated", handleUpdate);
+    const unsub = subscribeToGallery((updated) => {
+      if (updated && updated.length > 0) {
+        setItems(updated);
+      }
+    });
+    return () => unsub();
   }, []);
 
   const categories = ["All", ...Array.from(new Set(items.map((i) => i.category || "General")))];

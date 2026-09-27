@@ -8,7 +8,7 @@ import {
   Send
 } from "lucide-react";
 import { ProductHighlightCard } from "../ui/product-card";
-import { getLocalProducts, Product } from "../../lib/productsStore";
+import { getLocalProducts, fetchProducts, subscribeToProducts, Product } from "../../lib/productsStore";
 import ProductInquiryModal from "../modals/ProductInquiryModal";
 
 function getAccentGlow(category: string = "", division: string = ""): string {
@@ -54,17 +54,29 @@ export default function SwissProductShowcase() {
   };
 
   useEffect(() => {
-    const update = () => {
-      setAllProducts(getLocalProducts());
-    };
+    let isMounted = true;
+    async function load() {
+      try {
+        const data = await fetchProducts();
+        if (isMounted && data.length > 0) {
+          setAllProducts(data);
+        }
+      } catch (err) {
+        console.info("Swiss showcase product fetch fallback:", err);
+      }
+    }
 
-    window.addEventListener("products-updated", update);
-    window.addEventListener("storage", update);
-    update();
+    load();
+
+    const unsub = subscribeToProducts((updated) => {
+      if (isMounted && updated.length > 0) {
+        setAllProducts(updated);
+      }
+    });
 
     return () => {
-      window.removeEventListener("products-updated", update);
-      window.removeEventListener("storage", update);
+      isMounted = false;
+      unsub();
     };
   }, []);
 

@@ -89,3 +89,19 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     autoRefreshToken: true,
   },
 });
+
+export async function checkSupabaseConnection(): Promise<{ connected: boolean; error?: string }> {
+  if (!isSupabaseConfigured) {
+    return { connected: false, error: 'Supabase URL or Key missing' };
+  }
+  try {
+    const { error } = await supabase.from('products').select('id').limit(1);
+    if (error && error.code !== 'PGRST116') {
+      return { connected: false, error: error.message };
+    }
+    return { connected: true };
+  } catch (err: any) {
+    return { connected: false, error: err?.message || 'Connection failed' };
+  }
+}
+

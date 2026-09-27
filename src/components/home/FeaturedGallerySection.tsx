@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getGalleryItems, GalleryItem } from "../../lib/galleryStore";
+import { fetchGalleryItems, subscribeToGallery, GalleryItem } from "../../lib/galleryStore";
 import { formatDriveImageUrl } from "../../lib/utils";
 import { LayoutGrid, Card } from "../ui/layout-grid";
 import { ArrowRight, Building2, Sparkles, ShieldCheck, ExternalLink, Eye } from "lucide-react";
@@ -11,7 +11,7 @@ export default function FeaturedGallerySection() {
 
   const loadItems = async () => {
     try {
-      const all = await getGalleryItems();
+      const all = await fetchGalleryItems();
       const featured = all.filter((item) => item.is_featured);
       // Select up to 6 featured items for a clean 3-column bento grid
       setFeaturedItems(featured.length > 0 ? featured.slice(0, 6) : all.slice(0, 6));
@@ -24,9 +24,13 @@ export default function FeaturedGallerySection() {
 
   useEffect(() => {
     loadItems();
-    const handleUpdate = () => loadItems();
-    window.addEventListener("emsurg_gallery_updated", handleUpdate);
-    return () => window.removeEventListener("emsurg_gallery_updated", handleUpdate);
+    const unsub = subscribeToGallery((all) => {
+      if (all && all.length > 0) {
+        const featured = all.filter((item) => item.is_featured);
+        setFeaturedItems(featured.length > 0 ? featured.slice(0, 6) : all.slice(0, 6));
+      }
+    });
+    return () => unsub();
   }, []);
 
   if (!loading && featuredItems.length === 0) return null;

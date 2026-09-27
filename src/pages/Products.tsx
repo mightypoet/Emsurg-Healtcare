@@ -13,7 +13,7 @@ import {
   Factory,
   Send
 } from "lucide-react";
-import { Product, fetchProducts, getLocalProducts } from "../lib/productsStore";
+import { Product, fetchProducts, getLocalProducts, subscribeToProducts } from "../lib/productsStore";
 import { 
   MANUFACTURING_CATEGORIES, 
   CHANNEL_PARTNER_CATEGORIES, 
@@ -57,8 +57,16 @@ export default function Products() {
     }
 
     load();
+
+    const unsub = subscribeToProducts((updated) => {
+      if (isMounted && updated.length > 0) {
+        setProducts(updated);
+      }
+    });
+
     return () => {
       isMounted = false;
+      unsub();
     };
   }, []);
 
