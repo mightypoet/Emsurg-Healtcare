@@ -19,7 +19,15 @@ import {
   HeartHandshake,
   Landmark,
   Factory,
-  UserCheck
+  UserCheck,
+  Target,
+  Eye,
+  Compass,
+  Award,
+  Sprout,
+  Handshake,
+  FileSignature,
+  FlaskConical
 } from "lucide-react";
 import { timeline, locations } from "../data/content";
 import { Team02, type TeamMember } from "@/components/ui/team-02";
@@ -43,7 +51,7 @@ const leadershipTeam: TeamMember[] = [
     role: "CFO & Director",
     category: "Executive Board",
     department: "Corporate Finance & Treasury",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+    image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/PRIYANKA-ACHARYYA.jpg",
     bio: "Directing financial strategy, capital allocation, audit integrity, and institutional banking partnerships with State Bank of India and Axis Bank.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -55,7 +63,7 @@ const leadershipTeam: TeamMember[] = [
     role: "Director",
     category: "Executive Board",
     department: "Corporate Development",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/RITOBROTO-MUKHERJEE.jpg",
     bio: "Spearheading pan-India institutional distribution alliances, corporate governance, and multi-state medical supply chain infrastructure.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -67,7 +75,7 @@ const leadershipTeam: TeamMember[] = [
     role: "Director - Clinical Affairs",
     category: "Executive Board",
     department: "Clinical Advisory",
-    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80",
+    image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Dr.-SUMAN-SAHA-%28Ph.jpg",
     bio: "Leading clinical trial evaluations, physician advisory boards, biomaterial biocompatibility protocols, and surgical efficacy standards.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -79,7 +87,7 @@ const leadershipTeam: TeamMember[] = [
     role: "Business Leader - Oncology Devices & Biologics",
     category: "Clinical Division",
     department: "Oncology & Biologics",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80",
+    image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/SUBHRO%20KAMAL%20BHATTACHARYYA.png",
     bio: "Managing BoneSurg HA/CR bioresorbable granules, bone cements, and exclusive Italian MDL biopsy instrumentation portfolios.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -91,7 +99,7 @@ const leadershipTeam: TeamMember[] = [
     role: "GM Admin & HR",
     category: "Operations Leadership",
     department: "Human Capital & Administration",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
+    image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/SWARNALI%20DEY.png",
     bio: "Directing talent development, cleanroom operational staffing, organizational compliance, and multi-hub administrative workflow.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -116,6 +124,9 @@ export default function About() {
 
   // Portrait image error fallback state
   const [imgError, setImgError] = useState(false);
+
+  // Mission / Vision view tab toggle state (centered toggle)
+  const [missionVisionView, setMissionVisionView] = useState<"mission" | "vision">("mission");
 
   // Video Time Formatting
   const formatTime = (timeInSeconds: number) => {
@@ -232,7 +243,7 @@ export default function About() {
           </p>
 
           {/* 4 Stats Metrics Cards in the Hero */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-2 mb-14">
             <div className="bg-white/80 backdrop-blur-md border border-sky-100 rounded-2xl p-5 shadow-sm shadow-sky-900/5 text-left hover:border-sky-200 transition-colors">
               <div className="text-sky-600 font-bold text-3xl md:text-4xl tracking-tight">14+</div>
               <div className="text-slate-500 text-xs font-medium uppercase tracking-wider mt-1">Years of Innovation</div>
@@ -250,23 +261,280 @@ export default function About() {
               <div className="text-slate-500 text-xs font-medium uppercase tracking-wider mt-1">Target by 2028</div>
             </div>
           </div>
+
+          {/* OUR MISSION & OUR VISION SECTION */}
+          <div className="max-w-4xl mx-auto pt-4">
+            {/* Centered Heading & Switcher */}
+            <div className="flex flex-col items-center text-center gap-3 mb-8 pb-2">
+              <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/70 border border-sky-200/80 text-[11px] font-bold tracking-[0.2em] px-3.5 py-1 rounded-full uppercase">
+                <Compass className="w-3.5 h-3.5 text-sky-600" />
+                OUR STRATEGIC PILLARS
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 tracking-tight">
+                Our Mission <span className="text-slate-400 font-extralight">&</span> Our Vision
+              </h2>
+
+              {/* Centered Pill Toggle Switch */}
+              <div className="inline-flex items-center p-1 bg-sky-100/70 rounded-full border border-sky-200/60 shadow-inner mt-2">
+                <button
+                  type="button"
+                  onClick={() => setMissionVisionView("mission")}
+                  className={`px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                    missionVisionView === "mission"
+                      ? "bg-white text-sky-800 shadow-sm"
+                      : "text-slate-600 hover:text-sky-900"
+                  }`}
+                >
+                  Our Mission
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMissionVisionView("vision")}
+                  className={`px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                    missionVisionView === "vision"
+                      ? "bg-white text-sky-800 shadow-sm"
+                      : "text-slate-600 hover:text-sky-900"
+                  }`}
+                >
+                  Our Vision
+                </button>
+              </div>
+            </div>
+
+            {/* Centered Active Content Card */}
+            <div className="max-w-3xl mx-auto text-left">
+              {/* 1. OUR MISSION CARD */}
+              {missionVisionView === "mission" && (
+                <div className="bg-white/95 backdrop-blur-xl border border-sky-100 rounded-3xl p-6 sm:p-9 shadow-md shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all relative overflow-hidden flex flex-col justify-between group animate-in fade-in zoom-in-95 duration-200">
+                  {/* Subtle top ambient bar */}
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-400" />
+                  
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center gap-3.5 mb-5">
+                      <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 group-hover:scale-105 transition-transform shadow-sm">
+                        <Target className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-sky-600">Core Purpose</div>
+                        <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Our Mission</h3>
+                      </div>
+                    </div>
+
+                    {/* Mission Paragraph */}
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+                      To drive innovation and excellence in healthcare by delivering high-quality medical devices, implants, and equipment that improve patient outcomes. We are committed to maintaining the highest standards of safety, quality, and ethical practices, while continuously adapting to the evolving clinical needs and empowering healthcare professionals in India and globally.
+                    </p>
+
+                    {/* Mission Bullet Points */}
+                    <div className="pt-5 border-t border-sky-50">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3.5 flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-sky-600" /> Strategic Commitments:
+                      </div>
+                      <ul className="space-y-2.5">
+                        {[
+                          "Provide innovative and life-saving medical devices",
+                          "Continuous innovation in medical technology",
+                          "Maintain the highest standards of ethical practices",
+                          "Deliver reliable and high-quality solutions",
+                          "Focus on sustainable business practices and robust management",
+                          "Support healthcare professionals with training and knowledge sharing"
+                        ].map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
+                            <CheckCircle2 className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-sky-800 font-semibold">
+                    <span className="inline-flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" /> CDSCO Form MD-9 / Class C
+                    </span>
+                    <span className="text-slate-400 font-normal">Emsurg Healthcare</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 2. OUR VISION CARD */}
+              {missionVisionView === "vision" && (
+                <div className="bg-white/95 backdrop-blur-xl border border-sky-100 rounded-3xl p-6 sm:p-9 shadow-md shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all relative overflow-hidden flex flex-col justify-between group animate-in fade-in zoom-in-95 duration-200">
+                  {/* Subtle top ambient bar */}
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500" />
+                  
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center gap-3.5 mb-5">
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200/80 flex items-center justify-center text-indigo-600 group-hover:scale-105 transition-transform shadow-sm">
+                        <Eye className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-indigo-600">Future Horizon</div>
+                        <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Our Vision</h3>
+                      </div>
+                    </div>
+
+                    {/* Vision Paragraph */}
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+                      To become a globally recognized, professionally managed medical technology company that expands the possibilities of healthcare. We aim to lead through innovation, collaboration, and ethical business practices while fostering a culture of excellence, meritocracy, and sustainable growth. Our vision is to empower medical professionals and institutions with advanced solutions that set new benchmarks in patient care and clinical efficiency.
+                    </p>
+
+                    {/* Vision Bullet Points */}
+                    <div className="pt-5 border-t border-sky-50">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3.5 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Key Strategic Objectives:
+                      </div>
+                      <ul className="space-y-2.5">
+                        {[
+                          "Achieve leadership in healthcare innovation",
+                          "Foster a culture of professional excellence",
+                          "Empower healthcare professionals and institutions",
+                          "Promote sustainable growth and long-term partnerships",
+                          "Integrate global best practices with indigenous solutions",
+                          "Continuously enhance the quality and effectiveness of medical technologies"
+                        ].map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
+                            <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-indigo-900 font-semibold">
+                    <span className="inline-flex items-center gap-1.5">
+                      <TrendingUp className="w-4 h-4 text-indigo-600" /> 1,000M INR Roadmap 2028
+                    </span>
+                    <span className="text-slate-400 font-normal">Global Excellence</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. LEADERSHIP SHOWCASE & FROM THE MD'S DESK */}
+      {/* 2. OUR HISTORY SECTION */}
+      <section id="our-history" className="py-20 sm:py-24 bg-slate-50/70 border-b border-sky-100 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-14 sm:mb-16">
+            <div>
+              <div className="inline-block bg-[#1e3a8a] text-white text-sm sm:text-base font-bold px-6 py-2.5 rounded-full shadow-sm">
+                Our History
+              </div>
+            </div>
+            <div className="lg:max-w-2xl text-left lg:text-right">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
+                Tracing Our Journey of Growth
+                <div className="mt-1">
+                  <span className="font-semibold text-slate-900">Innovation and </span>
+                  <span className="text-[#3730a3]">Healthcare Excellence</span>
+                </div>
+              </h2>
+            </div>
+          </div>
+
+          {/* 6 Cards in 3-Column Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <Sprout className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+                Founding and Early Focus (2010)
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                Emsurg was founded in 2010, initially operating in biologics, vertebroplasty, and kyphoplasty, laying the foundation for expertise in advanced medical procedures.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <Handshake className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+                Channel Partnership with Smith & Nephew (2012)
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                In 2012, Emsurg became a channel partner of Smith & Nephew, a global leader in sports medicine, bringing minimally invasive joint surgery technologies to India.
+              </p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <FileSignature className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+                Exclusive Importer for Teknimed and MDL
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                Emsurg gained exclusive import rights for spine bone cement and biopsy devices from Teknimed and MDL, establishing itself as a trusted partner for leading medical firms.
+              </p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <Factory className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+                Expansion into Indigenous Manufacturing (2020)
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                In 2020, Emsurg established a state-of-the-art production facility in Kolkata for dry citrate powder and hemodialysate, marking the start of domestic manufacturing excellence.
+              </p>
+            </div>
+
+            {/* Card 5 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <FlaskConical className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+                Diversification into Wound Care and Ortho Biologics (2023)
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                Emsurg expanded its portfolio in 2023 to include wound care materials and orthopedic biologics, broadening its impact in advanced healthcare solutions.
+              </p>
+            </div>
+
+            {/* Card 6 */}
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
+                <Microscope className="w-6 h-6 text-[#1e3a8a]" />
+              </div>
+              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+                Manufacturing and Marketing Medical Devices (2024)
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                By 2024, Emsurg began producing and marketing innovative medical devices, including negative pressure wound therapy machines, strengthening its role in patient-centered healthcare.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. LEADERSHIP SHOWCASE & FROM THE MD'S DESK */}
       <section id="md-desk" className="py-20 sm:py-24 bg-white border-b border-sky-100 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="mb-14 sm:mb-20 text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/80 border border-sky-200/80 text-xs font-bold tracking-[0.25em] px-3.5 py-1 rounded-full uppercase mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-sky-600" />
-              LEADERSHIP & INDIGENOUS RIGOR
+              OFFICIAL ADDRESS
             </div>
             <h2 className="text-3xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
-              From the Managing Director’s Desk
+              From the MD’s Desk
             </h2>
             <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
-              A personal address on pioneering medical device self-reliance in India, building resilient cleanroom infrastructure, and advancing patient care through relentless perseverance.
+              We are excited about the opportunities that lie ahead and look forward to consistent success.
             </p>
           </div>
 
@@ -315,7 +583,7 @@ export default function About() {
                   {/* Caption Info & Trajectory Pill */}
                   <div className="pt-3 px-1">
                     <span className="bg-sky-50 text-sky-700 border border-sky-200/70 text-xs font-semibold px-3 py-1 rounded-full mt-2 inline-block">
-                      Scalable Growth from Zero to 360M INR · Targeting 1,000M INR by 2028
+                      Zero to 360M INR · Targeting 1,000M INR by 2028 with 300+ Employees
                     </span>
                   </div>
                 </div>
@@ -329,7 +597,7 @@ export default function About() {
                     Managing Director · Emsurg Bioscience India Pvt. Ltd.
                   </span>
                   <span className="px-3 py-1 rounded-lg bg-sky-50/70 border border-sky-100 text-sky-800 text-xs font-medium">
-                    Bioresorbable Grafts & MedTech Pioneer
+                    State-of-the-Art R&D Facility & Ace Team
                   </span>
                 </div>
               </div>
@@ -343,91 +611,34 @@ export default function About() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 text-sky-600 text-xs font-bold tracking-widest uppercase mb-3">
                     <Sparkles className="w-3.5 h-3.5" />
-                    Core Guiding Philosophy
+                    Company's Core Commitment
                   </div>
                   <blockquote className="text-xl sm:text-2xl lg:text-3xl font-light italic leading-snug text-slate-900">
-                    “We at Emsurg believe, <span className="font-semibold text-sky-700">never die before death</span>. 
-                    If you try, you risk failure. If you don't, <span className="underline decoration-sky-400 decoration-2 underline-offset-4">you ensure it</span>.”
+                    “We at <span className="font-semibold text-sky-800">“Emsurg”</span> believe, never die before the death and <span className="font-semibold text-sky-700">IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</span>”
                   </blockquote>
                   <div className="mt-4 pt-4 border-t border-sky-100 flex items-center justify-between text-xs text-slate-500">
                     <span className="font-medium text-slate-700">— Mr. Kunal Mukherjee, Managing Director</span>
-                    <span className="text-sky-600 font-semibold tracking-wider uppercase">Official Address</span>
+                    <span className="text-sky-600 font-bold tracking-wider uppercase">YOU ENSURE IT</span>
                   </div>
                 </div>
               </div>
 
               {/* Core Narrative */}
-              <div className="space-y-4 text-slate-600 text-base leading-relaxed">
+              <div className="space-y-5 text-slate-700 text-base sm:text-lg leading-relaxed">
                 <p>
-                  When we established <strong className="text-slate-900">Emsurg Healthcare</strong> in 2010 in Kolkata, the Indian healthcare 
-                  landscape was overwhelmingly dependent on expensive imported biomaterials, orthopedic consumables, 
-                  and renal formulations. Our ambition was never merely commercial; it was fundamentally patriotic 
-                  and clinical—to prove that world-class bioresorbable implants, dialysis fluids, and precision surgical 
-                  technologies could be engineered right here on Indian soil.
+                  We at <strong className="text-slate-900">“Emsurg”</strong> believe, never die before the death and <strong>IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</strong>
                 </p>
 
                 <p>
-                  Over the past decade and a half, we have transformed into a diversified healthcare enterprise. Through 
-                  our manufacturing and research entities—<strong className="text-slate-900">Emsurg Healthcare (India) Pvt. Ltd.</strong> and 
-                  <strong className="text-slate-900"> Emsurg Bioscience India Pvt. Ltd.</strong>—we have pioneered indigenous formulation capabilities 
-                  spanning:
+                  That's the way we grew from <strong className="text-slate-900">Zero to 360 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
                 </p>
-
-                {/* 4 Clinical Divisions Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-4">
-                  <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm hover:border-sky-300 transition-colors">
-                    <div className="text-sky-700 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-sky-500" />
-                      Nephro-Care Formulations
-                    </div>
-                    <div className="text-xs text-slate-600 font-medium">
-                      Automated hemodialysis fluids & dry citrate powder concentrates saving vital clinical beds.
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm hover:border-sky-300 transition-colors">
-                    <div className="text-sky-700 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-sky-500" />
-                      Orthobiologics & Bone Grafts
-                    </div>
-                    <div className="text-xs text-slate-600 font-medium">
-                      CDSCO-approved BoneSurg HA nanocrystalline hydroxyapatite and BoneSurg CR calcium sulphate beads.
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm hover:border-sky-300 transition-colors">
-                    <div className="text-sky-700 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-sky-500" />
-                      Sterile NPWT Wound Care
-                    </div>
-                    <div className="text-xs text-slate-600 font-medium">
-                      EM-VAC digital micro-deformation negative pressure wound therapy units & cleanroom dressing kits.
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm hover:border-sky-300 transition-colors">
-                    <div className="text-sky-700 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-sky-500" />
-                      Global Surgical Alliances
-                    </div>
-                    <div className="text-xs text-slate-600 font-medium">
-                      Exclusive partnerships with Smith & Nephew, Teknimed France, MDL Italy, and Fresenius.
-                    </div>
-                  </div>
-                </div>
 
                 <p>
-                  Today, with state-of-the-art ISO 14644 cleanrooms, in-house XRD & SEM analytical testing, and 
-                  dedicated research scientists, we take immense pride in having scaled from zero to over 
-                  <strong className="text-slate-900"> 360 Million INR in annual turnover</strong>, serving premier medical institutes including 
-                  Apollo Hospitals, Narayana Health, Fortis, and Manipal Hospitals.
+                  By year 2028, we should be a <strong className="text-slate-900">1000 million INR</strong> company with <strong className="text-slate-900">300+ employees</strong>. We are excited about the opportunities that lie ahead and look forward to continuing success.
                 </p>
 
-                <p className="text-slate-600 text-base">
-                  This journey belongs to our dedicated workforce, our clinical advisors, our banking partners—specifically 
-                  State Bank of India and Axis Bank—and the thousands of surgeons who place their surgical trust in Emsurg 
-                  every single day. As we march confidently toward our <strong className="text-slate-900">1,000 Million INR roadmap for 2028</strong>, 
-                  our promise remains resolute: uncompromising clinical excellence and ethical care for every patient.
+                <p className="text-slate-600">
+                  We are thankful to our employees, our teachers, and of course our stakeholders who believed in us and even in tough times never left us. We are thankful to our banks and financial institutions who are also our valued stakeholders.
                 </p>
               </div>
 
@@ -443,11 +654,6 @@ export default function About() {
                   <div className="text-xs text-slate-400">
                     Managing Director & CEO, Emsurg Healthcare (India) Pvt. Ltd.
                   </div>
-                </div>
-
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200/80 text-sky-800 text-xs font-medium">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>CDSCO Licensed · ISO 13485 Certified</span>
                 </div>
               </div>
             </div>

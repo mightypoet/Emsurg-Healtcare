@@ -40,15 +40,9 @@ export default function Footer() {
                 />
               </Link>
               
-              <p className="text-slate-600 text-sm leading-relaxed max-w-sm font-normal mt-2">
+              <p className="text-slate-600 text-sm leading-relaxed max-w-sm font-normal mt-2 mb-6">
                 Advancing healthcare with innovation, integrity and clinical expertise. Pioneering indigenously manufactured orthobiologics, advanced wound care, and hemodialysis solutions.
               </p>
-
-              {/* Regulatory Standards Badge */}
-              <div className="bg-sky-50 border border-sky-200/80 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1.5 mt-3 mb-6">
-                <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-                <span>CDSCO Approved · ISO 13485:2016 Certified</span>
-              </div>
             </div>
 
             {/* Follow Us Section with Social Badges */}
@@ -56,24 +50,17 @@ export default function Footer() {
               <h4 className="text-sky-700 text-xs font-bold tracking-[0.2em] uppercase mb-3">
                 Follow Us
               </h4>
-              <div className="grid grid-cols-2 gap-2 max-w-sm">
+              <div className="flex items-center gap-3">
                 {/* Facebook */}
                 <a
                   href="https://facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on Facebook"
-                  className="flex items-center justify-between p-2 rounded-xl bg-white/80 hover:bg-white border border-sky-100 hover:border-sky-300 transition-all text-xs group shadow-2xs"
+                  title="Facebook"
+                  className="w-10 h-10 rounded-xl bg-white/90 hover:bg-blue-600 border border-sky-100 hover:border-blue-600 flex items-center justify-center text-blue-600 hover:text-white transition-all shadow-2xs hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 text-slate-700 group-hover:text-blue-600 font-medium">
-                    <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <Facebook className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Facebook</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded-full">
-                    Fans
-                  </span>
+                  <Facebook className="w-4 h-4" />
                 </a>
 
                 {/* Instagram */}
@@ -82,17 +69,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on Instagram"
-                  className="flex items-center justify-between p-2 rounded-xl bg-white/80 hover:bg-white border border-sky-100 hover:border-sky-300 transition-all text-xs group shadow-2xs"
+                  title="Instagram"
+                  className="w-10 h-10 rounded-xl bg-white/90 hover:bg-pink-600 border border-sky-100 hover:border-pink-600 flex items-center justify-center text-pink-600 hover:text-white transition-all shadow-2xs hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 text-slate-700 group-hover:text-pink-600 font-medium">
-                    <div className="w-6 h-6 rounded-lg bg-pink-50 flex items-center justify-center text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors">
-                      <Instagram className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Instagram</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-pink-700 bg-pink-50 border border-pink-200/70 px-2 py-0.5 rounded-full">
-                    Follower
-                  </span>
+                  <Instagram className="w-4 h-4" />
                 </a>
 
                 {/* LinkedIn */}
@@ -101,17 +81,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Connect with Emsurg on LinkedIn"
-                  className="flex items-center justify-between p-2 rounded-xl bg-white/80 hover:bg-white border border-sky-100 hover:border-sky-300 transition-all text-xs group shadow-2xs"
+                  title="LinkedIn"
+                  className="w-10 h-10 rounded-xl bg-white/90 hover:bg-sky-600 border border-sky-100 hover:border-sky-600 flex items-center justify-center text-sky-600 hover:text-white transition-all shadow-2xs hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 text-slate-700 group-hover:text-sky-700 font-medium">
-                    <div className="w-6 h-6 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
-                      <Linkedin className="w-3.5 h-3.5" />
-                    </div>
-                    <span>LinkedIn</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-sky-700 bg-sky-50 border border-sky-200/70 px-2 py-0.5 rounded-full">
-                    Connect
-                  </span>
+                  <Linkedin className="w-4 h-4" />
                 </a>
 
                 {/* X (Twitter) */}
@@ -120,19 +93,12 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on X"
-                  className="flex items-center justify-between p-2 rounded-xl bg-white/80 hover:bg-white border border-sky-100 hover:border-sky-300 transition-all text-xs group shadow-2xs"
+                  title="X (Twitter)"
+                  className="w-10 h-10 rounded-xl bg-white/90 hover:bg-slate-900 border border-sky-100 hover:border-slate-900 flex items-center justify-center text-slate-700 hover:text-white transition-all shadow-2xs hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 text-slate-700 group-hover:text-slate-900 font-medium">
-                    <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 group-hover:bg-slate-900 group-hover:text-white transition-colors">
-                      <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                      </svg>
-                    </div>
-                    <span>X</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200/70 px-2 py-0.5 rounded-full">
-                    Follow
-                  </span>
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
                 </a>
               </div>
             </div>
@@ -172,49 +138,76 @@ export default function Footer() {
             {/* 3 Operational Facility Location Cards in Kolkata */}
             <div className="space-y-3">
               {/* 1. Corporate Office (Dumdum) */}
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-sky-100/90 shadow-2xs text-left">
-                <div className="flex items-center gap-2 mb-1">
-                  <Building className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800">
-                    Corporate Office
-                  </span>
+              <a
+                href="https://maps.google.com/?q=8/2/74/1B,+Sachi+Apartment,+Aravinda+Sarani,+East+Kamalapur,+Dumdum,+Kolkata+700028"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open Corporate Office in Google Maps"
+                className="block p-3.5 rounded-2xl bg-white/80 hover:bg-white border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-md transition-all text-left group cursor-pointer"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2">
+                    <Building className="w-3.5 h-3.5 text-sky-600 group-hover:text-sky-700 shrink-0" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 group-hover:text-sky-900">
+                      Corporate Office
+                    </span>
+                  </div>
+                  <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-normal pl-5">
+                <p className="text-xs text-slate-600 group-hover:text-slate-700 leading-relaxed font-normal pl-5">
                   8/2/74/1B, Sachi Apartment, Aravinda Sarani, East Kamalapur, Dumdum, Kolkata 700028
                 </p>
-              </div>
+              </a>
 
               {/* 2. Manufacturing Unit (Talbanda) */}
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-sky-100/90 shadow-2xs text-left">
-                <div className="flex items-center gap-2 mb-1">
-                  <Factory className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800">
-                    Manufacturing Unit
-                  </span>
+              <a
+                href="https://maps.google.com/?q=Board+Ghar,+Bilkanda,+Talbanda,+Kolkata+700110"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open Manufacturing Unit in Google Maps"
+                className="block p-3.5 rounded-2xl bg-white/80 hover:bg-white border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-md transition-all text-left group cursor-pointer"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2">
+                    <Factory className="w-3.5 h-3.5 text-sky-600 group-hover:text-sky-700 shrink-0" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 group-hover:text-sky-900">
+                      Manufacturing Unit
+                    </span>
+                  </div>
+                  <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </div>
                 <div className="text-[11px] font-semibold text-slate-800 pl-5 mb-0.5">
                   Emsurg Healthcare (India) Pvt. Ltd
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-normal pl-5">
+                <p className="text-xs text-slate-600 group-hover:text-slate-700 leading-relaxed font-normal pl-5">
                   Board Ghar, Bilkanda, Talbanda, Kolkata 700110
                 </p>
-              </div>
+              </a>
 
               {/* 3. Manufacturing & R&D Unit 1 (Panihati) */}
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-sky-100/90 shadow-2xs text-left">
-                <div className="flex items-center gap-2 mb-1">
-                  <Microscope className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800">
-                    Manufacturing & R&D Unit 1
-                  </span>
+              <a
+                href="https://maps.google.com/?q=Chand+Dalal+Ghat+Road,+Panihati,+Kolkata+700114"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open Manufacturing & R&D Unit in Google Maps"
+                className="block p-3.5 rounded-2xl bg-white/80 hover:bg-white border border-sky-100/90 hover:border-sky-300 shadow-2xs hover:shadow-md transition-all text-left group cursor-pointer"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2">
+                    <Microscope className="w-3.5 h-3.5 text-sky-600 group-hover:text-sky-700 shrink-0" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 group-hover:text-sky-900">
+                      Manufacturing & R&D Unit 1
+                    </span>
+                  </div>
+                  <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </div>
                 <div className="text-[11px] font-semibold text-slate-800 pl-5 mb-0.5">
                   Emsurg Bioscience India Pvt. Ltd
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-normal pl-5">
+                <p className="text-xs text-slate-600 group-hover:text-slate-700 leading-relaxed font-normal pl-5">
                   Chand Dalal Ghat Road, Panihati, Kolkata 700114
                 </p>
-              </div>
+              </a>
             </div>
           </div>
 
