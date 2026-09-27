@@ -846,7 +846,7 @@ The MDL ILLY, JAM BLU, and OSTEOJ needle families provide hematologists and onco
   },
 ];
 
-const LOCAL_STORAGE_PRODUCTS_KEY = "emsurg_products_catalog_v2";
+const LOCAL_STORAGE_PRODUCTS_KEY = "emsurg_products_v2_synced";
 const LOCAL_STORAGE_INQUIRIES_KEY = "emsurg_inquiries";
 const LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY = "emsurg_product_inquiries";
 
@@ -876,14 +876,22 @@ export function getLocalProducts(): Product[] {
     const raw = localStorage.getItem(LOCAL_STORAGE_PRODUCTS_KEY);
     let items: Product[];
     if (!raw) {
-      items = INITIAL_PRODUCTS.map((p, idx) => ({ ...p, orderIndex: idx, featured: p.is_featured }));
+      items = INITIAL_PRODUCTS.map((p, idx) => ({ 
+        ...p, 
+        orderIndex: typeof p.orderIndex === "number" ? p.orderIndex : idx, 
+        featured: p.is_featured ?? p.featured ?? false 
+      }));
       localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(items));
     } else {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length >= INITIAL_PRODUCTS.length) {
         items = parsed;
       } else {
-        items = INITIAL_PRODUCTS.map((p, idx) => ({ ...p, orderIndex: idx, featured: p.is_featured }));
+        items = INITIAL_PRODUCTS.map((p, idx) => ({ 
+          ...p, 
+          orderIndex: typeof p.orderIndex === "number" ? p.orderIndex : idx, 
+          featured: p.is_featured ?? p.featured ?? false 
+        }));
         localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(items));
       }
     }

@@ -14,6 +14,7 @@ export interface ProductItem {
   featured?: boolean;
   orderIndex?: number;
   image: string;
+  images?: string[];
 }
 
 export const EMSURG_CATALOG: ProductItem[] = [
@@ -34,7 +35,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Closed-loop cleanroom filling",
       "Compatible with leading dialysis systems"
     ],
-    image: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 0,
+    image: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-neph-2",
@@ -49,7 +56,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Rapid uniform dissolution",
       "Prevents resin bed fouling"
     ],
-    image: "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 1,
+    image: "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-neph-3",
@@ -64,7 +76,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Rapid rinse-out profile",
       "Non-corrosive to dialysis fluid paths"
     ],
-    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 2,
+    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-neph-4",
@@ -79,7 +96,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Bio-degradable organic matrix",
       "Optimized thermal disinfection performance"
     ],
-    image: "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 3,
+    image: "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-neph-5",
@@ -94,7 +116,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Neutralizes heavy organic burdens",
       "Safe for hollow-fiber membranes"
     ],
-    image: "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 4,
+    image: "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-neph-6",
@@ -109,7 +136,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Includes high-absorbency drapes & gauze",
       "Reduces bloodstream infection risks"
     ],
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 5,
+    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // B. Orthobiologics
@@ -126,7 +158,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "No foreign body residue",
       "Reliable elution vehicle in osteomyelitis"
     ],
-    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 6,
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-ortho-2",
@@ -141,7 +179,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "High compressive strength",
       "Rapid capillary ingrowth"
     ],
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 7,
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // C. Wound Management
@@ -158,7 +202,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Smart leak and blockage alarms",
       "Hydrophobic antimicrobial filter canisters"
     ],
-    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 8,
+    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-wound-2",
@@ -173,7 +223,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Controls exudate MMP protease levels",
       "Accelerates epithelialization"
     ],
-    image: "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 9,
+    image: "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "m-wound-3",
@@ -188,7 +243,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Maintains moist wound microenvironment",
       "Direct protease binding capacity"
     ],
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 10,
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // D. Launching Soon
@@ -206,7 +266,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Biphasic HA/TCP architecture",
       "Rapid vascularization"
     ],
-    image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 11,
+    image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // ==========================================
@@ -227,7 +292,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "High-fixation bioabsorbable anchors",
       "Minimally invasive instrumentation"
     ],
-    image: "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 12,
+    image: "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // B. Bone Cement (Demetra)
@@ -245,7 +316,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Minimal monomer fumes",
       "Safe exothermic curing profile"
     ],
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 13,
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "cp-cement-2",
@@ -261,7 +337,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Prolonged working time",
       "Optimized syringe injectability"
     ],
-    image: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 14,
+    image: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "cp-cement-3",
@@ -277,7 +358,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Reliable mechanical stability",
       "Balanced setting time"
     ],
-    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 15,
+    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // C. Spine
@@ -295,7 +381,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Controllable injection viscosity",
       "Includes dedicated high-pressure syringe"
     ],
-    image: "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 16,
+    image: "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "cp-spine-2",
@@ -311,7 +402,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Consistent extrusion through fine needles",
       "Predictable vertebral stabilization"
     ],
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 17,
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "cp-spine-3",
@@ -327,7 +424,12 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Significantly mitigates extravasation",
       "High compressive fatigue strength"
     ],
-    image: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 18,
+    image: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 
   // D. Biopsy Needles (MDL Italy)
@@ -345,7 +447,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Clear sample notch geometry",
       "Ergonomic one-handed firing trigger"
     ],
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=800&q=80",
+    featured: true,
+    orderIndex: 19,
+    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
   {
     id: "cp-biopsy-2",
@@ -361,7 +469,13 @@ export const EMSURG_CATALOG: ProductItem[] = [
       "Trocar stylet for smooth cortical penetration",
       "Includes specimen push rod"
     ],
-    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80",
+    featured: false,
+    orderIndex: 20,
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
+    ]
   },
 ];
 
