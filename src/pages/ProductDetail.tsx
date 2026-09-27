@@ -32,7 +32,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(() => (slug ? getLocalProductBySlug(slug) || null : null));
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [activeImage, setActiveImage] = useState<string>("");
 
   // Accordion state
   const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({
@@ -85,6 +85,16 @@ export default function ProductDetail() {
     };
   }, [slug]);
 
+  // Update active image when product changes
+  useEffect(() => {
+    if (product) {
+      const initialImg = (product.images && product.images.length > 0)
+        ? formatDriveImageUrl(product.images[0])
+        : formatDriveImageUrl((product as any).image || "");
+      setActiveImage(initialImg || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop");
+    }
+  }, [product]);
+
   const toggleAccordion = (key: string) => {
     setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -129,9 +139,21 @@ export default function ProductDetail() {
     ? product.images
     : [(product as any).image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"];
 
-  const images = rawImages.map(formatDriveImageUrl);
+  const images = Array.from(new Set(rawImages.map(formatDriveImageUrl).filter(Boolean)));
+  const currentImage = activeImage || images[0] || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
+  const currentIndex = Math.max(0, images.indexOf(currentImage));
 
-  const currentImage = images[selectedImageIndex] || images[0];
+  const handlePrevImage = () => {
+    if (images.length <= 1) return;
+    const nextIdx = (currentIndex - 1 + images.length) % images.length;
+    setActiveImage(images[nextIdx]);
+  };
+
+  const handleNextImage = () => {
+    if (images.length <= 1) return;
+    const nextIdx = (currentIndex + 1) % images.length;
+    setActiveImage(images[nextIdx]);
+  };
 
   const targetWhatsApp = getWhatsAppNumberForProduct(product);
   const whatsappMessage = encodeURIComponent(
@@ -181,39 +203,81 @@ export default function ProductDetail() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
-          {/* LEFT COLUMN: Interactive Image Gallery */}
+          {/* LEFT COLUMN: Interactive E-Commerce Style Image Gallery */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-sm overflow-hidden relative">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center">
-                <img
-                  src={currentImage}
-                  alt={product.title}
-                  className="w-full h-full object-cover transition-all duration-300"
-                />
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  <span className="inline-block text-[11px] font-bold tracking-wider text-blue-700 uppercase bg-white/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-slate-200">
+              {/* Main Image Viewport */}
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-6 group">
+                {currentImage ? (
+                  <img
+                    key={currentImage}
+                    src={currentImage}
+                    alt={product.title}
+                    className="object-contain w-full h-full transform transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="text-slate-300 text-sm">No image available</div>
+                )}
+                
+                {/* Category Badge */}
+                <div className="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none">
+                  <span className="inline-block text-[11px] font-bold tracking-wider text-sky-700 uppercase bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-sky-100">
                     {product.category}
                   </span>
                 </div>
+
+                {/* Counter Badge */}
+                {images.length > 1 && (
+                  <div className="absolute top-4 right-4 bg-slate-900/75 text-white backdrop-blur-md text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                    {currentIndex + 1} / {images.length}
+                  </div>
+                )}
+
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handlePrevImage}
+                      aria-label="Previous Image"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-md transition-all opacity-80 hover:opacity-100 hover:scale-105"
+                    >
+                      <ChevronRight className="w-5 h-5 rotate-180" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextImage}
+                      aria-label="Next Image"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 flex items-center justify-center shadow-md transition-all opacity-80 hover:opacity-100 hover:scale-105"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* Thumbnails Row */}
+              {/* Clickable Thumbnail Strip */}
               {images.length > 1 && (
-                <div className="flex items-center gap-3 mt-4 overflow-x-auto pb-1">
-                  {images.map((img, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setSelectedImageIndex(idx)}
-                      className={`relative w-20 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
-                        selectedImageIndex === idx
-                          ? "border-blue-600 ring-2 ring-blue-500/30 scale-95"
-                          : "border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+                <div className="mt-4">
+                  <div className="flex flex-row gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
+                    {images.map((imgUrl, idx) => {
+                      const isActive = currentImage === imgUrl;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setActiveImage(imgUrl)}
+                          className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all snap-start ${
+                            isActive
+                              ? "border-sky-500 ring-2 ring-sky-200 ring-offset-1 opacity-100 shadow-sm"
+                              : "border-slate-100 opacity-60 hover:opacity-100 hover:border-sky-300"
+                          }`}
+                        >
+                          <img src={imgUrl} alt={`${product.title} view ${idx + 1}`} className="w-full h-full object-cover bg-white" />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>

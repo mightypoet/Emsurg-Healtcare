@@ -70,7 +70,8 @@ import {
   Cloud,
   Eye,
   Filter,
-  ArrowRight
+  ArrowRight,
+  GripVertical
 } from "lucide-react";
 import { format } from "date-fns";
 import ProductsTab from "../../components/admin/ProductsTab";
@@ -191,6 +192,7 @@ export default function Dashboard() {
   const [newSpecValue, setNewSpecValue] = useState("");
   const [prodImages, setProdImages] = useState<string[]>([]);
   const [selectedProdImageFiles, setSelectedProdImageFiles] = useState<File[]>([]);
+  const [draggedImgIndex, setDraggedImgIndex] = useState<number | null>(null);
   const [newImageInput, setNewImageInput] = useState("");
   const [prodIsFeatured, setProdIsFeatured] = useState(true);
   const [prodBrochureUrl, setProdBrochureUrl] = useState("");
@@ -465,7 +467,10 @@ export default function Dashboard() {
       setProdFullDesc(prod.full_description || "");
       setProdFeatures(prod.features || []);
       setProdSpecs(prod.specifications || {});
-      setProdImages(prod.images || []);
+      const existingImgs = (prod.images && prod.images.length > 0)
+        ? prod.images
+        : ((prod as any).image ? [(prod as any).image] : []);
+      setProdImages(existingImgs);
       setProdIsFeatured(prod.is_featured ?? true);
       setProdBrochureUrl(prod.brochure_url || "");
     } else {
@@ -508,46 +513,75 @@ export default function Dashboard() {
     }
   };
 
-  const handleProdImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  const handleProdImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
 
-    setUploadingProdImage(true);
-    const validFiles = Array.from(files).filter((f) => f.type.startsWith("image/"));
-
-    if (validFiles.length === 0) {
-      showToast("error", "Please upload valid image files (JPG, PNG, WebP).");
-      setUploadingProdImage(false);
+    const newFiles = Array.from(e.target.files).filter((f) => f.type.startsWith("image/"));
+    if (newFiles.length === 0) {
+      showToast("error", "Please select valid image files (JPG, PNG, WebP).");
+      e.target.value = "";
       return;
     }
 
-    // Preserve raw File objects in state for verified storage upload
-    setSelectedProdImageFiles((prev) => [...prev, ...validFiles]);
+    // 1. Preserve raw File objects in state for verified bulk storage upload
+    setSelectedProdImageFiles((prev) => [...(prev || []), ...newFiles]);
 
-    try {
-      const uploadPromises = validFiles.map(async (file) => {
-        try {
-          return await uploadProductImage(file);
-        } catch (storageErr) {
-          console.warn("Direct storage upload failed on select, keeping local data URI fallback:", storageErr);
-          return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = () => reject(new Error("File read error"));
-            reader.readAsDataURL(file);
-          });
-        }
-      });
+    // 2. Generate local instant preview URLs for all selected files
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
 
-      const uploadedUrls = await Promise.all(uploadPromises);
-      setProdImages((prev) => [...uploadedUrls, ...prev]);
-      showToast("success", `${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} staged for product.`);
-    } catch {
-      showToast("error", "Error processing product images.");
-    } finally {
-      setUploadingProdImage(false);
-      if (e.target) e.target.value = "";
-    }
+    // 3. Strictly append new previews to existing images
+    setProdImages((prev) => {
+      const existingImages = Array.isArray(prev) ? prev : [];
+      return [...existingImages, ...newPreviews];
+    });
+
+    showToast("success", `${newFiles.length} image${newFiles.length > 1 ? "s" : ""} added to gallery.`);
+    // Reset the input value so the same file can be selected again if needed
+    e.target.value = "";
+  };
+
+  const setAsPrimaryImage = (index: number) => {
+    if (index <= 0 || index >= prodImages.length) return;
+    setProdImages((prev) => {
+      const copy = [...prev];
+      const [selected] = copy.splice(index, 1);
+      copy.unshift(selected);
+      return copy;
+    });
+    showToast("success", "Cover image updated!");
+  };
+
+  const handleImageDragStart = (index: number) => {
+    setDraggedImgIndex(index);
+  };
+
+  const handleImageDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleImageDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedImgIndex === null || draggedImgIndex === dropIndex) return;
+
+    setProdImages((prev) => {
+      const currentImages = [...prev];
+      const draggedItem = currentImages[draggedImgIndex];
+      
+      // Remove from old position and insert at new position
+      currentImages.splice(draggedImgIndex, 1);
+      currentImages.splice(dropIndex, 0, draggedItem);
+
+      return currentImages;
+    });
+    setDraggedImgIndex(null);
+    showToast("success", "Images reordered. First image is the cover photo.");
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setProdImages((prev) => {
+      const existingImages = Array.isArray(prev) ? prev : [];
+      return existingImages.filter((_, idx) => idx !== indexToRemove);
+    });
   };
 
   const addFeature = () => {
@@ -581,15 +615,19 @@ export default function Dashboard() {
   const addImageFromUrl = () => {
     if (!newImageInput.trim()) return;
     const directUrl = formatDriveImageUrl(newImageInput.trim());
-    setProdImages((prev) => [...prev, directUrl]);
+
+    // Strictly append new URL to existing images
+    setProdImages((prev) => {
+      const existingImages = Array.isArray(prev) ? prev : [];
+      return [...existingImages, directUrl];
+    });
+
     if (directUrl !== newImageInput.trim()) {
       showToast("success", "Google Drive link converted to direct image URL!");
+    } else {
+      showToast("success", "Image URL added to gallery!");
     }
     setNewImageInput("");
-  };
-
-  const removeImage = (index: number) => {
-    setProdImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const saveProductHandler = async (e: React.FormEvent) => {
@@ -602,8 +640,22 @@ export default function Dashboard() {
     setSavingProduct(true);
 
     try {
-      // 1. Gather all candidates (files in state, existing prodImages, unsubmitted text in newImageInput)
-      const rawCandidates: (string | File)[] = [...selectedProdImageFiles, ...prodImages];
+      // 1. Upload all raw File objects in state to Supabase Storage
+      const uploadedFileUrls: string[] = [];
+      if (selectedProdImageFiles.length > 0) {
+        console.log(`Uploading ${selectedProdImageFiles.length} raw file(s) to Supabase Storage...`);
+        for (const file of selectedProdImageFiles) {
+          try {
+            const publicUrl = await uploadProductImage(file);
+            if (publicUrl) uploadedFileUrls.push(publicUrl);
+          } catch (uploadErr) {
+            console.error("Storage upload for selected raw File failed:", uploadErr);
+          }
+        }
+      }
+
+      // 2. Gather all image candidates (existing URLs, newly uploaded file URLs, unsubmitted input text)
+      const rawCandidates: string[] = [...uploadedFileUrls, ...prodImages];
       if (newImageInput.trim()) {
         rawCandidates.push(newImageInput.trim());
         setNewImageInput("");
@@ -613,26 +665,13 @@ export default function Dashboard() {
 
       for (const item of rawCandidates) {
         if (!item) continue;
-
-        // A. If item is a raw File object
-        if (item instanceof File) {
-          try {
-            console.log("Uploading raw File object to Supabase Storage:", item.name);
-            const cdnUrl = await uploadProductImage(item);
-            if (cdnUrl) uploadedCdnUrls.push(cdnUrl);
-          } catch (fileUploadErr) {
-            console.error("Failed to upload raw File to Supabase Storage:", fileUploadErr);
-          }
-          continue;
-        }
-
         const strItem = typeof item === "string" ? item.trim() : "";
         if (!strItem) continue;
 
-        // B. BULLETPROOF INTERCEPTOR: If string is a Base64 data URI (data:image/...) or blob URL (blob:...)
+        // A. BULLETPROOF INTERCEPTOR: If string is a Base64 data URI (data:image/...) or blob URL (blob:...)
         if (strItem.startsWith("data:image/") || strItem.startsWith("blob:")) {
           try {
-            console.log("Base64/Blob string detected. Converting to physical File and uploading to Storage...");
+            console.log("Base64/Blob string detected during save. Converting to physical File and uploading to Storage...");
             const fetchResponse = await fetch(strItem);
             const blob = await fetchResponse.blob();
             const extension = blob.type.split("/")[1] || "jpg";
@@ -643,7 +682,7 @@ export default function Dashboard() {
             );
             const cdnUrl = await uploadProductImage(fileToUpload);
             if (cdnUrl) {
-              console.log("Successfully converted Base64 to Storage URL:", cdnUrl);
+              console.log("Successfully converted to Storage CDN URL:", cdnUrl);
               uploadedCdnUrls.push(cdnUrl);
             }
           } catch (convertErr) {
@@ -652,19 +691,26 @@ export default function Dashboard() {
           continue;
         }
 
-        // C. If string is a Google Drive Link
+        // B. If string is a Google Drive Link
         if (strItem.includes("drive.google.com")) {
           const directDriveUrl = formatDriveImageUrl(strItem);
           if (directDriveUrl) uploadedCdnUrls.push(directDriveUrl);
           continue;
         }
 
-        // D. Regular remote URL (Unsplash, existing Supabase Storage, CDN, etc.)
+        // C. Regular remote URL (Unsplash, existing Supabase Storage, CDN, etc.)
         uploadedCdnUrls.push(strItem);
       }
 
       // Deduplicate and filter empty
-      const cleanImages = Array.from(new Set(uploadedCdnUrls.filter(Boolean)));
+      const cleanImages = Array.from(
+        new Set(
+          uploadedCdnUrls
+            .map((url) => formatDriveImageUrl(url))
+            .filter((url) => Boolean(url) && !url.startsWith("blob:") && !url.startsWith("data:image/"))
+        )
+      );
+
       const primaryImage = cleanImages.length > 0 
         ? cleanImages[0] 
         : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
@@ -686,16 +732,16 @@ export default function Dashboard() {
         features: prodFeatures,
         specifications: prodSpecs,
         image: primaryImage,
-        images: finalImageList, // Sync both columns
+        images: finalImageList, // Full array of high-res image URLs
         is_featured: prodIsFeatured,
         featured: prodIsFeatured,
         brochure_url: prodBrochureUrl.trim() || "#"
       };
 
-      console.log("Persisting product payload to Supabase Postgres:", productPayload);
+      console.log("Persisting product payload with multiple images to Supabase:", productPayload);
       await saveProduct(productPayload, currentProduct?.id);
       
-      showToast("success", "Product and images saved successfully to Supabase!");
+      showToast("success", `Product and ${finalImageList.length} image(s) saved successfully!`);
       setIsEditingProduct(false);
 
       // Force fresh fetch so the UI updates instantly
@@ -1333,9 +1379,14 @@ export default function Dashboard() {
                     {/* IMAGERY SECTION */}
                     <div className="md:col-span-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                          <ImageIcon className="w-4 h-4 text-blue-600" /> Product Images
-                        </label>
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                            <ImageIcon className="w-4 h-4 text-blue-600" /> Product Images Gallery
+                          </label>
+                          <span className="text-[11px] font-semibold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded-full">
+                            {prodImages.length} attached
+                          </span>
+                        </div>
                         <div>
                           <input
                             type="file"
@@ -1349,10 +1400,10 @@ export default function Dashboard() {
                             type="button"
                             onClick={() => prodFileInputRef.current?.click()}
                             disabled={uploadingProdImage}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
                             title="Select one or multiple images"
                           >
-                            <Upload className="w-3.5 h-3.5" /> Upload File(s)
+                            <Upload className="w-3.5 h-3.5" /> Bulk Upload Images
                           </button>
                         </div>
                       </div>
@@ -1360,7 +1411,7 @@ export default function Dashboard() {
                       <div className="flex gap-2 mb-3">
                         <input
                           type="url"
-                          placeholder="Or paste image URL (e.g. Unsplash or Cloud Storage)..."
+                          placeholder="Or paste image URL (Google Drive, Unsplash, CDN)..."
                           value={newImageInput}
                           onChange={(e) => setNewImageInput(e.target.value)}
                           className="flex-1 border border-slate-300 rounded-xl px-3.5 py-2 text-xs text-slate-900 bg-white"
@@ -1374,21 +1425,42 @@ export default function Dashboard() {
                         </button>
                       </div>
 
-                      {prodImages.length > 0 && (
-                        <div className="flex flex-wrap gap-3">
-                          {prodImages.map((img, idx) => (
-                            <div key={idx} className="relative w-24 h-20 rounded-xl overflow-hidden border border-slate-300 group bg-white">
-                              <img src={img} alt={`Preview ${idx}`} referrerPolicy="no-referrer" loading="lazy" className="w-full h-full object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(idx)}
-                                className="absolute top-1 right-1 bg-rose-600 text-white p-1 rounded-full opacity-90 hover:opacity-100 transition-opacity"
-                                title="Remove image"
+                      {prodImages && prodImages.length > 0 && (
+                        <div>
+                          <div className="flex flex-wrap gap-3 mt-4">
+                            {prodImages.map((img, idx) => (
+                              <div
+                                key={idx}
+                                draggable
+                                onDragStart={() => handleImageDragStart(idx)}
+                                onDragOver={handleImageDragOver}
+                                onDrop={(e) => handleImageDrop(e, idx)}
+                                className={`relative w-24 h-24 rounded-xl overflow-hidden border-2 cursor-grab active:cursor-grabbing transition-all ${
+                                  idx === 0 ? "border-sky-500 ring-2 ring-sky-200 ring-offset-1" : "border-slate-200 hover:border-sky-300"
+                                } ${draggedImgIndex === idx ? "opacity-50" : "opacity-100"}`}
                               >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
+                                <img src={img} alt={`Upload ${idx}`} className="w-full h-full object-cover bg-slate-50" />
+                                
+                                {/* Remove Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => removeImage(idx)}
+                                  className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-600 text-white p-1 rounded-full backdrop-blur-sm shadow-sm"
+                                  title="Remove image"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+
+                                {/* Cover Photo Badge */}
+                                {idx === 0 && (
+                                  <div className="absolute bottom-0 left-0 right-0 bg-sky-600/90 text-white text-[10px] font-bold text-center py-1">
+                                    COVER
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-slate-500 mt-2">Drag and drop images to reorder. The first image is the cover photo.</p>
                         </div>
                       )}
                     </div>
