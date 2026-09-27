@@ -190,6 +190,7 @@ export default function Dashboard() {
   const [newSpecKey, setNewSpecKey] = useState("");
   const [newSpecValue, setNewSpecValue] = useState("");
   const [prodImages, setProdImages] = useState<string[]>([]);
+  const [selectedProdImageFiles, setSelectedProdImageFiles] = useState<File[]>([]);
   const [newImageInput, setNewImageInput] = useState("");
   const [prodIsFeatured, setProdIsFeatured] = useState(true);
   const [prodBrochureUrl, setProdBrochureUrl] = useState("");
@@ -490,6 +491,7 @@ export default function Dashboard() {
     setNewSpecKey("");
     setNewSpecValue("");
     setNewImageInput("");
+    setSelectedProdImageFiles([]);
     setIsEditingProduct(true);
   };
 
@@ -519,12 +521,15 @@ export default function Dashboard() {
       return;
     }
 
+    // Preserve raw File objects in state for verified storage upload
+    setSelectedProdImageFiles((prev) => [...prev, ...validFiles]);
+
     try {
       const uploadPromises = validFiles.map(async (file) => {
         try {
           return await uploadProductImage(file);
         } catch (storageErr) {
-          console.warn("Direct storage upload failed, converting to local data URI fallback:", storageErr);
+          console.warn("Direct storage upload failed on select, keeping local data URI fallback:", storageErr);
           return new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result as string);
@@ -536,9 +541,9 @@ export default function Dashboard() {
 
       const uploadedUrls = await Promise.all(uploadPromises);
       setProdImages((prev) => [...uploadedUrls, ...prev]);
-      showToast("success", `${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} uploaded to Supabase Storage.`);
+      showToast("success", `${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} staged for product.`);
     } catch {
-      showToast("error", "Error uploading product images.");
+      showToast("error", "Error processing product images.");
     } finally {
       setUploadingProdImage(false);
       if (e.target) e.target.value = "";
@@ -595,37 +600,92 @@ export default function Dashboard() {
     }
 
     setSavingProduct(true);
-    const cleanedImages = prodImages.map(formatDriveImageUrl).filter(Boolean);
-    const primaryImage = cleanedImages.length > 0 
-      ? cleanedImages[0] 
-      : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
-
-    const productPayload: any = {
-      title: prodTitle.trim(),
-      slug: prodSlug.trim(),
-      category: prodCategory,
-      division: currentProduct?.division || "Manufacturing",
-      partnerBrand: currentProduct?.partnerBrand || undefined,
-      short_description: prodShortDesc.trim(),
-      description: prodShortDesc.trim(),
-      full_description: prodFullDesc.trim() || prodShortDesc.trim(),
-      features: prodFeatures,
-      specifications: prodSpecs,
-      image: primaryImage,
-      images: cleanedImages.length > 0 ? cleanedImages : [primaryImage],
-      is_featured: prodIsFeatured,
-      featured: prodIsFeatured,
-      brochure_url: prodBrochureUrl.trim() || "#"
-    };
 
     try {
+      // 1. Upload any raw File objects from state to Supabase Storage
+      const uploadedFromFiles: string[] = [];
+      if (selectedProdImageFiles.length > 0) {
+        for (const file of selectedProdImageFiles) {
+          try {
+            const publicUrl = await uploadProductImage(file);
+            uploadedFromFiles.push(publicUrl);
+          } catch (uploadErr) {
+            console.warn("Storage upload for selected raw File failed:", uploadErr);
+          }
+        }
+      }
+
+      // 2. Gather all current image entries, including un-added URL input and newly uploaded files
+      const currentImages = [...uploadedFromFiles, ...prodImages];
+      if (newImageInput.trim()) {
+        const formatted = formatDriveImageUrl(newImageInput.trim());
+        currentImages.push(formatted);
+        setNewImageInput("");
+      }
+
+      // 3. Await upload of any remaining data URI / blob URL to Supabase Storage
+      const processedImages: string[] = [];
+      for (const img of currentImages) {
+        if (!img) continue;
+        if (img.startsWith("data:image/") || img.startsWith("blob:")) {
+          try {
+            const res = await fetch(img);
+            const blob = await res.blob();
+            const ext = blob.type.split("/")[1] || "png";
+            const file = new File([blob], `product-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`, { type: blob.type });
+            const publicUrl = await uploadProductImage(file);
+            processedImages.push(publicUrl);
+          } catch (uploadErr) {
+            console.warn("Storage upload for data URI failed, keeping url:", uploadErr);
+            processedImages.push(img);
+          }
+        } else {
+          processedImages.push(formatDriveImageUrl(img));
+        }
+      }
+
+      // Filter empty and local blob strings
+      const cleanImages = Array.from(
+        new Set(
+          processedImages
+            .map((url) => formatDriveImageUrl(url))
+            .filter((url) => Boolean(url) && !url.startsWith("blob:"))
+        )
+      );
+
+      const primaryImage = cleanImages.length > 0 
+        ? cleanImages[0] 
+        : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
+
+      const finalImageList = cleanImages.length > 0 ? cleanImages : [primaryImage];
+      setProdImages(finalImageList);
+      setSelectedProdImageFiles([]);
+
+      const productPayload: any = {
+        title: prodTitle.trim(),
+        slug: prodSlug.trim(),
+        category: prodCategory,
+        division: currentProduct?.division || "Manufacturing",
+        partnerBrand: currentProduct?.partnerBrand || undefined,
+        short_description: prodShortDesc.trim(),
+        description: prodShortDesc.trim(),
+        full_description: prodFullDesc.trim() || prodShortDesc.trim(),
+        features: prodFeatures,
+        specifications: prodSpecs,
+        image: primaryImage,
+        images: finalImageList,
+        is_featured: prodIsFeatured,
+        featured: prodIsFeatured,
+        brochure_url: prodBrochureUrl.trim() || "#"
+      };
+
       await saveProduct(productPayload, currentProduct?.id);
       await loadProducts();
       setIsEditingProduct(false);
       showToast("success", "Product details and images saved successfully to Supabase!");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Save product error:", err);
-      showToast("error", "Error saving product.");
+      showToast("error", err?.message || "Error saving product.");
     } finally {
       setSavingProduct(false);
     }

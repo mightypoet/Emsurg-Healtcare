@@ -1074,6 +1074,28 @@ export async function fetchProducts(): Promise<Product[]> {
 }
 
 /**
+ * Ensures an image URL is a CDN / Storage URL, converting any base64 data URIs
+ * by uploading to Supabase Storage, and normalizing Google Drive URLs.
+ */
+export async function ensureStorageUrl(img: string): Promise<string> {
+  if (!img) return "";
+  const trimmed = img.trim();
+  if (trimmed.startsWith("data:image/")) {
+    try {
+      const res = await fetch(trimmed);
+      const blob = await res.blob();
+      const ext = blob.type.split("/")[1] || "png";
+      const file = new File([blob], `product-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`, { type: blob.type });
+      return await uploadProductImage(file);
+    } catch (err) {
+      console.warn("Auto-upload data URI to storage failed, using fallback:", err);
+      return trimmed;
+    }
+  }
+  return formatDriveImageUrl(trimmed);
+}
+
+/**
  * Updates a product's attributes (featured flag, image, orderIndex, etc.) directly in Supabase
  */
 export async function updateProduct(id: string, updates: Partial<ProductItem> | Partial<Product>): Promise<boolean> {
@@ -1118,15 +1140,24 @@ export async function updateProduct(id: string, updates: Partial<ProductItem> | 
     // Handle image update
     const primaryImg = (updates as any).image || (updates.images && updates.images[0]);
     if (primaryImg) {
-      const cleanImg = formatDriveImageUrl(primaryImg);
+      const cleanImg = await ensureStorageUrl(primaryImg);
       dbPayload.image = cleanImg;
-      dbPayload.images = updates.images && updates.images.length > 0
-        ? updates.images.map(formatDriveImageUrl).filter(Boolean)
-        : [cleanImg];
+      if (updates.images && updates.images.length > 0) {
+        const cleanArr: string[] = [];
+        for (const itm of updates.images) {
+          cleanArr.push(await ensureStorageUrl(itm));
+        }
+        dbPayload.images = cleanArr;
+      } else {
+        dbPayload.images = [cleanImg];
+      }
     } else if (updates.images && updates.images.length > 0) {
-      const cleanImages = updates.images.map(formatDriveImageUrl).filter(Boolean);
-      dbPayload.image = cleanImages[0];
-      dbPayload.images = cleanImages;
+      const cleanArr: string[] = [];
+      for (const itm of updates.images) {
+        cleanArr.push(await ensureStorageUrl(itm));
+      }
+      dbPayload.image = cleanArr[0];
+      dbPayload.images = cleanArr;
     }
 
     console.log("Writing payload to Supabase for ID:", id, dbPayload);
@@ -1238,14 +1269,23 @@ export async function saveProduct(productData: Partial<Product> | Partial<Produc
   const current = getLocalProducts();
   const isFeat = (productData as any).is_featured ?? productData.featured ?? false;
   
-  const rawPrimary = (productData.images && productData.images.length > 0)
-    ? productData.images[0]
-    : ((productData as any).image || "");
-  const cleanImage = formatDriveImageUrl(rawPrimary) || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
+  const rawList = (productData.images && productData.images.length > 0)
+    ? productData.images
+    : ((productData as any).image ? [(productData as any).image] : []);
 
-  const cleanImages = (productData.images && productData.images.length > 0)
-    ? productData.images.map(formatDriveImageUrl).filter(Boolean)
-    : [cleanImage];
+  const cleanImages: string[] = [];
+  for (const item of rawList) {
+    if (item) {
+      const formatted = await ensureStorageUrl(item);
+      if (formatted) cleanImages.push(formatted);
+    }
+  }
+
+  const cleanImage = cleanImages.length > 0 
+    ? cleanImages[0] 
+    : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
+
+  const finalImageList = cleanImages.length > 0 ? cleanImages : [cleanImage];
 
   const targetId = existingId || productData.id || `prod-${Date.now()}`;
   const targetSlug = productData.slug || productData.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || `prod-${Date.now()}`;
@@ -1264,7 +1304,7 @@ export async function saveProduct(productData: Partial<Product> | Partial<Produc
     specifications: (productData as any).specifications || {},
     certifications: (productData as any).certifications || null,
     image: cleanImage,
-    images: cleanImages.length > 0 ? cleanImages : [cleanImage],
+    images: finalImageList,
     is_featured: isFeat,
     featured: isFeat,
     order_index: (productData as any).order_index ?? (productData as any).orderIndex ?? 0,
