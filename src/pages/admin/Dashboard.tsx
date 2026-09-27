@@ -602,57 +602,69 @@ export default function Dashboard() {
     setSavingProduct(true);
 
     try {
-      // 1. Upload any raw File objects from state to Supabase Storage
-      const uploadedFromFiles: string[] = [];
-      if (selectedProdImageFiles.length > 0) {
-        for (const file of selectedProdImageFiles) {
-          try {
-            const publicUrl = await uploadProductImage(file);
-            uploadedFromFiles.push(publicUrl);
-          } catch (uploadErr) {
-            console.warn("Storage upload for selected raw File failed:", uploadErr);
-          }
-        }
-      }
-
-      // 2. Gather all current image entries, including un-added URL input and newly uploaded files
-      const currentImages = [...uploadedFromFiles, ...prodImages];
+      // 1. Gather all candidates (files in state, existing prodImages, unsubmitted text in newImageInput)
+      const rawCandidates: (string | File)[] = [...selectedProdImageFiles, ...prodImages];
       if (newImageInput.trim()) {
-        const formatted = formatDriveImageUrl(newImageInput.trim());
-        currentImages.push(formatted);
+        rawCandidates.push(newImageInput.trim());
         setNewImageInput("");
       }
 
-      // 3. Await upload of any remaining data URI / blob URL to Supabase Storage
-      const processedImages: string[] = [];
-      for (const img of currentImages) {
-        if (!img) continue;
-        if (img.startsWith("data:image/") || img.startsWith("blob:")) {
+      const uploadedCdnUrls: string[] = [];
+
+      for (const item of rawCandidates) {
+        if (!item) continue;
+
+        // A. If item is a raw File object
+        if (item instanceof File) {
           try {
-            const res = await fetch(img);
-            const blob = await res.blob();
-            const ext = blob.type.split("/")[1] || "png";
-            const file = new File([blob], `product-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`, { type: blob.type });
-            const publicUrl = await uploadProductImage(file);
-            processedImages.push(publicUrl);
-          } catch (uploadErr) {
-            console.warn("Storage upload for data URI failed, keeping url:", uploadErr);
-            processedImages.push(img);
+            console.log("Uploading raw File object to Supabase Storage:", item.name);
+            const cdnUrl = await uploadProductImage(item);
+            if (cdnUrl) uploadedCdnUrls.push(cdnUrl);
+          } catch (fileUploadErr) {
+            console.error("Failed to upload raw File to Supabase Storage:", fileUploadErr);
           }
-        } else {
-          processedImages.push(formatDriveImageUrl(img));
+          continue;
         }
+
+        const strItem = typeof item === "string" ? item.trim() : "";
+        if (!strItem) continue;
+
+        // B. BULLETPROOF INTERCEPTOR: If string is a Base64 data URI (data:image/...) or blob URL (blob:...)
+        if (strItem.startsWith("data:image/") || strItem.startsWith("blob:")) {
+          try {
+            console.log("Base64/Blob string detected. Converting to physical File and uploading to Storage...");
+            const fetchResponse = await fetch(strItem);
+            const blob = await fetchResponse.blob();
+            const extension = blob.type.split("/")[1] || "jpg";
+            const fileToUpload = new File(
+              [blob],
+              `product-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${extension}`,
+              { type: blob.type || "image/jpeg" }
+            );
+            const cdnUrl = await uploadProductImage(fileToUpload);
+            if (cdnUrl) {
+              console.log("Successfully converted Base64 to Storage URL:", cdnUrl);
+              uploadedCdnUrls.push(cdnUrl);
+            }
+          } catch (convertErr) {
+            console.error("Failed to upload Base64/Blob to Supabase Storage:", convertErr);
+          }
+          continue;
+        }
+
+        // C. If string is a Google Drive Link
+        if (strItem.includes("drive.google.com")) {
+          const directDriveUrl = formatDriveImageUrl(strItem);
+          if (directDriveUrl) uploadedCdnUrls.push(directDriveUrl);
+          continue;
+        }
+
+        // D. Regular remote URL (Unsplash, existing Supabase Storage, CDN, etc.)
+        uploadedCdnUrls.push(strItem);
       }
 
-      // Filter empty and local blob strings
-      const cleanImages = Array.from(
-        new Set(
-          processedImages
-            .map((url) => formatDriveImageUrl(url))
-            .filter((url) => Boolean(url) && !url.startsWith("blob:"))
-        )
-      );
-
+      // Deduplicate and filter empty
+      const cleanImages = Array.from(new Set(uploadedCdnUrls.filter(Boolean)));
       const primaryImage = cleanImages.length > 0 
         ? cleanImages[0] 
         : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
@@ -661,6 +673,7 @@ export default function Dashboard() {
       setProdImages(finalImageList);
       setSelectedProdImageFiles([]);
 
+      // Prepare exact payload for Postgres
       const productPayload: any = {
         title: prodTitle.trim(),
         slug: prodSlug.trim(),
@@ -673,19 +686,23 @@ export default function Dashboard() {
         features: prodFeatures,
         specifications: prodSpecs,
         image: primaryImage,
-        images: finalImageList,
+        images: finalImageList, // Sync both columns
         is_featured: prodIsFeatured,
         featured: prodIsFeatured,
         brochure_url: prodBrochureUrl.trim() || "#"
       };
 
+      console.log("Persisting product payload to Supabase Postgres:", productPayload);
       await saveProduct(productPayload, currentProduct?.id);
-      await loadProducts();
+      
+      showToast("success", "Product and images saved successfully to Supabase!");
       setIsEditingProduct(false);
-      showToast("success", "Product details and images saved successfully to Supabase!");
+
+      // Force fresh fetch so the UI updates instantly
+      await loadProducts();
     } catch (err: any) {
-      console.error("Save product error:", err);
-      showToast("error", err?.message || "Error saving product.");
+      console.error("Save product failed:", err);
+      showToast("error", err?.message || "Error saving product to Supabase.");
     } finally {
       setSavingProduct(false);
     }
