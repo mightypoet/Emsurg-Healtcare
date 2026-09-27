@@ -1331,6 +1331,48 @@ export async function saveProduct(productData: Partial<Product> | Partial<Produc
 export const saveLocalProduct = saveProduct;
 
 /**
+ * Uploads a product image file directly to Supabase Storage ('products' bucket)
+ * and returns its public CDN URL.
+ */
+export async function uploadProductImage(file: File): Promise<string> {
+  try {
+    const fileExt = file.name.split(".").pop() || "jpg";
+    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${cleanFileName}`;
+    const filePath = `catalog/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("products")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.warn("Storage upload to 'products' bucket failed, trying 'gallery':", uploadError);
+      const { error: fallbackError } = await supabase.storage
+        .from("gallery")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (!fallbackError) {
+        const { data } = supabase.storage.from("gallery").getPublicUrl(filePath);
+        return data.publicUrl;
+      }
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from("products").getPublicUrl(filePath);
+    return data.publicUrl;
+  } catch (err) {
+    console.error("Error in uploadProductImage:", err);
+    throw err;
+  }
+}
+
+/**
  * Deletes a product directly from Supabase and local cache
  */
 export async function deleteProduct(id: string): Promise<boolean> {

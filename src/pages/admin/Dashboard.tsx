@@ -16,6 +16,7 @@ import {
   fetchProducts,
   getLocalProducts,
   saveProduct,
+  uploadProductImage,
   deleteProduct,
   toggleFeatured,
   reorderProducts,
@@ -519,18 +520,23 @@ export default function Dashboard() {
     }
 
     try {
-      const readPromises = validFiles.map((file) => {
-        return new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = () => reject(new Error("File read error"));
-          reader.readAsDataURL(file);
-        });
+      const uploadPromises = validFiles.map(async (file) => {
+        try {
+          return await uploadProductImage(file);
+        } catch (storageErr) {
+          console.warn("Direct storage upload failed, converting to local data URI fallback:", storageErr);
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error("File read error"));
+            reader.readAsDataURL(file);
+          });
+        }
       });
 
-      const images = await Promise.all(readPromises);
-      setProdImages((prev) => [...images, ...prev]);
-      showToast("success", `${images.length} product image${images.length > 1 ? "s" : ""} attached.`);
+      const uploadedUrls = await Promise.all(uploadPromises);
+      setProdImages((prev) => [...uploadedUrls, ...prev]);
+      showToast("success", `${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} uploaded to Supabase Storage.`);
     } catch {
       showToast("error", "Error uploading product images.");
     } finally {
