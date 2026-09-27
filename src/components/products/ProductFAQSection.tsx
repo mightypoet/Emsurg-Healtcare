@@ -14,7 +14,9 @@ import {
   ThumbsDown,
   Layers,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  ArrowRight,
+  Send
 } from "lucide-react";
 import { Product, ProductFAQ, getProductFAQs } from "../../lib/productsStore";
 
@@ -368,24 +370,29 @@ export function ProductFAQSection({ product, onOpenInquiry }: ProductFAQSectionP
             </p>
           </div>
 
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
-            {onOpenInquiry && (
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+            {onOpenInquiry ? (
               <button
                 type="button"
                 onClick={onOpenInquiry}
-                className="w-full sm:w-auto px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
-                <FileCheck2 className="w-4 h-4" /> Ask a Question / Request Quote
+                <Send className="w-4 h-4" />
+                <span>Inquire</span>
+                <ArrowRight className="w-4 h-4 ml-0.5" />
               </button>
+            ) : (
+              <a
+                href={whatsappInquiryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                <span>Inquire</span>
+                <ArrowRight className="w-4 h-4 ml-0.5" />
+              </a>
             )}
-            <a
-              href={whatsappInquiryUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"
-            >
-              <PhoneCall className="w-4 h-4" /> WhatsApp Specialist
-            </a>
           </div>
         </div>
       </div>

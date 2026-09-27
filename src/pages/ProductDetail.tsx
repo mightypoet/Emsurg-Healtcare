@@ -5,7 +5,6 @@ import {
   ArrowLeft, 
   ShieldCheck, 
   CheckCircle2, 
-  PhoneCall, 
   Download, 
   MessageSquare, 
   Building, 
@@ -16,12 +15,14 @@ import {
   ExternalLink, 
   Sparkles, 
   Info,
-  HelpCircle
+  HelpCircle,
+  ArrowRight
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug } from "../lib/productsStore";
 import ProductInquiryModal from "../components/products/ProductInquiryModal";
 import { ProductFAQSection } from "../components/products/ProductFAQSection";
+import { LiquidButton } from "../components/ui/liquid-glass-button";
 import { companyInfo } from "../data/content";
 
 export default function ProductDetail() {
@@ -273,27 +274,20 @@ export default function ProductDetail() {
               {/* Action Dock (Primary CTAs) */}
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8 space-y-3">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
+                  <LiquidButton
+                    variant="primary"
+                    size="lg"
                     onClick={() => setIsInquiryOpen(true)}
-                    className="flex-1 py-3.5 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-500/25 hover:shadow-lg hover:-translate-y-0.5"
+                    className="w-full sm:w-auto text-sm font-bold uppercase tracking-wider py-3.5 px-7 justify-center gap-2"
                   >
-                    <MessageSquare className="w-4 h-4" /> Request Quotation / Inquiry
-                  </button>
-
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm"
-                  >
-                    <PhoneCall className="w-4 h-4" /> WhatsApp Direct
-                  </a>
+                    <span>Inquire Now</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </LiquidButton>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-500 gap-2">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Fast Response from Clinical Specialists
+                  <span className="flex items-center gap-1.5 font-medium text-slate-700">
+                    <span>⚡</span> Fast Response from Clinical Specialists &amp; Tenders Desk
                   </span>
                   <div className="flex items-center gap-3">
                     <a

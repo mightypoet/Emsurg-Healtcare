@@ -8,10 +8,10 @@ import {
   Building, 
   Globe2, 
   ShieldCheck, 
-  Sparkles,
   Award,
   Layers,
-  Factory
+  Factory,
+  Send
 } from "lucide-react";
 import { Product, fetchProducts, getLocalProducts } from "../lib/productsStore";
 import { 
@@ -416,13 +416,11 @@ export default function Products() {
                     {/* Top Left: Division Tag */}
                     <div className="absolute top-3.5 left-3.5 flex flex-col gap-1.5 items-start">
                       {isManufacturing ? (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-sky-900 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-sky-200">
-                          <Building className="w-3 h-3 text-sky-600" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-900 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-xs border border-sky-200/80">
                           Indigenous Manufacturing
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-indigo-900 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-indigo-200">
-                          <Globe2 className="w-3 h-3 text-indigo-600" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-900 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-xs border border-indigo-200/80">
                           Partner: {product.partnerBrand || "Global Alliance"}
                         </span>
                       )}
@@ -431,12 +429,11 @@ export default function Products() {
                     {/* Top Right: Status / Upcoming Badge */}
                     <div className="absolute top-3.5 right-3.5">
                       {product.isUpcoming ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-900 bg-amber-100/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm border border-amber-300">
-                          <Sparkles className="w-3 h-3 text-amber-600" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-100/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-xs border border-amber-300/80">
                           Launching Soon
                         </span>
                       ) : product.is_featured ? (
-                        <span className="inline-block text-[10px] font-bold text-sky-800 uppercase bg-sky-50/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm border border-sky-200">
+                        <span className="text-[10px] font-bold text-sky-800 uppercase tracking-wider bg-sky-50/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-xs border border-sky-200/80">
                           Flagship
                         </span>
                       ) : null}
@@ -444,7 +441,7 @@ export default function Products() {
 
                     {/* Bottom Left on image: Category pill */}
                     <div className="absolute bottom-3 left-3.5">
-                      <span className="inline-block text-[11px] font-bold tracking-wider text-white uppercase bg-slate-900/80 backdrop-blur-md px-3 py-0.5 rounded-full border border-white/20">
+                      <span className="inline-block text-[11px] font-bold tracking-[0.2em] text-white uppercase bg-slate-900/85 backdrop-blur-md px-3 py-0.5 rounded-full border border-white/20 shadow-xs">
                         {product.category}
                       </span>
                     </div>
@@ -509,13 +506,10 @@ export default function Products() {
                         <button
                           type="button"
                           onClick={() => openInquiry(product)}
-                          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-center transition-colors shadow-sm ${
-                            isManufacturing
-                              ? "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-600/20"
-                              : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20"
-                          }`}
+                          className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-center transition-colors shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
                         >
-                          Inquire Now
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Inquire</span>
                         </button>
                       </div>
                     </div>

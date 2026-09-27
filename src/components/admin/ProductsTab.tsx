@@ -100,7 +100,7 @@ export default function ProductsTab({
         </div>
         <div className="flex items-center gap-2 text-amber-800">
           <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
-          <span>Click <strong>★ Featured on Home</strong> to instantly showcase products on the flagship homepage showcase.</span>
+          <span>Click <strong>Featured on Home</strong> to instantly showcase products on the flagship homepage showcase.</span>
         </div>
       </div>
 
@@ -221,7 +221,7 @@ export default function ProductsTab({
                             title="Currently featured on the homepage flagship showcase. Click to unfeature."
                           >
                             <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                            <span>★ Featured on Home</span>
+                            <span>Featured on Home</span>
                           </button>
                         ) : (
                           <button
@@ -231,7 +231,7 @@ export default function ProductsTab({
                             title="Not featured on homepage. Click to showcase as Flagship."
                           >
                             <Star className="w-3.5 h-3.5" />
-                            <span>☆ Feature</span>
+                            <span>Feature</span>
                           </button>
                         )}
                       </td>

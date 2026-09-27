@@ -767,8 +767,8 @@ export default function About() {
 
             {/* 2028 Future Horizon Milestone */}
             <div className="flex relative group mt-10">
-              <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center shrink-0 z-10 shadow-md font-bold text-xs sm:text-sm">
-                ★
+              <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center shrink-0 z-10 shadow-md">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
               <div className="ml-5 sm:ml-8 pt-0.5">
                 <div className="inline-block px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold tracking-wider mb-2">

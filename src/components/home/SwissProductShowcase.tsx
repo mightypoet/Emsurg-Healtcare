@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Bone, 
-  Activity, 
-  Droplets, 
-  Layers, 
   ArrowUpRight, 
   ShieldCheck, 
   Building, 
-  Globe2, 
-  Sparkles,
-  Award
+  Globe2,
+  Send
 } from "lucide-react";
 import { ProductHighlightCard } from "../ui/product-card";
 import { getLocalProducts, Product } from "../../lib/productsStore";
-
-function getCategoryIcon(category: string = "", division: string = ""): React.ReactNode {
-  const cat = category.toLowerCase();
-  if (cat.includes("orthobiologic") || cat.includes("bone")) return <Bone className="w-4 h-4" />;
-  if (cat.includes("wound") || cat.includes("npwt")) return <Activity className="w-4 h-4" />;
-  if (cat.includes("nephro") || cat.includes("dialysis") || cat.includes("fluid")) return <Droplets className="w-4 h-4" />;
-  if (cat.includes("sport")) return <Award className="w-4 h-4" />;
-  if (cat.includes("cement") || cat.includes("spine")) return <Layers className="w-4 h-4" />;
-  if (cat.includes("biopsy") || cat.includes("needle")) return <ShieldCheck className="w-4 h-4" />;
-  if (division === "Manufacturing") return <Building className="w-4 h-4" />;
-  return <Globe2 className="w-4 h-4" />;
-}
+import ProductInquiryModal from "../modals/ProductInquiryModal";
 
 function getAccentGlow(category: string = "", division: string = ""): string {
   const cat = category.toLowerCase();
@@ -61,6 +45,13 @@ function getBadge(product: Product): string {
 export default function SwissProductShowcase() {
   const [selectedTier, setSelectedTier] = useState<"All" | "Manufacturing" | "Channel Partner">("All");
   const [allProducts, setAllProducts] = useState<Product[]>(() => getLocalProducts());
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [inquiryProduct, setInquiryProduct] = useState<Product | null>(null);
+
+  const handleInquireProduct = (product: Product) => {
+    setInquiryProduct(product);
+    setIsInquiryOpen(true);
+  };
 
   useEffect(() => {
     const update = () => {
@@ -187,7 +178,6 @@ export default function SwissProductShowcase() {
                 <ProductHighlightCard
                   key={product.id}
                   variant="light"
-                  categoryIcon={getCategoryIcon(product.category, product.division)}
                   category={product.category}
                   badge={getBadge(product)}
                   title={product.title}
@@ -196,6 +186,7 @@ export default function SwissProductShowcase() {
                   imageAlt={product.title}
                   slug={product.slug}
                   accentGlow={getAccentGlow(product.category, product.division)}
+                  onInquire={() => handleInquireProduct(product)}
                 />
               );
             })
@@ -203,7 +194,7 @@ export default function SwissProductShowcase() {
             <div className="col-span-full py-12 text-center text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
               <p className="text-sm font-semibold text-slate-700">No featured products in this division yet.</p>
               <p className="text-xs text-slate-400 mt-1">
-                Use the Admin Dashboard &gt; Medical Products Catalog to toggle "★ Featured on Home" on products.
+                Use the Admin Dashboard &gt; Medical Products Catalog to toggle "Featured on Home" on products.
               </p>
             </div>
           )}
@@ -217,7 +208,7 @@ export default function SwissProductShowcase() {
             </div>
             <div>
               <h4 className="text-base font-bold text-slate-900 tracking-tight">
-                Hospital Procurement & Institutional Tenders
+                Hospital Procurement &amp; Institutional Tenders
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                 Technical dossiers, CDSCO Form MD-9 / Class C certifications, and evaluation samples available upon clinical verification.
@@ -225,7 +216,18 @@ export default function SwissProductShowcase() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-3 shrink-0 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => {
+                setInquiryProduct(null);
+                setIsInquiryOpen(true);
+              }}
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md shadow-emerald-600/20 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>Inquire</span>
+            </button>
             <Link
               to="/products?division=Manufacturing"
               className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md shadow-sky-600/20 active:scale-95"
@@ -241,6 +243,13 @@ export default function SwissProductShowcase() {
           </div>
         </div>
       </div>
+
+      {/* Product Inquiry Modal for Showcase */}
+      <ProductInquiryModal
+        isOpen={isInquiryOpen}
+        onClose={() => setIsInquiryOpen(false)}
+        product={inquiryProduct}
+      />
     </section>
   );
 }

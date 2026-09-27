@@ -278,7 +278,8 @@ export function WoundManagementPackshot() {
             <polygon points="10,7 16,10 10,13" fill="#0284C7" />
 
             <circle cx="34" cy="10" r="7" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="0.8" />
-            <text x="34" y="13.5" fill="#334155" fontSize="10" fontWeight="bold" textAnchor="middle">⚙</text>
+            <circle cx="34" cy="10" r="2.2" fill="none" stroke="#334155" strokeWidth="1.1" />
+            <path d="M 34 6.8 L 34 7.8 M 34 12.2 L 34 13.2 M 30.8 10 L 31.8 10 M 36.2 10 L 37.2 10" stroke="#334155" strokeWidth="1.1" strokeLinecap="round" />
 
             {/* Power button */}
             <circle cx="56" cy="10" r="7" fill="#0284C7" stroke="#0369A1" strokeWidth="0.8" />

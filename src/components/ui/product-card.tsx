@@ -1,11 +1,11 @@
 import * as React from "react";
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, type HTMLMotionProps } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Send } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export interface ProductHighlightCardProps extends Omit<HTMLMotionProps<"div">, "children"> {
-  categoryIcon: React.ReactNode;
+  categoryIcon?: React.ReactNode;
   category: string;
   title: string;
   description: string;
@@ -15,6 +15,7 @@ export interface ProductHighlightCardProps extends Omit<HTMLMotionProps<"div">, 
   accentGlow?: string;
   badge?: string;
   variant?: "dark" | "light";
+  onInquire?: () => void;
 }
 
 export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHighlightCardProps>(
@@ -31,6 +32,7 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
       accentGlow = "rgba(14, 165, 233, 0.45)",
       badge,
       variant = "dark",
+      onInquire,
       ...props
     },
     ref
@@ -110,33 +112,16 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
               "relative h-full w-full rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-md bg-white/85 border border-sky-100/60"
             )}
           >
-            {/* Top Row: Category Badge & Icon */}
+            {/* Top Row: Clean Typographic Category Tag & Right-aligned Certification Pill */}
             <div
               style={{ transform: "translateZ(30px)" }}
-              className="flex items-center justify-between gap-2 z-10"
+              className="flex items-center justify-between gap-2 z-10 w-full"
             >
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    "w-8 h-8 rounded-xl flex items-center justify-center shadow-xs backdrop-blur-md bg-sky-50 border border-sky-100 text-sky-600"
-                  )}
-                >
-                  {categoryIcon}
-                </span>
-                <span
-                  className={cn(
-                    "text-[11px] font-bold uppercase tracking-widest text-slate-600"
-                  )}
-                >
-                  {category}
-                </span>
-              </div>
+              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-sky-700 truncate">
+                {category}
+              </span>
               {badge && (
-                <span
-                  className={cn(
-                    "text-[10px] font-mono font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full border text-sky-700 bg-sky-50 border-sky-200/70"
-                  )}
-                >
+                <span className="border border-sky-200/80 bg-sky-50/70 text-sky-700 text-[10px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">
                   {badge}
                 </span>
               )}
@@ -187,28 +172,39 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
 
               <div
                 className={cn(
-                  "pt-3 mt-1 border-t flex items-center justify-between border-sky-100"
+                  "pt-3 mt-1 border-t flex items-center justify-between gap-2 border-sky-100"
                 )}
               >
                 <Link
                   to={productHref}
                   className={cn(
-                    "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider group/link transition-colors text-sky-600 hover:text-sky-700"
+                    "inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider group/link transition-colors text-slate-600 hover:text-sky-600"
                   )}
                 >
-                  <span>Clinical Specs</span>
+                  <span>Specs</span>
                   <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
                 </Link>
 
-                <Link
-                  to={productHref}
-                  className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center transition-all active:scale-95 bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200/70"
-                  )}
-                  aria-label={`View details for ${title}`}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (onInquire) {
+                      onInquire();
+                    } else {
+                      window.dispatchEvent(
+                        new CustomEvent("open-inquiry-modal", {
+                          detail: { title, category, slug, images: [imageSrc] }
+                        })
+                      );
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-all cursor-pointer shadow-2xs active:scale-95"
                 >
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
+                  <Send className="w-3 h-3 text-emerald-600" />
+                  <span>Inquire</span>
+                </button>
               </div>
             </div>
           </div>

@@ -32,12 +32,17 @@ export interface ProductInquiry {
   id: string;
   product_id?: string;
   product_name: string;
+  category?: string;
+  division?: string;
   name: string;
   institution: string;
   city: string;
+  state?: string;
   phone: string;
-  email: string;
+  email?: string;
+  role?: string;
   quantity_requirement?: string;
+  notes?: string;
   created_at: string;
 }
 
@@ -842,7 +847,8 @@ The MDL ILLY, JAM BLU, and OSTEOJ needle families provide hematologists and onco
 ];
 
 const LOCAL_STORAGE_PRODUCTS_KEY = "emsurg_products_catalog_v2";
-const LOCAL_STORAGE_INQUIRIES_KEY = "emsurg_product_inquiries";
+const LOCAL_STORAGE_INQUIRIES_KEY = "emsurg_inquiries";
+const LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY = "emsurg_product_inquiries";
 
 // Map old slug aliases to new slugs
 const SLUG_ALIAS_MAP: Record<string, string> = {
@@ -1166,12 +1172,23 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
 // Inquiries handling
 export function getLocalInquiries(): ProductInquiry[] {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_INQUIRIES_KEY);
+    const raw = localStorage.getItem(LOCAL_STORAGE_INQUIRIES_KEY) || localStorage.getItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+}
+
+export function deleteLocalInquiry(id: string): void {
+  try {
+    const current = getLocalInquiries().filter((inq) => inq.id !== id);
+    localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(current));
+    localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(current));
+    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated"));
+  } catch (err) {
+    console.info("Could not delete inquiry locally:", err);
   }
 }
 
@@ -1186,6 +1203,8 @@ export async function submitProductInquiry(inquiry: Omit<ProductInquiry, "id" | 
   current.unshift(newInquiry);
   try {
     localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(current));
+    localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(current));
+    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated"));
   } catch (err) {
     console.info("Could not save inquiry locally:", err);
   }
@@ -1193,7 +1212,12 @@ export async function submitProductInquiry(inquiry: Omit<ProductInquiry, "id" | 
   // Attempt Supabase insert if table exists
   try {
     const promise = Promise.resolve(
-      supabase.from("product_inquiries").insert([newInquiry])
+      supabase.from("inquiries").insert([newInquiry]).then((res) => {
+        if (res.error) {
+          return supabase.from("product_inquiries").insert([newInquiry]);
+        }
+        return res;
+      })
     );
     await Promise.race([
       promise,
