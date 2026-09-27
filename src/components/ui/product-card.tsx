@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, type HTMLMotionProps } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRight, Send } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -37,6 +37,8 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
     },
     ref
   ) => {
+    const navigate = useNavigate();
+
     const mouseX = useMotionValue(175);
     const mouseY = useMotionValue(200);
 
@@ -65,10 +67,15 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
         : `/products/${slug}`
       : "/products";
 
+    const handleCardClick = () => {
+      navigate(productHref);
+    };
+
     return (
       <div className="relative group perspective-[1000px] w-full max-w-[360px] mx-auto">
         <motion.div
           ref={ref}
+          onClick={handleCardClick}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => {
             mouseX.set(175);
@@ -80,10 +87,10 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
             transformStyle: "preserve-3d",
           }}
           className={cn(
-            "relative h-[420px] w-full rounded-3xl p-3 select-none transition-all duration-300",
+            "relative h-[420px] w-full rounded-3xl p-3 select-none transition-all duration-300 cursor-pointer",
             isLight
-              ? "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.14)] hover:border-sky-300/80"
-              : "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.14)] hover:border-sky-300/80",
+              ? "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.18)] hover:border-sky-300"
+              : "bg-white/80 backdrop-blur-xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.06)] hover:shadow-[0_16px_40px_rgba(2,132,199,0.18)] hover:border-sky-300",
             className
           )}
           {...props}

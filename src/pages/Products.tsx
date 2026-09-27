@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { 
   Search, 
   ArrowRight, 
@@ -24,6 +24,7 @@ import ProductInquiryModal from "../components/products/ProductInquiryModal";
 type DivisionFilter = "All" | "Manufacturing" | "Channel Partner";
 
 export default function Products() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const initialDivision = (searchParams.get("division") as DivisionFilter) || "All";
@@ -399,7 +400,8 @@ export default function Products() {
               return (
                 <div
                   key={product.id}
-                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 overflow-hidden flex flex-col group"
+                  onClick={() => navigate(`/products/${product.slug}`)}
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-sky-300 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer"
                 >
                   {/* Aspect-Ratio Thumbnail Image */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
@@ -505,7 +507,10 @@ export default function Products() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => openInquiry(product)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openInquiry(product);
+                          }}
                           className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-center transition-colors shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
                         >
                           <Send className="w-3.5 h-3.5" />
