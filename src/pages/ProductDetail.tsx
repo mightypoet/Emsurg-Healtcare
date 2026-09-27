@@ -19,7 +19,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug } from "../lib/productsStore";
+import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug, getWhatsAppNumberForProduct } from "../lib/productsStore";
 import ProductInquiryModal from "../components/products/ProductInquiryModal";
 import { ProductFAQSection } from "../components/products/ProductFAQSection";
 import { LiquidButton } from "../components/ui/liquid-glass-button";
@@ -120,13 +120,14 @@ export default function ProductDetail() {
 
   const currentImage = images[selectedImageIndex] || images[0];
 
+  const targetWhatsApp = getWhatsAppNumberForProduct(product);
   const whatsappMessage = encodeURIComponent(
     `Hello Emsurg Healthcare, I am inquiring regarding the procurement and technical specs for: ${product.title}`
   );
-  const whatsappUrl = `https://wa.me/917439757452?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/${targetWhatsApp}?text=${whatsappMessage}`;
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-gradient-to-b from-sky-50/70 via-white to-white min-h-screen">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-[130] bg-emerald-700 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-emerald-500 animate-in fade-in slide-in-from-bottom-4">
@@ -135,19 +136,22 @@ export default function ProductDetail() {
         </div>
       )}
 
-      {/* Top Breadcrumb Header */}
-      <div className="pt-24 sm:pt-32 pb-4 sm:pb-6 bg-[#0B1120] text-white border-b border-slate-800">
+      {/* Top Breadcrumb Header - Light Medical Liquid Glass Aesthetic */}
+      <div className="pt-24 sm:pt-32 pb-4 sm:pb-6 bg-white/80 backdrop-blur-2xl border-b border-sky-100 shadow-[0_4px_20px_rgba(2,132,199,0.06)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-wrap items-center text-xs font-medium text-slate-400 gap-1.5 sm:gap-2">
-            <Link to="/" className="hover:text-white transition-colors py-1">Home</Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
-            <Link to="/products" className="hover:text-white transition-colors py-1">Products</Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
-            <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="text-blue-400 hover:text-blue-300 transition-colors py-1 truncate max-w-[120px] sm:max-w-none">
+          <div className="flex flex-wrap items-center text-xs font-medium text-slate-500 gap-1.5 sm:gap-2">
+            <Link to="/" className="hover:text-sky-600 transition-colors py-1">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Link to="/products" className="hover:text-sky-600 transition-colors py-1">Products</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Link 
+              to={`/products?category=${encodeURIComponent(product.category)}`} 
+              className="text-sky-600 hover:text-sky-700 transition-colors py-1 truncate max-w-[140px] sm:max-w-none font-semibold"
+            >
               {product.category}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
-            <span className="text-slate-200 truncate max-w-[130px] sm:max-w-xs py-1">{product.title}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span className="text-sky-900 font-semibold truncate max-w-[150px] sm:max-w-xs py-1">{product.title}</span>
           </div>
         </div>
       </div>

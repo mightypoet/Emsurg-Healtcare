@@ -1229,3 +1229,53 @@ export async function submitProductInquiry(inquiry: Omit<ProductInquiry, "id" | 
 
   return newInquiry;
 }
+
+/**
+ * Category-to-WhatsApp Routing Rules:
+ * 1. +91 74397 57452 (Phone: 917439757452):
+ *    - Nephrology (Dialysis Fluid, Drycitrate, NaCl Tablets, Aquasurg, Citric Acid, Diaclean, Diakit)
+ *    - Trading Cements / Bone Cement (Demetra Cemex HV, LV, ID Green)
+ *    - Spine Solutions (Tecres Mendec, Teknimed Opacity+, High V+)
+ *    - Default fallback for general/unassigned inquiries
+ * 
+ * 2. +91 98745 35674 (Phone: 919874535674):
+ *    - BoneSurg / Orthobiologics (BoneSurg CR, BoneSurg HA, BoneSurg Regen)
+ *    - Sports Medicine (Smith & Nephew Arthroscopy)
+ * 
+ * 3. +91 83350 29278 (Phone: 918335029278):
+ *    - NPWT / Wound Management (NPWT Machine & Kits, Cellsurg P, Cellsurg M)
+ *    - MDL / Biopsy Needles (MDL Soft Tissue & Bone Marrow Biopsy Systems)
+ */
+export function getWhatsAppNumberForProduct(
+  product?: { category?: string; division?: string; partnerBrand?: string; title?: string } | null
+): string {
+  if (!product) return "917439757452";
+
+  const cat = (product.category || "").toLowerCase();
+  const title = (product.title || "").toLowerCase();
+  const brand = (product.partnerBrand || "").toLowerCase();
+
+  // 2. BoneSurg and Sports Medicine -> +91 98745 35674
+  if (
+    cat.includes("orthobiologic") ||
+    title.includes("bonesurg") ||
+    cat.includes("sport") ||
+    brand.includes("smith")
+  ) {
+    return "919874535674";
+  }
+
+  // 3. NPWT and MDL Biopsy -> +91 83350 29278
+  if (
+    cat.includes("wound") ||
+    title.includes("npwt") ||
+    title.includes("cellsurg") ||
+    cat.includes("biopsy") ||
+    brand.includes("mdl")
+  ) {
+    return "918335029278";
+  }
+
+  // 1. Nephrology, Trading Cements, Spine (Default) -> +91 74397 57452
+  return "917439757452";
+}

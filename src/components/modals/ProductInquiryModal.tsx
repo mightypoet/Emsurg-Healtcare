@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   ArrowRight
 } from "lucide-react";
-import { Product, submitProductInquiry } from "../../lib/productsStore";
+import { Product, submitProductInquiry, getWhatsAppNumberForProduct } from "../../lib/productsStore";
 
 export interface ProductInquiryModalProps {
   isOpen: boolean;
@@ -107,8 +107,11 @@ export default function ProductInquiryModal({
         "_Generated via emsurg.com official portal_"
       ].join("\n");
 
-      // Official Emsurg Clinical Desk WhatsApp Number (+91 7439757452)
-      const targetPhone = "917439757452";
+      // Category-to-WhatsApp Routing Rules:
+      // 1. +91 74397 57452: Nephrology & Trading Cements (Default)
+      // 2. +91 98745 35674: BoneSurg / Orthobiologics & Sports Medicine
+      // 3. +91 83350 29278: NPWT / Wound Management & MDL Biopsy Needles
+      const targetPhone = getWhatsAppNumberForProduct(product);
       const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(formattedMessage)}`;
 
       // Safe dispatch to WhatsApp in new tab
