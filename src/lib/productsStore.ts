@@ -1076,58 +1076,126 @@ export async function fetchProducts(): Promise<Product[]> {
 /**
  * Updates a product's attributes (featured flag, image, orderIndex, etc.) directly in Supabase
  */
-export async function updateProduct(id: string, updates: Partial<ProductItem> | Partial<Product>): Promise<void> {
-  const dbUpdates: any = { ...updates };
-  if (updates.featured !== undefined) {
-    dbUpdates.is_featured = updates.featured;
-    dbUpdates.featured = updates.featured;
-  }
-  if ((updates as any).is_featured !== undefined) {
-    dbUpdates.is_featured = (updates as any).is_featured;
-    dbUpdates.featured = (updates as any).is_featured;
-  }
-  if ((updates as any).partnerBrand !== undefined) {
-    dbUpdates.partner_brand = (updates as any).partnerBrand;
-  }
-  if ((updates as any).orderIndex !== undefined) {
-    dbUpdates.order_index = (updates as any).orderIndex;
-  }
-  if ((updates as any).short_description !== undefined) {
-    dbUpdates.description = (updates as any).short_description;
-    dbUpdates.short_description = (updates as any).short_description;
-  }
-  if ((updates as any).images !== undefined && Array.isArray((updates as any).images) && (updates as any).images.length > 0) {
-    const formattedImages = (updates as any).images.map(formatDriveImageUrl).filter(Boolean);
-    dbUpdates.image = formattedImages[0];
-    dbUpdates.images = formattedImages;
-  } else if ((updates as any).image !== undefined) {
-    const formatted = formatDriveImageUrl((updates as any).image);
-    dbUpdates.image = formatted;
-    dbUpdates.images = [formatted];
-  }
+export async function updateProduct(id: string, updates: Partial<ProductItem> | Partial<Product>): Promise<boolean> {
+  try {
+    // 1. Prepare exact Supabase column mappings
+    const dbPayload: any = {};
+    if (updates.title !== undefined) dbPayload.title = updates.title;
+    if (updates.slug !== undefined) dbPayload.slug = updates.slug;
+    if (updates.division !== undefined) dbPayload.division = updates.division;
+    if (updates.category !== undefined) dbPayload.category = updates.category;
+    if ((updates as any).partner_brand !== undefined) dbPayload.partner_brand = (updates as any).partner_brand;
+    else if (updates.partnerBrand !== undefined) dbPayload.partner_brand = updates.partnerBrand;
+    
+    if ((updates as any).description !== undefined) {
+      dbPayload.description = (updates as any).description;
+      dbPayload.short_description = (updates as any).description;
+    } else if ((updates as any).short_description !== undefined) {
+      dbPayload.description = (updates as any).short_description;
+      dbPayload.short_description = (updates as any).short_description;
+    }
+    
+    if ((updates as any).full_description !== undefined) {
+      dbPayload.full_description = (updates as any).full_description;
+    }
+    if (updates.certifications !== undefined) dbPayload.certifications = updates.certifications;
+    if (updates.features !== undefined) dbPayload.features = updates.features;
+    if ((updates as any).specifications !== undefined) dbPayload.specifications = (updates as any).specifications;
+    if (updates.featured !== undefined) {
+      dbPayload.is_featured = updates.featured;
+      dbPayload.featured = updates.featured;
+    }
+    if ((updates as any).is_featured !== undefined) {
+      dbPayload.is_featured = (updates as any).is_featured;
+      dbPayload.featured = (updates as any).is_featured;
+    }
+    if (updates.orderIndex !== undefined) {
+      dbPayload.order_index = updates.orderIndex;
+    } else if ((updates as any).order_index !== undefined) {
+      dbPayload.order_index = (updates as any).order_index;
+    }
 
-  // Update in-memory cache immediately
-  if (inMemoryProductsCache) {
-    const idx = inMemoryProductsCache.findIndex((p) => p.id === id || p.slug === id);
-    if (idx !== -1) {
-      inMemoryProductsCache[idx] = mapSingleDbProduct({ ...inMemoryProductsCache[idx], ...dbUpdates });
-      try {
-        localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(inMemoryProductsCache));
-      } catch {}
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("products-updated", { detail: inMemoryProductsCache }));
+    // Handle image update
+    const primaryImg = (updates as any).image || (updates.images && updates.images[0]);
+    if (primaryImg) {
+      const cleanImg = formatDriveImageUrl(primaryImg);
+      dbPayload.image = cleanImg;
+      dbPayload.images = updates.images && updates.images.length > 0
+        ? updates.images.map(formatDriveImageUrl).filter(Boolean)
+        : [cleanImg];
+    } else if (updates.images && updates.images.length > 0) {
+      const cleanImages = updates.images.map(formatDriveImageUrl).filter(Boolean);
+      dbPayload.image = cleanImages[0];
+      dbPayload.images = cleanImages;
+    }
+
+    console.log("Writing payload to Supabase for ID:", id, dbPayload);
+
+    // Update in-memory cache immediately
+    if (inMemoryProductsCache) {
+      const idx = inMemoryProductsCache.findIndex((p) => p.id === id || p.slug === id);
+      if (idx !== -1) {
+        inMemoryProductsCache[idx] = mapSingleDbProduct({ ...inMemoryProductsCache[idx], ...dbPayload });
+        try {
+          localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(inMemoryProductsCache));
+        } catch {}
       }
     }
-  }
 
-  try {
-    const { error } = await supabase.from("products").update(dbUpdates).or(`id.eq.${id},slug.eq.${id}`);
+    // 2. Perform direct update
+    const { data, error } = await supabase
+      .from("products")
+      .update(dbPayload)
+      .eq("id", id)
+      .select();
+
     if (error) {
-      console.warn("Supabase update error, trying upsert by slug:", error.message);
-      await supabase.from("products").upsert({ id, ...dbUpdates }, { onConflict: "slug" });
+      console.warn("Supabase update by ID rejected or error:", error.message);
+      // Attempt update by slug or upsert
+      const targetSlug = updates.slug || id;
+      const { data: slugData, error: slugErr } = await supabase
+        .from("products")
+        .update(dbPayload)
+        .eq("slug", targetSlug)
+        .select();
+
+      if (slugErr || !slugData || slugData.length === 0) {
+        console.warn("Update by slug rejected, attempting upsert with onConflict slug:", slugErr?.message);
+        const { error: upsertErr } = await supabase
+          .from("products")
+          .upsert({ id, slug: targetSlug, ...dbPayload }, { onConflict: "slug" });
+        if (upsertErr) {
+          console.error("Critical error in updateProduct:", upsertErr);
+          throw upsertErr;
+        }
+      }
+    } else if (!data || data.length === 0) {
+      console.warn("No rows matched ID:", id, "Attempting update by slug...");
+      const targetSlug = updates.slug || id;
+      const { data: slugData, error: slugErr } = await supabase
+        .from("products")
+        .update(dbPayload)
+        .eq("slug", targetSlug)
+        .select();
+
+      if (slugErr || !slugData || slugData.length === 0) {
+        console.warn("No rows matched slug, performing upsert by slug...");
+        await supabase
+          .from("products")
+          .upsert({ id, slug: targetSlug, ...dbPayload }, { onConflict: "slug" });
+      }
     }
-  } catch (err) {
-    console.info("Supabase updateProduct bypassed:", err);
+
+    console.log("Successfully persisted update to Supabase!");
+    // Notify all tabs and active views
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("products-updated", { detail: inMemoryProductsCache }));
+      window.dispatchEvent(new CustomEvent("emsurg-products-changed"));
+    }
+    return true;
+  } catch (err: any) {
+    console.error("Critical error in updateProduct:", err);
+    throw err;
   }
 }
 
@@ -1164,7 +1232,7 @@ export function getLocalProductBySlug(slug: string): Product | undefined {
 }
 
 /**
- * Saves/Upserts a product directly to Supabase with robust Drive URL sanitization
+ * Saves/Upserts a product directly to Supabase with verified persistence and Drive URL sanitization
  */
 export async function saveProduct(productData: Partial<Product> | Partial<ProductItem>, existingId?: string): Promise<Product> {
   const current = getLocalProducts();
@@ -1204,6 +1272,8 @@ export async function saveProduct(productData: Partial<Product> | Partial<Produc
     created_at: (productData as any).created_at || new Date().toISOString()
   };
 
+  console.log("Saving product payload to Supabase:", payload);
+
   const targetProduct = mapSingleDbProduct(payload);
 
   // Update in-memory & local cache
@@ -1221,32 +1291,38 @@ export async function saveProduct(productData: Partial<Product> | Partial<Produc
 
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
+    window.dispatchEvent(new CustomEvent("emsurg-products-changed"));
   }
 
-  // Supabase upsert with automatic slug conflict fallback
+  // Supabase upsert: Try onConflict: 'id' first, fallback to onConflict: 'slug'
   try {
     const { data, error } = await supabase
       .from("products")
       .upsert(payload, { onConflict: "id" })
-      .select()
-      .single();
+      .select();
 
-    if (error) {
-      console.warn("Supabase upsert onConflict id failed, retrying onConflict slug:", error.message);
+    if (error || !data || data.length === 0) {
+      console.warn("Supabase upsert onConflict id notice, retrying with onConflict slug:", error?.message);
       const { data: retryData, error: retryErr } = await supabase
         .from("products")
         .upsert(payload, { onConflict: "slug" })
-        .select()
-        .single();
+        .select();
       
-      if (!retryErr && retryData) {
-        return mapSingleDbProduct(retryData);
+      if (retryErr) {
+        console.error("Supabase upsert retry by slug failed:", retryErr);
+        throw retryErr;
       }
-    } else if (data) {
-      return mapSingleDbProduct(data);
+      if (retryData && retryData.length > 0) {
+        console.log("Successfully saved product to Supabase (slug conflict matched)!");
+        return mapSingleDbProduct(retryData[0]);
+      }
+    } else if (data && data.length > 0) {
+      console.log("Successfully saved product to Supabase (id conflict matched)!");
+      return mapSingleDbProduct(data[0]);
     }
-  } catch (err) {
-    console.error("Supabase write error:", err);
+  } catch (err: any) {
+    console.error("Critical error in saveProduct:", err);
+    throw err;
   }
 
   return targetProduct;
@@ -1442,12 +1518,14 @@ export function subscribeToProducts(callback: (products: Product[]) => void): ()
 
   if (typeof window !== "undefined") {
     window.addEventListener("products-updated", handleCustomEvent);
+    window.addEventListener("emsurg-products-changed", handleCustomEvent);
   }
 
   return () => {
     supabase.removeChannel(channel);
     if (typeof window !== "undefined") {
       window.removeEventListener("products-updated", handleCustomEvent);
+      window.removeEventListener("emsurg-products-changed", handleCustomEvent);
     }
   };
 }
