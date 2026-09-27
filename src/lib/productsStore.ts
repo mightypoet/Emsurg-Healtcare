@@ -1,9 +1,11 @@
 import { supabase } from "./supabase";
 import { getProductFAQs, type ProductFAQ } from "./productsFaqs";
 import { EMSURG_CATALOG, type ProductItem } from "./productsData";
+import { formatDriveImageUrl } from "./utils";
 
 export { getProductFAQs, type ProductFAQ };
 export { EMSURG_CATALOG, type ProductItem };
+export { formatDriveImageUrl };
 
 export interface Product {
   id: string;
@@ -1092,9 +1094,16 @@ export async function updateProduct(id: string, updates: Partial<ProductItem> | 
   }
   if ((updates as any).short_description !== undefined) {
     dbUpdates.description = (updates as any).short_description;
+    dbUpdates.short_description = (updates as any).short_description;
   }
   if ((updates as any).images !== undefined && Array.isArray((updates as any).images) && (updates as any).images.length > 0) {
-    dbUpdates.image = (updates as any).images[0];
+    const formattedImages = (updates as any).images.map(formatDriveImageUrl).filter(Boolean);
+    dbUpdates.image = formattedImages[0];
+    dbUpdates.images = formattedImages;
+  } else if ((updates as any).image !== undefined) {
+    const formatted = formatDriveImageUrl((updates as any).image);
+    dbUpdates.image = formatted;
+    dbUpdates.images = [formatted];
   }
 
   // Update in-memory cache immediately
@@ -1114,7 +1123,8 @@ export async function updateProduct(id: string, updates: Partial<ProductItem> | 
   try {
     const { error } = await supabase.from("products").update(dbUpdates).or(`id.eq.${id},slug.eq.${id}`);
     if (error) {
-      console.error("Failed to update product in Supabase:", error);
+      console.warn("Supabase update error, trying upsert by slug:", error.message);
+      await supabase.from("products").upsert({ id, ...dbUpdates }, { onConflict: "slug" });
     }
   } catch (err) {
     console.info("Supabase updateProduct bypassed:", err);
@@ -1154,61 +1164,56 @@ export function getLocalProductBySlug(slug: string): Product | undefined {
 }
 
 /**
- * Saves/Upserts a product directly to Supabase
+ * Saves/Upserts a product directly to Supabase with robust Drive URL sanitization
  */
-export async function saveProduct(productData: Partial<Product>, existingId?: string): Promise<Product> {
+export async function saveProduct(productData: Partial<Product> | Partial<ProductItem>, existingId?: string): Promise<Product> {
   const current = getLocalProducts();
-  const isFeat = productData.is_featured ?? productData.featured ?? true;
+  const isFeat = (productData as any).is_featured ?? productData.featured ?? false;
   
-  const primaryImage = (productData.images && productData.images.length > 0)
+  const rawPrimary = (productData.images && productData.images.length > 0)
     ? productData.images[0]
     : ((productData as any).image || "");
+  const cleanImage = formatDriveImageUrl(rawPrimary) || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
 
-  const allImages = (productData.images && productData.images.length > 0)
-    ? productData.images
-    : (primaryImage ? [primaryImage] : []);
-  
-  let targetProduct: Product;
-  let isNew = false;
+  const cleanImages = (productData.images && productData.images.length > 0)
+    ? productData.images.map(formatDriveImageUrl).filter(Boolean)
+    : [cleanImage];
 
-  if (existingId) {
-    const index = current.findIndex((p) => p.id === existingId || p.slug === productData.slug);
-    if (index !== -1) {
-      targetProduct = {
-        ...current[index],
-        ...productData,
-        id: existingId,
-        is_featured: isFeat,
-        featured: isFeat,
-        images: allImages.length > 0 ? allImages : current[index].images,
-      };
-      current[index] = targetProduct;
-    } else {
-      targetProduct = mapSingleDbProduct({
-        ...productData,
-        id: existingId,
-        is_featured: isFeat,
-        featured: isFeat,
-        images: allImages,
-        image: primaryImage,
-      }, current.length);
-      current.push(targetProduct);
-      isNew = true;
-    }
-  } else {
-    targetProduct = mapSingleDbProduct({
-      ...productData,
-      id: `prod-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      is_featured: isFeat,
-      featured: isFeat,
-      images: allImages,
-      image: primaryImage,
-    }, current.length);
-    current.push(targetProduct);
-    isNew = true;
-  }
+  const targetId = existingId || productData.id || `prod-${Date.now()}`;
+  const targetSlug = productData.slug || productData.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || `prod-${Date.now()}`;
+
+  const payload: any = {
+    id: targetId,
+    slug: targetSlug,
+    title: productData.title || "Medical Product",
+    division: productData.division || "Manufacturing",
+    category: productData.category || "Orthobiologics",
+    partner_brand: (productData as any).partner_brand || productData.partnerBrand || null,
+    description: (productData as any).description || (productData as any).short_description || "",
+    short_description: (productData as any).short_description || (productData as any).description || "",
+    full_description: (productData as any).full_description || (productData as any).description || "",
+    features: productData.features || [],
+    specifications: (productData as any).specifications || {},
+    certifications: (productData as any).certifications || null,
+    image: cleanImage,
+    images: cleanImages.length > 0 ? cleanImages : [cleanImage],
+    is_featured: isFeat,
+    featured: isFeat,
+    order_index: (productData as any).order_index ?? (productData as any).orderIndex ?? 0,
+    brochure_url: (productData as any).brochure_url || (productData as any).brochureUrl || "#",
+    created_at: (productData as any).created_at || new Date().toISOString()
+  };
+
+  const targetProduct = mapSingleDbProduct(payload);
 
   // Update in-memory & local cache
+  const existingIdx = current.findIndex((p) => p.id === targetId || p.slug === targetSlug);
+  if (existingIdx !== -1) {
+    current[existingIdx] = { ...current[existingIdx], ...targetProduct };
+  } else {
+    current.push(targetProduct);
+  }
+
   inMemoryProductsCache = current;
   try {
     localStorage.setItem(LOCAL_STORAGE_PRODUCTS_KEY, JSON.stringify(current));
@@ -1218,60 +1223,30 @@ export async function saveProduct(productData: Partial<Product>, existingId?: st
     window.dispatchEvent(new CustomEvent("products-updated", { detail: current }));
   }
 
-  // Persist directly to Supabase
+  // Supabase upsert with automatic slug conflict fallback
   try {
-    const finalPrimaryImage = targetProduct.images && targetProduct.images.length > 0
-      ? targetProduct.images[0]
-      : (primaryImage || "");
+    const { data, error } = await supabase
+      .from("products")
+      .upsert(payload, { onConflict: "id" })
+      .select()
+      .single();
 
-    const dbPayload: any = {
-      title: targetProduct.title,
-      slug: targetProduct.slug,
-      division: targetProduct.division,
-      category: targetProduct.category,
-      partner_brand: targetProduct.partnerBrand || null,
-      description: targetProduct.short_description,
-      short_description: targetProduct.short_description,
-      full_description: targetProduct.full_description,
-      features: targetProduct.features,
-      specifications: targetProduct.specifications,
-      image: finalPrimaryImage,
-      images: targetProduct.images && targetProduct.images.length > 0 ? targetProduct.images : (finalPrimaryImage ? [finalPrimaryImage] : []),
-      is_featured: isFeat,
-      featured: isFeat,
-      order_index: targetProduct.orderIndex ?? current.indexOf(targetProduct),
-      brochure_url: targetProduct.brochure_url,
-    };
-
-    if (existingId) {
-      const { data: updateData, error: updateError } = await supabase
+    if (error) {
+      console.warn("Supabase upsert onConflict id failed, retrying onConflict slug:", error.message);
+      const { data: retryData, error: retryErr } = await supabase
         .from("products")
-        .update(dbPayload)
-        .or(`id.eq.${existingId},slug.eq.${targetProduct.slug}`)
-        .select();
-
-      if (updateError || !updateData || updateData.length === 0) {
-        const { data: upsertData } = await supabase
-          .from("products")
-          .upsert([dbPayload], { onConflict: "slug" })
-          .select();
-        if (upsertData && upsertData[0]) {
-          targetProduct.id = upsertData[0].id;
-        }
-      } else if (updateData && updateData[0]) {
-        targetProduct.id = updateData[0].id;
+        .upsert(payload, { onConflict: "slug" })
+        .select()
+        .single();
+      
+      if (!retryErr && retryData) {
+        return mapSingleDbProduct(retryData);
       }
-    } else {
-      const { data: upsertData } = await supabase
-        .from("products")
-        .upsert([dbPayload], { onConflict: "slug" })
-        .select();
-      if (upsertData && upsertData[0]) {
-        targetProduct.id = upsertData[0].id;
-      }
+    } else if (data) {
+      return mapSingleDbProduct(data);
     }
   } catch (err) {
-    console.info("Supabase saveProduct error:", err);
+    console.error("Supabase write error:", err);
   }
 
   return targetProduct;

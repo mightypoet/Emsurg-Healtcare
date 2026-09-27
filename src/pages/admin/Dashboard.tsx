@@ -589,8 +589,9 @@ export default function Dashboard() {
     }
 
     setSavingProduct(true);
-    const primaryImage = prodImages && prodImages.length > 0 
-      ? prodImages[0] 
+    const cleanedImages = prodImages.map(formatDriveImageUrl).filter(Boolean);
+    const primaryImage = cleanedImages.length > 0 
+      ? cleanedImages[0] 
       : "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop";
 
     const productPayload: any = {
@@ -600,11 +601,12 @@ export default function Dashboard() {
       division: currentProduct?.division || "Manufacturing",
       partnerBrand: currentProduct?.partnerBrand || undefined,
       short_description: prodShortDesc.trim(),
+      description: prodShortDesc.trim(),
       full_description: prodFullDesc.trim() || prodShortDesc.trim(),
       features: prodFeatures,
       specifications: prodSpecs,
       image: primaryImage,
-      images: prodImages.length > 0 ? prodImages : [primaryImage],
+      images: cleanedImages.length > 0 ? cleanedImages : [primaryImage],
       is_featured: prodIsFeatured,
       featured: prodIsFeatured,
       brochure_url: prodBrochureUrl.trim() || "#"
