@@ -19,6 +19,9 @@ import {
   deleteLocalProduct,
   deleteProduct,
   toggleLocalProductFeatured,
+  toggleFeatured,
+  reorderProducts,
+  updateProductsOrder,
   getLocalInquiries
 } from "../../lib/productsStore";
 import { formatDriveImageUrl } from "../../lib/utils";
@@ -65,6 +68,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { format } from "date-fns";
+import ProductsTab from "../../components/admin/ProductsTab";
 import GalleryTab from "../../components/admin/GalleryTab";
 import GalleryItemModal from "../../components/admin/GalleryItemModal";
 import BulkUploadModal from "../../components/admin/BulkUploadModal";
@@ -628,20 +632,29 @@ export default function Dashboard() {
     }
   };
 
+  const handleProductReorder = (sourceIndex: number, destinationIndex: number) => {
+    const updated = reorderProducts(sourceIndex, destinationIndex);
+    setProducts([...updated]);
+    showToast("success", "Product catalog order updated");
+  };
+
   const handleToggleProductFeatured = async (product: Product) => {
+    const isCurrentlyFeatured = product.featured ?? product.is_featured ?? false;
+    toggleFeatured(product.id);
+    const updated = getLocalProducts();
+    setProducts([...updated]);
+    showToast("success", `Product ${!isCurrentlyFeatured ? "featured on homepage" : "unfeatured from homepage"}.`);
+
     try {
-      if (!product.id.startsWith("prod-")) {
+      if (!product.id.startsWith("prod-") && !product.id.startsWith("m-") && !product.id.startsWith("cp-")) {
         await withTimeout(
-          Promise.resolve(supabase.from("products").update({ is_featured: !product.is_featured }).eq("id", product.id)),
-          3000
+          Promise.resolve(supabase.from("products").update({ is_featured: !isCurrentlyFeatured, featured: !isCurrentlyFeatured }).eq("id", product.id)),
+          2500
         );
       }
     } catch (err) {
       console.info("Supabase update featured bypassed:", err);
     }
-    toggleLocalProductFeatured(product.id);
-    await loadProducts();
-    showToast("success", `Product ${!product.is_featured ? "marked as Flagship" : "unflagged"}.`);
   };
 
   /* ---------------- GALLERY & MEDIA LOGIC ---------------- */
@@ -1105,141 +1118,15 @@ export default function Dashboard() {
         {activeTab === "products" && (
           <>
             {!isEditingProduct ? (
-              <>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                  <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Medical Products Catalog</h1>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Manage indigenous medical devices, French PMMA cements, Italian biopsy lines, and surgical solutions.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => openProductEditor()}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-colors shadow-sm shadow-blue-500/20 self-start sm:self-auto"
-                  >
-                    <Plus className="w-4 h-4" /> New Product
-                  </button>
-                </div>
-
-                <div className="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200 text-left">
-                      <thead className="bg-slate-50">
-                        <tr>
-                          <th className="px-6 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Product</th>
-                          <th className="px-6 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</th>
-                          <th className="px-6 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-slate-200">
-                        {loadingProducts ? (
-                          <tr>
-                            <td colSpan={4} className="px-6 py-8 text-center text-sm text-slate-500">
-                              Loading products catalog...
-                            </td>
-                          </tr>
-                        ) : products.length === 0 ? (
-                          <tr>
-                            <td colSpan={4} className="px-6 py-12 text-center text-sm text-slate-500">
-                              No products found. Click "New Product" to add your first device.
-                            </td>
-                          </tr>
-                        ) : (
-                          products.map((p) => {
-                            const thumb = p.images?.[0] || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=200&auto=format&fit=crop";
-                            return (
-                              <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-3">
-                                    <img
-                                      src={thumb}
-                                      alt={p.title}
-                                      referrerPolicy="no-referrer"
-                                      loading="lazy"
-                                      className="w-12 h-10 rounded-lg object-cover border border-slate-200 shrink-0"
-                                    />
-                                    <div>
-                                      <div className="text-sm font-bold text-slate-900 line-clamp-1">{p.title}</div>
-                                      <div className="text-xs text-slate-400 font-mono">/products/{p.slug}</div>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-slate-700">
-                                  <span className="px-2.5 py-1 bg-slate-100 rounded-full border border-slate-200">
-                                    {p.category}
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  {p.is_featured ? (
-                                    <span className="px-2.5 py-0.5 inline-flex text-xs leading-5 font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                      Flagship
-                                    </span>
-                                  ) : (
-                                    <span className="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-600">
-                                      Standard
-                                    </span>
-                                  )}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
-                                  <div className="flex justify-end items-center gap-2">
-                                    <Link
-                                      to={`/products/${p.slug}`}
-                                      target="_blank"
-                                      className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                      title="View Live Product Page"
-                                    >
-                                      <ExternalLink className="w-4 h-4" />
-                                    </Link>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleToggleProductFeatured(p)}
-                                      className={`p-1.5 rounded-lg border transition-colors ${
-                                        p.is_featured
-                                          ? "bg-amber-50 border-amber-200 text-amber-600"
-                                          : "border-slate-200 text-slate-400 hover:text-amber-600 hover:bg-amber-50"
-                                      }`}
-                                      title={p.is_featured ? "Flagship product (Click to unflag)" : "Click to mark as Flagship"}
-                                    >
-                                      <Sparkles className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        openProductEditor(p);
-                                      }}
-                                      className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                      title="Edit"
-                                    >
-                                      <Pencil className="w-4 h-4 text-slate-500 hover:text-blue-600" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (e.shiftKey) {
-                                          executeDeleteProduct(p.id);
-                                        } else {
-                                          handleDeleteProduct(p.id, p.title);
-                                        }
-                                      }}
-                                      className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
-                                      title="Delete"
-                                    >
-                                      <Trash2 className="w-4 h-4 text-slate-400 hover:text-red-600" />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </>
+              <ProductsTab
+                products={products}
+                loadingProducts={loadingProducts}
+                onOpenEditor={openProductEditor}
+                onToggleFeatured={handleToggleProductFeatured}
+                onReorder={handleProductReorder}
+                onDeleteProduct={handleDeleteProduct}
+                onQuickDelete={executeDeleteProduct}
+              />
             ) : (
               /* PRODUCT EDITOR FORM */
               <div className="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 md:p-8">

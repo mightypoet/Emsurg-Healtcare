@@ -84,57 +84,74 @@ export default function Contact() {
 
         {/* Contact Info & Locations */}
         <div className="lg:col-span-5">
-          <div className="bg-slate-50 p-8 md:p-10 rounded-3xl border border-slate-100 mb-10">
-            <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-8 flex items-center"><MessageSquare className="w-4 h-4 mr-2 text-blue-600" /> Direct Contact</h3>
-            <div className="space-y-8">
+          <div className="bg-slate-50 p-8 md:p-10 rounded-3xl border border-slate-100 mb-8">
+            <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-8 flex items-center">
+              <MessageSquare className="w-4 h-4 mr-2 text-sky-600" /> Direct Communication
+            </h3>
+            <div className="space-y-6">
               <div className="flex items-start">
-                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-slate-400">
+                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-sky-600 shadow-2xs">
                   <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-1">Phone</div>
-                  <div className="text-lg font-bold text-slate-900">{companyInfo.phone}</div>
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-0.5">Telephone</div>
+                  <a href={`tel:${companyInfo.phone}`} className="text-lg font-bold text-slate-900 hover:text-sky-600 transition-colors">
+                    {companyInfo.phone}
+                  </a>
                 </div>
               </div>
+
               <div className="flex items-start">
-                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-slate-400">
-                  <Phone className="w-4 h-4 text-green-600" />
+                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-emerald-600 shadow-2xs">
+                  <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-1">WhatsApp</div>
-                  <div className="text-lg font-bold text-slate-900">{companyInfo.whatsapp}</div>
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-0.5">WhatsApp / Clinical Desk</div>
+                  <a href={`https://wa.me/${companyInfo.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-slate-900 hover:text-emerald-600 transition-colors">
+                    {companyInfo.whatsapp}
+                  </a>
                 </div>
               </div>
+
               <div className="flex items-start">
-                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-slate-400">
+                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-sky-600 shadow-2xs">
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-1">Official Email</div>
-                  <div className="text-base font-bold text-blue-700">{companyInfo.email}</div>
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-0.5">Official Email</div>
+                  <a href={`mailto:${companyInfo.email}`} className="text-base font-bold text-sky-700 hover:underline">
+                    {companyInfo.email}
+                  </a>
                 </div>
               </div>
+
               <div className="flex items-start">
-                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-slate-400">
+                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-4 text-slate-500 shadow-2xs">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-1">Hours</div>
-                  <div className="text-base font-medium text-slate-700">{companyInfo.hours}</div>
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-slate-400 mb-0.5">Operating Hours</div>
+                  <div className="text-sm font-medium text-slate-700">{companyInfo.hours}</div>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="bg-white p-8 md:p-10 rounded-3xl border border-slate-200 shadow-sm">
-            <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-8">Our Locations</h3>
-            <div className="space-y-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase">Our Facilities in Kolkata</h3>
+              <span className="text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200/80 px-2.5 py-0.5 rounded-full">
+                3 Operational Hubs
+              </span>
+            </div>
+            
+            <div className="space-y-6">
               {locations.map((loc, idx) => (
-                <div key={idx} className="relative pl-6">
-                  <div className="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-blue-600"></div>
-                  <div className="text-sm font-bold text-slate-900 mb-1 tracking-tight">{loc.type}</div>
-                  {loc.company && <div className="text-[11px] font-bold tracking-wider uppercase text-blue-700 mb-2">{loc.company}</div>}
-                  <div className="text-sm text-slate-600 leading-relaxed font-medium">{loc.address}</div>
+                <div key={idx} className="relative pl-6 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                  <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-sky-500 ring-4 ring-sky-100"></div>
+                  <div className="text-sm font-bold text-slate-900 tracking-tight">{loc.type}</div>
+                  {loc.company && <div className="text-[11px] font-semibold text-sky-700 mb-1">{loc.company}</div>}
+                  <div className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">{loc.address}</div>
                 </div>
               ))}
             </div>

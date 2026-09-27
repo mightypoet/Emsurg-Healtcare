@@ -10,7 +10,11 @@ import {
   ShieldCheck, 
   Bone, 
   Droplets, 
-  Layers 
+  Layers,
+  Building,
+  Globe2,
+  Sparkles,
+  Award
 } from "lucide-react";
 import { companyInfo } from "../data/content";
 import { LiquidButton } from "./ui/liquid-glass-button";
@@ -121,111 +125,191 @@ export default function LiquidGlassNavbar() {
 
               {/* Liquid Glass Dropdown Menu */}
               {solutionsHovered && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[580px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-sky-100 p-5 shadow-xl shadow-sky-900/5 grid grid-cols-2 gap-4 text-left">
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-600 px-2 block">
-                        Indigenous Manufacturing
-                      </span>
-                      <Link
-                        to="/products?category=Orthobiologics"
-                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
-                      >
-                        <div className="w-7 h-7 rounded-xl bg-sky-50 border border-sky-200/70 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
-                          <Bone className="w-3.5 h-3.5" />
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[660px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="bg-white/95 backdrop-blur-2xl rounded-2xl border border-sky-100 p-5 shadow-2xl shadow-sky-900/10 text-left">
+                    <div className="grid grid-cols-2 gap-5">
+                      {/* Left: Division 1 - Indigenous Manufacturing */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-1.5 px-2 pb-1.5 border-b border-sky-100">
+                          <Building className="w-3.5 h-3.5 text-sky-600" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-sky-700">
+                            Indigenous Manufacturing
+                          </span>
                         </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
-                            Orthobiologics
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            BoneSurg CR & BoneSurg HA
-                          </div>
-                        </div>
-                      </Link>
 
-                      <Link
-                        to="/products?category=Wound%20Management"
-                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
-                      >
-                        <div className="w-7 h-7 rounded-xl bg-purple-50 border border-purple-200/70 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
-                          <Activity className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
-                            Wound Management
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            EM-VAC Digital NPWT System
-                          </div>
-                        </div>
-                      </Link>
-
-                      <Link
-                        to="/products?category=Nephro%20Care"
-                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
-                      >
-                        <div className="w-7 h-7 rounded-xl bg-cyan-50 border border-cyan-200/70 text-cyan-600 flex items-center justify-center shrink-0 mt-0.5">
-                          <Droplets className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
-                            Nephro Care
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            Dialysis Concentrates & Powders
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-
-                    <div className="space-y-2 border-l border-sky-100 pl-4">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-600 px-2 block">
-                        European Partnerships
-                      </span>
-                      <Link
-                        to="/products?category=Bone%20Cements"
-                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
-                      >
-                        <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/70 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
-                          <Layers className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
-                            Bone Cements
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            Teknimed OPACITY+® PMMA
-                          </div>
-                        </div>
-                      </Link>
-
-                      <Link
-                        to="/products?category=Biopsy%20Devices"
-                        className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/70 transition-colors group/item"
-                      >
-                        <div className="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-200/70 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
-                          <ShieldCheck className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover/item:text-sky-600 transition-colors">
-                            Biopsy Devices
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            MDL Precision Trocar Needles
-                          </div>
-                        </div>
-                      </Link>
-
-                      <div className="pt-2 mt-2 border-t border-sky-100">
                         <Link
-                          to="/products"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline px-2 py-1"
+                          to="/products?division=Manufacturing&category=Nephrology"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/80 transition-colors group/item"
                         >
-                          <span>Explore Complete Catalog</span>
-                          <ArrowUpRight className="w-3 h-3" />
+                          <div className="w-7 h-7 rounded-xl bg-cyan-50 border border-cyan-200/70 text-cyan-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Droplets className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-sky-600 transition-colors">
+                              Nephrology Solutions
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              Dialysis Fluids, Drycitrate & NaCl Tablets
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Manufacturing&category=Orthobiologics"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-sky-50 border border-sky-200/70 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Bone className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-sky-600 transition-colors">
+                              Orthobiologics
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              BoneSurg CR & BoneSurg HA
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Manufacturing&category=Wound%20Management"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-sky-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-purple-50 border border-purple-200/70 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Activity className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-sky-600 transition-colors">
+                              Wound Management
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              NPWT Systems & Cellsurg Collagen
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Manufacturing&category=Launching%20Soon"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-amber-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-amber-50 border border-amber-200/70 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-amber-700 transition-colors">
+                              Launching Soon
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              BoneSurg Regen (Biphasic HA/TCP)
+                            </div>
+                          </div>
                         </Link>
                       </div>
+
+                      {/* Right: Division 2 - Channel Partner Alliances */}
+                      <div className="space-y-1.5 border-l border-sky-100 pl-5">
+                        <div className="flex items-center gap-1.5 px-2 pb-1.5 border-b border-sky-100">
+                          <Globe2 className="w-3.5 h-3.5 text-indigo-600" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-700">
+                            Channel Partner Alliances
+                          </span>
+                        </div>
+
+                        <Link
+                          to="/products?division=Channel%20Partner&category=Sports%20Medicine"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-indigo-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-blue-50 border border-blue-200/70 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Award className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors">
+                              Sports Medicine
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              Smith & Nephew Joint Repair
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Channel%20Partner&category=Bone%20Cement"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-indigo-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/70 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Layers className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors">
+                              Bone Cements
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              Demetra Cemex HV / LV / ID Green
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Channel%20Partner&category=Spine%20Solutions"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-indigo-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-200/70 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors">
+                              Spine Solutions
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              Teknimed Opacity+ & Tecres Mendec
+                            </div>
+                          </div>
+                        </Link>
+
+                        <Link
+                          to="/products?division=Channel%20Partner&category=Biopsy%20Needles"
+                          className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-indigo-50/80 transition-colors group/item"
+                        >
+                          <div className="w-7 h-7 rounded-xl bg-purple-50 border border-purple-200/70 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Activity className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors">
+                              Biopsy Devices
+                            </div>
+                            <div className="text-[11px] text-slate-500">
+                              MDL S.r.l. Italy Core & Marrow
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Strip */}
+                    <div className="pt-3.5 mt-3 border-t border-sky-100 flex items-center justify-between text-xs font-bold">
+                      <Link
+                        to="/products?division=Manufacturing"
+                        className="text-sky-700 hover:text-sky-800 hover:underline px-2 py-1 flex items-center gap-1"
+                      >
+                        <Building className="w-3.5 h-3.5 text-sky-600" />
+                        <span>View Indigenous Line</span>
+                      </Link>
+
+                      <Link
+                        to="/products?division=Channel%20Partner"
+                        className="text-indigo-700 hover:text-indigo-800 hover:underline px-2 py-1 flex items-center gap-1"
+                      >
+                        <Globe2 className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>View Partner Alliances</span>
+                      </Link>
+
+                      <Link
+                        to="/products"
+                        className="inline-flex items-center gap-1 text-slate-700 hover:text-sky-600 px-2 py-1"
+                      >
+                        <span>Full Catalog</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -328,14 +412,41 @@ export default function LiquidGlassNavbar() {
               </div>
 
               <div className="flex flex-col space-y-1">
-                <Link
-                  to="/products"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
-                >
-                  <span>Products Catalog</span>
-                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
-                </Link>
+                {/* Two-Tier Products Group */}
+                <div className="bg-sky-50/60 rounded-2xl p-2 border border-sky-100/90 space-y-1">
+                  <Link
+                    to="/products"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-sky-100/70 text-sm font-bold text-slate-900 hover:text-sky-700 transition-colors group"
+                  >
+                    <span>All Products & Solutions</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600" />
+                  </Link>
+
+                  <Link
+                    to="/products?division=Manufacturing"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between py-1.5 px-2.5 rounded-lg hover:bg-sky-100/60 text-xs font-semibold text-sky-800 transition-colors pl-4"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Building className="w-3 h-3 text-sky-600" />
+                      Indigenous Manufacturing
+                    </span>
+                    <span className="text-[10px] bg-sky-200/70 text-sky-800 px-1.5 py-0.5 rounded-full font-bold">12</span>
+                  </Link>
+
+                  <Link
+                    to="/products?division=Channel%20Partner"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between py-1.5 px-2.5 rounded-lg hover:bg-indigo-100/60 text-xs font-semibold text-indigo-800 transition-colors pl-4"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Globe2 className="w-3 h-3 text-indigo-600" />
+                      Channel Partner Alliances
+                    </span>
+                    <span className="text-[10px] bg-indigo-200/70 text-indigo-800 px-1.5 py-0.5 rounded-full font-bold">9</span>
+                  </Link>
+                </div>
 
                 <a
                   href="#our-expertise"

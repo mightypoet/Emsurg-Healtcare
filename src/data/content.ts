@@ -4,9 +4,9 @@ export const companyInfo = {
   rdEntity: "Emsurg Bioscience India Pvt. Ltd.",
   founded: "2010",
   headquarters: "Kolkata",
-  phone: "+91 33-2537-0069",
+  phone: "+91 33-25370069",
   whatsapp: "+91 7439757452",
-  email: "info@emsurghealthcare.com",
+  email: "info@emsurg.com",
   hours: "Monday–Friday, 9:00 AM–4:00 PM",
   mission: "Advancing healthcare with innovation, integrity and expertise.",
   vision: "Engineering better outcomes through medical innovation and care.",
@@ -14,15 +14,12 @@ export const companyInfo = {
 
 export const locations = [
   {
-    type: "REGISTERED OFFICE",
-    address: "30, Joy Gopal Das Road, Sodepur, Kolkata 700110",
-  },
-  {
     type: "CORPORATE OFFICE",
+    company: "Emsurg Healthcare (India) Pvt. Ltd.",
     address: "8/2/74/1B, Sachi Apartment, Aravinda Sarani, East Kamalapur, Dumdum, Kolkata 700028",
   },
   {
-    type: "MANUFACTURING UNIT 2",
+    type: "MANUFACTURING UNIT",
     company: "Emsurg Healthcare (India) Pvt. Ltd.",
     address: "Board Ghar, Bilkanda, Talbanda, Kolkata 700110",
   },
@@ -30,6 +27,11 @@ export const locations = [
     type: "MANUFACTURING & R&D UNIT 1",
     company: "Emsurg Bioscience India Pvt. Ltd.",
     address: "Chand Dalal Ghat Road, Panihati, Kolkata 700114",
+  },
+  {
+    type: "REGISTERED OFFICE",
+    company: "Emsurg Healthcare (India) Pvt. Ltd.",
+    address: "30, Joy Gopal Das Road, Sodepur, Kolkata 700110",
   },
 ];
 

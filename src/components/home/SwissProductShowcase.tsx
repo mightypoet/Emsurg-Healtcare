@@ -1,80 +1,99 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Bone, Activity, Droplets, Layers, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { 
+  Bone, 
+  Activity, 
+  Droplets, 
+  Layers, 
+  ArrowUpRight, 
+  ShieldCheck, 
+  Building, 
+  Globe2, 
+  Sparkles,
+  Award
+} from "lucide-react";
 import { ProductHighlightCard } from "../ui/product-card";
+import { getLocalProducts, Product } from "../../lib/productsStore";
 
-interface ShowcaseProductItem {
-  id: string;
-  category: string;
-  title: string;
-  description: string;
-  imageSrc: string;
-  imageAlt: string;
-  slug: string;
-  categoryIcon: React.ReactNode;
-  accentGlow: string;
-  badge: string;
+function getCategoryIcon(category: string = "", division: string = ""): React.ReactNode {
+  const cat = category.toLowerCase();
+  if (cat.includes("orthobiologic") || cat.includes("bone")) return <Bone className="w-4 h-4" />;
+  if (cat.includes("wound") || cat.includes("npwt")) return <Activity className="w-4 h-4" />;
+  if (cat.includes("nephro") || cat.includes("dialysis") || cat.includes("fluid")) return <Droplets className="w-4 h-4" />;
+  if (cat.includes("sport")) return <Award className="w-4 h-4" />;
+  if (cat.includes("cement") || cat.includes("spine")) return <Layers className="w-4 h-4" />;
+  if (cat.includes("biopsy") || cat.includes("needle")) return <ShieldCheck className="w-4 h-4" />;
+  if (division === "Manufacturing") return <Building className="w-4 h-4" />;
+  return <Globe2 className="w-4 h-4" />;
+}
+
+function getAccentGlow(category: string = "", division: string = ""): string {
+  const cat = category.toLowerCase();
+  if (cat.includes("ortho") || cat.includes("bone")) return "rgba(56, 189, 248, 0.35)"; // sky
+  if (cat.includes("wound")) return "rgba(168, 85, 247, 0.35)"; // purple
+  if (cat.includes("nephro") || cat.includes("dialysis")) return "rgba(14, 165, 233, 0.35)"; // cyan
+  if (cat.includes("sport")) return "rgba(59, 130, 246, 0.35)"; // blue
+  if (cat.includes("cement")) return "rgba(16, 185, 129, 0.35)"; // emerald
+  if (cat.includes("spine")) return "rgba(139, 92, 246, 0.35)"; // violet
+  if (division === "Manufacturing") return "rgba(14, 165, 233, 0.35)";
+  return "rgba(99, 102, 241, 0.35)";
+}
+
+function getBadge(product: Product): string {
+  if (product.partnerBrand) {
+    if (product.partnerBrand === "Smith & Nephew") return "Smith & Nephew";
+    if (product.partnerBrand === "Demetra") return "Demetra (Italy)";
+    if (product.partnerBrand === "Teknimed") return "Teknimed (France)";
+    if (product.partnerBrand === "MDL") return "MDL (Italy)";
+    return product.partnerBrand;
+  }
+  if (product.certifications) {
+    if (product.certifications.includes("WHO-GMP")) return "WHO-GMP Certified";
+    if (product.certifications.includes("ISO 13485")) return "ISO 13485 Certified";
+    if (product.certifications.includes("Cleanroom")) return "Cleanroom Made";
+    if (product.certifications.includes("Clinical")) return "Clinical Grade";
+    return product.certifications.split("·")[0].trim();
+  }
+  if (product.division === "Manufacturing") return "Indigenous R&D";
+  return "Authorized Partner";
 }
 
 export default function SwissProductShowcase() {
-  const showcaseProducts: ShowcaseProductItem[] = [
-    {
-      id: "orthobiologics",
-      category: "Orthobiologics",
-      title: "BoneSurg CR & HA",
-      description:
-        "100% synthetic bio-absorbable calcium sulphate hemihydrate matrix and nanocrystalline hydroxyapatite bone graft substitutes.",
-      imageSrc:
-        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop",
-      imageAlt: "BoneSurg Orthobiologics synthetic bone graft substitute",
-      slug: "bonesurg-cr",
-      categoryIcon: <Bone className="w-4 h-4" />,
-      accentGlow: "rgba(56, 189, 248, 0.35)",
-      badge: "CDSCO Class C",
-    },
-    {
-      id: "wound-care",
-      category: "Wound Care",
-      title: "EM-VAC Digital NPWT",
-      description:
-        "Microprocessor-regulated negative pressure wound therapy unit with dual pressure monitoring and sterile reticulated foam dressing kits.",
-      imageSrc:
-        "https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=800&auto=format&fit=crop",
-      imageAlt: "EM-VAC Digital Negative Pressure Wound Therapy System",
-      slug: "em-vac-npwt",
-      categoryIcon: <Activity className="w-4 h-4" />,
-      accentGlow: "rgba(168, 85, 247, 0.35)",
-      badge: "Smart NPWT",
-    },
-    {
-      id: "nephro-care",
-      category: "Nephro Care",
-      title: "Hemodialysis Fluids",
-      description:
-        "Ultra-pure pharmacopeial liquid acid concentrates and dry sodium bicarbonate cartridges produced with automated multi-stage RO filtration.",
-      imageSrc:
-        "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=800&auto=format&fit=crop",
-      imageAlt: "Hemodialysis acid concentrates and dry bicarbonate cartridges",
-      slug: "hemodialysis-fluids-dry-powders",
-      categoryIcon: <Droplets className="w-4 h-4" />,
-      accentGlow: "rgba(14, 165, 233, 0.35)",
-      badge: "WHO-GMP Certified",
-    },
-    {
-      id: "bone-cements",
-      category: "Bone Cements",
-      title: "Teknimed OPACITY+",
-      description:
-        "High-radiopacity vertebroplasty PMMA cements, pre-mixed antibiotic cements, and MDL precision soft-tissue & bone marrow biopsy needles.",
-      imageSrc:
-        "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=800&auto=format&fit=crop",
-      imageAlt: "Teknimed OPACITY+ PMMA Bone Cements and MDL Biopsy Devices",
-      slug: "teknimed-opacity-plus-bone-cement",
-      categoryIcon: <Layers className="w-4 h-4" />,
-      accentGlow: "rgba(16, 185, 129, 0.35)",
-      badge: "CE Certified",
-    },
-  ];
+  const [selectedTier, setSelectedTier] = useState<"All" | "Manufacturing" | "Channel Partner">("All");
+  const [allProducts, setAllProducts] = useState<Product[]>(() => getLocalProducts());
+
+  useEffect(() => {
+    const update = () => {
+      setAllProducts(getLocalProducts());
+    };
+
+    window.addEventListener("products-updated", update);
+    window.addEventListener("storage", update);
+    update();
+
+    return () => {
+      window.removeEventListener("products-updated", update);
+      window.removeEventListener("storage", update);
+    };
+  }, []);
+
+  // Filter for products marked as featured and sorted by orderIndex
+  const featuredOnly = allProducts
+    .filter((p) => p.featured === true || p.is_featured === true)
+    .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+
+  // Fallback: If no products are explicitly featured, take the top 6 products sorted by orderIndex
+  const activeProducts = featuredOnly.length > 0
+    ? featuredOnly
+    : [...allProducts].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).slice(0, 6);
+
+  const displayedProducts = selectedTier === "All"
+    ? activeProducts
+    : activeProducts.filter((p) => p.division === selectedTier);
+
+  const countAll = activeProducts.length;
+  const countManufacturing = activeProducts.filter((p) => p.division === "Manufacturing").length;
+  const countChannelPartner = activeProducts.filter((p) => p.division === "Channel Partner").length;
 
   return (
     <section
@@ -90,11 +109,11 @@ export default function SwissProductShowcase() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200/80 text-sky-700 text-xs font-bold uppercase tracking-widest mb-3">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Flagship Clinical Portfolio</span>
+              <span>Two-Tier Clinical Hierarchy</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 leading-[1.15]">
               Precision-Engineered{" "}
@@ -103,38 +122,91 @@ export default function SwissProductShowcase() {
               </span>
             </h2>
             <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-              Explore our core medical specializations spanning bio-absorbable orthobiologics, digital NPWT wound systems, WHO-GMP dialysis consumables, and European PMMA bone cements.
+              A balanced clinical portfolio: indigenously manufactured orthobiologics, dialysis formulations, and digital wound care paired with authorized distribution for global medical leaders.
             </p>
           </div>
 
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-3">
             <Link
               to="/products"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-xs font-semibold uppercase tracking-wider text-white transition-all shadow-md shadow-sky-500/25 active:scale-95 group"
             >
-              <span>View All Products</span>
+              <span>Explore Complete Catalog</span>
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
         </div>
 
-        {/* 3D Liquid Glass Tilt Cards Grid in Light Mode */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 lg:gap-6 items-stretch">
-          {showcaseProducts.map((product) => (
-            <ProductHighlightCard
-              key={product.id}
-              variant="light"
-              categoryIcon={product.categoryIcon}
-              category={product.category}
-              badge={product.badge}
-              title={product.title}
-              description={product.description}
-              imageSrc={product.imageSrc}
-              imageAlt={product.imageAlt}
-              slug={product.slug}
-              accentGlow={product.accentGlow}
-            />
-          ))}
+        {/* Tier Switcher Controls */}
+        <div className="flex items-center justify-start sm:justify-center mb-10 overflow-x-auto pb-2 scrollbar-none">
+          <div className="inline-flex items-center p-1.5 rounded-full bg-slate-100 border border-slate-200/80 shadow-xs">
+            <button
+              type="button"
+              onClick={() => setSelectedTier("All")}
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                selectedTier === "All"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              All Pillars ({countAll} Flagships)
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedTier("Manufacturing")}
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                selectedTier === "Manufacturing"
+                  ? "bg-sky-600 text-white shadow-sm shadow-sky-600/20"
+                  : "text-slate-600 hover:text-sky-700"
+              }`}
+            >
+              <Building className="w-3.5 h-3.5" />
+              <span>Indigenous Manufacturing ({countManufacturing})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedTier("Channel Partner")}
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                selectedTier === "Channel Partner"
+                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
+                  : "text-slate-600 hover:text-indigo-700"
+              }`}
+            >
+              <Globe2 className="w-3.5 h-3.5" />
+              <span>Channel Partner Alliances ({countChannelPartner})</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3D Tilt Cards Grid in Light Mode */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 lg:gap-8 items-stretch">
+          {displayedProducts.length > 0 ? (
+            displayedProducts.map((product) => {
+              const thumb = product.images?.[0] || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop";
+              return (
+                <ProductHighlightCard
+                  key={product.id}
+                  variant="light"
+                  categoryIcon={getCategoryIcon(product.category, product.division)}
+                  category={product.category}
+                  badge={getBadge(product)}
+                  title={product.title}
+                  description={product.short_description}
+                  imageSrc={thumb}
+                  imageAlt={product.title}
+                  slug={product.slug}
+                  accentGlow={getAccentGlow(product.category, product.division)}
+                />
+              );
+            })
+          ) : (
+            <div className="col-span-full py-12 text-center text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
+              <p className="text-sm font-semibold text-slate-700">No featured products in this division yet.</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Use the Admin Dashboard &gt; Medical Products Catalog to toggle "★ Featured on Home" on products.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Bottom Hospital Procurement Strip */}
@@ -148,23 +220,23 @@ export default function SwissProductShowcase() {
                 Hospital Procurement & Institutional Tenders
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-                Full technical documentation, CDSCO/CE certifications, and sample evaluation kits available upon verified clinical request.
+                Technical dossiers, CDSCO Form MD-9 / Class C certifications, and evaluation samples available upon clinical verification.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
             <Link
-              to="/contact"
-              className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md shadow-sky-500/25 active:scale-95"
+              to="/products?division=Manufacturing"
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold tracking-wide uppercase transition-all shadow-md shadow-sky-600/20 active:scale-95"
             >
-              Request Specs
+              Indigenous Line
             </Link>
             <Link
-              to="/products"
-              className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-white hover:bg-sky-50 border border-sky-200 text-slate-700 hover:text-sky-700 text-xs font-bold tracking-wide uppercase transition-all shadow-xs active:scale-95"
+              to="/products?division=Channel%20Partner"
+              className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full bg-white hover:bg-indigo-50 border border-indigo-200 text-indigo-700 hover:text-indigo-800 text-xs font-bold tracking-wide uppercase transition-all shadow-xs active:scale-95"
             >
-              All Categories
+              Partner Alliances
             </Link>
           </div>
         </div>

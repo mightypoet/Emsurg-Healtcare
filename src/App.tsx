@@ -34,6 +34,9 @@ export default function App() {
             <Route path="locations" element={<PlaceholderPage title="Our Locations" />} />
             <Route path="leaders" element={<PlaceholderPage title="Leadership" />} />
             <Route path="faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
+            <Route path="privacy" element={<PlaceholderPage title="Privacy Policy" />} />
+            <Route path="terms" element={<PlaceholderPage title="Terms of Use" />} />
+            <Route path="quality-policy" element={<PlaceholderPage title="Quality Policy & Regulatory Standards" />} />
             <Route path="*" element={<PlaceholderPage title="Page Not Found" />} />
           </Route>
           <Route path="/admin/login" element={<Login />} />

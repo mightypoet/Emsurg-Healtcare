@@ -225,12 +225,34 @@ export default function ProductDetail() {
             <div>
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
+                {product.division === "Manufacturing" ? (
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <Building className="w-3.5 h-3.5 text-sky-600" />
+                    Indigenous Manufacturing
+                  </span>
+                ) : product.division === "Channel Partner" ? (
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5 text-indigo-600" />
+                    Channel Partner{product.partnerBrand ? ` · ${product.partnerBrand}` : ""}
+                  </span>
+                ) : null}
+                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-700 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">
                   {product.category}
                 </span>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                  Regulatory Approved
-                </span>
+                {product.certifications ? (
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                    {product.certifications}
+                  </span>
+                ) : (
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                    Regulatory Approved
+                  </span>
+                )}
+                {product.isUpcoming && (
+                  <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                    Launching Soon
+                  </span>
+                )}
                 {product.is_featured && (
                   <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
                     Flagship System

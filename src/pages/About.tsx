@@ -75,30 +75,6 @@ const leadershipTeam: TeamMember[] = [
     }
   },
   {
-    name: "Partha Dasgupta",
-    role: "Director - Manufacturing",
-    category: "Operations Leadership",
-    department: "Cleanroom Units 1 & 2",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
-    bio: "Overseeing automated hemodialysis bottling, Class 10,000 / ISO 7 cleanroom biomaterial synthesis, and CDSCO regulatory audits.",
-    socials: {
-      linkedin: "https://linkedin.com",
-      email: "partha@emsurghealthcare.com"
-    }
-  },
-  {
-    name: "Avijit Jana",
-    role: "Business Leader - Sports Medicine",
-    category: "Clinical Division",
-    department: "Sports Medicine",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
-    bio: "Heading national surgeon engagement, arthroscopy implant distribution, and our premier partnership with Smith & Nephew.",
-    socials: {
-      linkedin: "https://linkedin.com",
-      email: "avijit@emsurghealthcare.com"
-    }
-  },
-  {
     name: "Subhro Kamal Bhattacharyya",
     role: "Business Leader - Oncology Devices & Biologics",
     category: "Clinical Division",
@@ -714,10 +690,15 @@ export default function About() {
               >
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center mb-4">
-                    {idx === 0 && <Landmark className="w-5 h-5" />}
-                    {idx === 1 && <Building2 className="w-5 h-5" />}
-                    {idx === 2 && <Factory className="w-5 h-5" />}
-                    {idx === 3 && <Microscope className="w-5 h-5" />}
+                    {loc.type.includes("CORPORATE") ? (
+                      <Building2 className="w-5 h-5" />
+                    ) : loc.type.includes("R&D") ? (
+                      <Microscope className="w-5 h-5" />
+                    ) : loc.type.includes("MANUFACTURING") ? (
+                      <Factory className="w-5 h-5" />
+                    ) : (
+                      <Landmark className="w-5 h-5" />
+                    )}
                   </div>
                   <div className="text-xs font-bold text-sky-700 uppercase tracking-wider mb-1">
                     {loc.type}
