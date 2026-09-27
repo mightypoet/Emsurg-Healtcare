@@ -13,7 +13,7 @@ import {
   Factory,
   Send
 } from "lucide-react";
-import { Product, fetchProducts, getLocalProducts, subscribeToProducts } from "../lib/productsStore";
+import { Product, fetchProducts, getLocalProducts, subscribeToProducts, formatDriveImageUrl } from "../lib/productsStore";
 import { 
   MANUFACTURING_CATEGORIES, 
   CHANNEL_PARTNER_CATEGORIES, 
@@ -399,9 +399,11 @@ export default function Products() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => {
-              const thumbnail =
+              const rawThumbnail =
                 product.images?.[0] ||
+                (product as any).image ||
                 "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80";
+              const thumbnail = formatDriveImageUrl(rawThumbnail);
 
               const isManufacturing = product.division === "Manufacturing";
 

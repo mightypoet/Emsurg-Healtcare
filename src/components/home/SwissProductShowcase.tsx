@@ -8,7 +8,7 @@ import {
   Send
 } from "lucide-react";
 import { ProductHighlightCard } from "../ui/product-card";
-import { getLocalProducts, fetchProducts, subscribeToProducts, Product } from "../../lib/productsStore";
+import { getLocalProducts, fetchProducts, subscribeToProducts, formatDriveImageUrl, Product } from "../../lib/productsStore";
 import ProductInquiryModal from "../modals/ProductInquiryModal";
 
 function getAccentGlow(category: string = "", division: string = ""): string {
@@ -185,7 +185,8 @@ export default function SwissProductShowcase() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 lg:gap-8 items-stretch">
           {displayedProducts.length > 0 ? (
             displayedProducts.map((product) => {
-              const thumb = product.images?.[0] || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop";
+              const rawThumb = product.images?.[0] || (product as any).image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop";
+              const thumb = formatDriveImageUrl(rawThumb);
               return (
                 <ProductHighlightCard
                   key={product.id}

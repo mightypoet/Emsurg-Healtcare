@@ -19,7 +19,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug, getWhatsAppNumberForProduct } from "../lib/productsStore";
+import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug, subscribeToProducts, formatDriveImageUrl, getWhatsAppNumberForProduct } from "../lib/productsStore";
 import ProductInquiryModal from "../components/products/ProductInquiryModal";
 import { ProductFAQSection } from "../components/products/ProductFAQSection";
 import { LiquidButton } from "../components/ui/liquid-glass-button";
@@ -69,8 +69,19 @@ export default function ProductDetail() {
 
     loadData();
     window.scrollTo(0, 0);
+
+    const unsub = subscribeToProducts((updated) => {
+      if (isMounted && updated && updated.length > 0) {
+        const target = updated.find((p) => p.slug === slug);
+        if (target) setProduct(target);
+        const others = updated.filter((p) => p.slug !== slug).slice(0, 3);
+        setRelatedProducts(others);
+      }
+    });
+
     return () => {
       isMounted = false;
+      unsub();
     };
   }, [slug]);
 
@@ -114,9 +125,11 @@ export default function ProductDetail() {
     );
   }
 
-  const images = product.images && product.images.length > 0
+  const rawImages = product.images && product.images.length > 0
     ? product.images
-    : ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"];
+    : [(product as any).image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"];
+
+  const images = rawImages.map(formatDriveImageUrl);
 
   const currentImage = images[selectedImageIndex] || images[0];
 
