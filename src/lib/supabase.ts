@@ -73,7 +73,19 @@ CREATE POLICY "Admins have full access to gallery-assets" ON storage.objects
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || 'https://ulglftaptfvkatzhpmwc.supabase.co';
-const supabaseKey = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY) || 'sb_publishable_RKnKo4eegUWKp-eqKaBWnQ_EPmimPWm';
+const supabaseUrl = 
+  (typeof import.meta !== 'undefined' && (import.meta.env?.VITE_SUPABASE_URL || import.meta.env?.VITE_SUPABASE_URI)) || 
+  'https://ulglftaptfvkatzhpmwc.supabase.co';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseKey = 
+  (typeof import.meta !== 'undefined' && (import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env?.VITE_SUPABASE_ANON_KEY)) || 
+  'sb_publishable_RKnKo4eegUWKp-eqKaBWnQ_EPmimPWm';
+
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
+
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
