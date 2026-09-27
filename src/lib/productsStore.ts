@@ -37,14 +37,17 @@ export interface ProductInquiry {
   category?: string;
   division?: string;
   name: string;
+  full_name?: string;
   institution: string;
   city: string;
+  city_state?: string;
   state?: string;
   phone: string;
   email?: string;
   role?: string;
   quantity_requirement?: string;
   notes?: string;
+  target_phone?: string;
   created_at: string;
 }
 
@@ -1670,11 +1673,31 @@ export async function fetchInquiries(): Promise<ProductInquiry[]> {
       .order("created_at", { ascending: false });
 
     if (!error && Array.isArray(data)) {
-      inMemoryInquiriesCache = data;
+      const normalized: ProductInquiry[] = data.map((item: any) => ({
+        id: item.id || `inq-${Date.now()}`,
+        product_id: item.product_id,
+        product_name: item.product_name || item.productName || item.productTitle || "General Inquiry",
+        category: item.category || "General",
+        division: item.division || "General",
+        name: item.full_name || item.name || item.fullName || "Unknown",
+        full_name: item.full_name || item.name || item.fullName || "Unknown",
+        institution: item.institution || item.hospital || "",
+        city: item.city_state || item.city || item.cityState || "",
+        city_state: item.city_state || item.city || item.cityState || "",
+        phone: item.phone || item.contactNumber || "",
+        email: item.email || "",
+        role: item.role || item.designation || "Surgeon / Consultant",
+        notes: item.notes || item.message || item.quantity_requirement || "",
+        quantity_requirement: item.quantity_requirement || item.notes || "",
+        target_phone: item.target_phone || item.targetPhone || "",
+        created_at: item.created_at || new Date().toISOString(),
+      }));
+
+      inMemoryInquiriesCache = normalized;
       try {
-        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(data));
+        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(normalized));
       } catch {}
-      return data;
+      return normalized;
     }
 
     // Fallback table name product_inquiries
@@ -1684,11 +1707,31 @@ export async function fetchInquiries(): Promise<ProductInquiry[]> {
       .order("created_at", { ascending: false });
 
     if (!res2.error && Array.isArray(res2.data)) {
-      inMemoryInquiriesCache = res2.data;
+      const normalized: ProductInquiry[] = res2.data.map((item: any) => ({
+        id: item.id || `inq-${Date.now()}`,
+        product_id: item.product_id,
+        product_name: item.product_name || item.productName || item.productTitle || "General Inquiry",
+        category: item.category || "General",
+        division: item.division || "General",
+        name: item.full_name || item.name || item.fullName || "Unknown",
+        full_name: item.full_name || item.name || item.fullName || "Unknown",
+        institution: item.institution || item.hospital || "",
+        city: item.city_state || item.city || item.cityState || "",
+        city_state: item.city_state || item.city || item.cityState || "",
+        phone: item.phone || item.contactNumber || "",
+        email: item.email || "",
+        role: item.role || item.designation || "Surgeon / Consultant",
+        notes: item.notes || item.message || item.quantity_requirement || "",
+        quantity_requirement: item.quantity_requirement || item.notes || "",
+        target_phone: item.target_phone || item.targetPhone || "",
+        created_at: item.created_at || new Date().toISOString(),
+      }));
+
+      inMemoryInquiriesCache = normalized;
       try {
-        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(res2.data));
+        localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(normalized));
       } catch {}
-      return res2.data;
+      return normalized;
     }
   } catch (err) {
     console.info("Supabase fetchInquiries fallback:", err);
@@ -1730,44 +1773,81 @@ export async function deleteInquiry(id: string): Promise<void> {
 
 export const deleteLocalInquiry = deleteInquiry;
 
-export async function submitProductInquiry(inquiry: Omit<ProductInquiry, "id" | "created_at">): Promise<ProductInquiry> {
-  const newInquiry: ProductInquiry = {
-    ...inquiry,
-    id: `inq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    created_at: new Date().toISOString(),
-  };
-
-  const current = [newInquiry, ...getLocalInquiries()];
-  inMemoryInquiriesCache = current;
+export async function submitProductInquiry(formData: any) {
   try {
-    localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(current));
-    localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(current));
-    window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated", { detail: current }));
-  } catch {}
-
-  // Direct Supabase insert
-  try {
+    // Safely map frontend keys to database columns
     const payload = {
-      product_name: newInquiry.product_name,
-      name: newInquiry.name,
-      email: newInquiry.email || "",
-      phone: newInquiry.phone,
-      institution: newInquiry.institution || "",
-      city: newInquiry.city || "",
-      role: newInquiry.role || "Surgeon",
-      notes: newInquiry.notes || "",
-      created_at: newInquiry.created_at,
+      product_name: formData.product_name || formData.productName || formData.productTitle || 'General Inquiry',
+      category: formData.category || 'General',
+      division: formData.division || 'General',
+      full_name: formData.full_name || formData.fullName || formData.name || 'Unknown',
+      institution: formData.institution || formData.hospital || '',
+      city_state: formData.city_state || formData.cityState || formData.location || '',
+      phone: formData.phone || formData.contactNumber || '',
+      role: formData.role || formData.designation || '',
+      notes: formData.notes || formData.message || '',
+      target_phone: formData.target_phone || formData.targetPhone || ''
     };
 
-    const { error } = await supabase.from("inquiries").insert([payload]);
-    if (error) {
-      await supabase.from("product_inquiries").insert([payload]);
-    }
-  } catch (err) {
-    console.info("Supabase inquiry insert fallback:", err);
-  }
+    console.log("Sending inquiry payload to Supabase:", payload);
 
-  return newInquiry;
+    // Save to local cache & emit event for instant optimistic UI update
+    const localRecord: ProductInquiry = {
+      id: `inq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      product_name: payload.product_name,
+      category: payload.category,
+      division: payload.division,
+      name: payload.full_name,
+      full_name: payload.full_name,
+      institution: payload.institution,
+      city: payload.city_state,
+      city_state: payload.city_state,
+      phone: payload.phone,
+      role: payload.role,
+      notes: payload.notes,
+      target_phone: payload.target_phone,
+      created_at: new Date().toISOString()
+    };
+
+    const currentLocal = [localRecord, ...getLocalInquiries()];
+    inMemoryInquiriesCache = currentLocal;
+    try {
+      localStorage.setItem(LOCAL_STORAGE_INQUIRIES_KEY, JSON.stringify(currentLocal));
+      localStorage.setItem(LOCAL_STORAGE_INQUIRIES_FALLBACK_KEY, JSON.stringify(currentLocal));
+      window.dispatchEvent(new CustomEvent("emsurg-inquiries-updated", { detail: currentLocal }));
+    } catch {}
+
+    const { data, error } = await supabase
+      .from('inquiries')
+      .insert([payload])
+      .select();
+
+    if (error) {
+      console.error("Supabase rejected inquiry insert:", error);
+      // Try fallback with legacy column schema (name instead of full_name, city instead of city_state)
+      const fallbackPayload = {
+        product_name: payload.product_name,
+        name: payload.full_name,
+        institution: payload.institution,
+        city: payload.city_state,
+        phone: payload.phone,
+        role: payload.role,
+        notes: payload.notes,
+      };
+      const resFallback = await supabase.from('inquiries').insert([fallbackPayload]).select();
+      if (resFallback.error) {
+        throw error;
+      }
+      console.log("Inquiry saved via schema fallback:", resFallback.data);
+      return resFallback.data || true;
+    }
+
+    console.log("Inquiry saved successfully:", data);
+    return data || true;
+  } catch (err: any) {
+    console.error("Critical error in submitProductInquiry:", err);
+    throw err;
+  }
 }
 
 export function subscribeToInquiries(callback: (inquiries: ProductInquiry[]) => void): () => void {

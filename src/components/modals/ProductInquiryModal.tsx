@@ -323,10 +323,6 @@ export default function ProductInquiryModal({
                   </>
                 )}
               </button>
-
-              <p className="text-[11px] text-slate-400 text-center mt-2.5">
-                ⚡ Direct link to Emsurg WhatsApp Clinical Desk (+91 7439757452) with lead tracking.
-              </p>
             </div>
           </form>
         )}

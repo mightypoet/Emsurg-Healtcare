@@ -48,11 +48,11 @@ export default function InquiriesTab({
     return inquiries.filter((inq) => {
       const matchesSearch =
         !query ||
-        inq.name.toLowerCase().includes(query) ||
-        inq.product_name.toLowerCase().includes(query) ||
-        inq.institution.toLowerCase().includes(query) ||
-        inq.city.toLowerCase().includes(query) ||
-        inq.phone.includes(query) ||
+        (inq.name || inq.full_name || "").toLowerCase().includes(query) ||
+        (inq.product_name || "").toLowerCase().includes(query) ||
+        (inq.institution || "").toLowerCase().includes(query) ||
+        (inq.city || inq.city_state || "").toLowerCase().includes(query) ||
+        (inq.phone || "").includes(query) ||
         (inq.email && inq.email.toLowerCase().includes(query)) ||
         (inq.role && inq.role.toLowerCase().includes(query)) ||
         (inq.notes && inq.notes.toLowerCase().includes(query));
