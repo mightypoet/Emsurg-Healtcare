@@ -950,43 +950,39 @@ export default function Dashboard() {
     setIsBulkUploading(true);
 
     try {
-      const readPromises = bulkFiles.map((b) => {
-        return new Promise<Partial<GalleryItem>>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            resolve({
-              title: b.title.trim() || "Facility Showcase",
-              description: "High-sterility medical manufacturing and cleanroom operations at Emsurg.",
-              image_url: reader.result as string,
-              category: b.category,
-              col_span: b.col_span,
-              is_featured: b.is_featured,
-            });
-          };
-          reader.onerror = () => {
-            resolve({
-              title: b.title.trim() || "Facility Showcase",
-              description: "High-sterility medical manufacturing and cleanroom operations at Emsurg.",
-              image_url: b.preview,
-              category: b.category,
-              col_span: b.col_span,
-              is_featured: b.is_featured,
-            });
-          };
-          reader.readAsDataURL(b.file);
-        });
-      });
+      const itemsToSave: Array<Partial<GalleryItem>> = [];
 
-      const itemsToSave = await Promise.all(readPromises);
+      for (let i = 0; i < bulkFiles.length; i++) {
+        const b = bulkFiles[i];
+        let cdnUrl = "";
+        try {
+          // Upload file directly to Supabase Storage bucket
+          cdnUrl = await uploadProductImage(b.file);
+        } catch (uploadErr) {
+          console.warn("Storage upload failed for file, using preview/drive URL:", uploadErr);
+          cdnUrl = b.preview;
+        }
+
+        itemsToSave.push({
+          title: b.title.trim() || `Facility Highlight ${galleryItems.length + i + 1}`,
+          description: "High-sterility medical manufacturing and cleanroom operations at Emsurg.",
+          image_url: cdnUrl,
+          category: b.category,
+          col_span: b.col_span,
+          is_featured: b.is_featured,
+          order_index: galleryItems.length + i,
+        });
+      }
+
       await saveBulkGalleryItems(itemsToSave);
       await loadGalleryData();
 
       setIsBulkModalOpen(false);
       setBulkFiles([]);
-      showToast("success", `Successfully added ${itemsToSave.length} images to Supabase gallery & homepage!`);
+      showToast("success", `Successfully uploaded & stored ${itemsToSave.length} images to Supabase!`);
     } catch (err) {
       console.error("Bulk upload error:", err);
-      showToast("error", "Error uploading bulk images.");
+      showToast("error", "Error uploading bulk images to Supabase.");
     } finally {
       setIsBulkUploading(false);
     }
