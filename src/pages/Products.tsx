@@ -195,11 +195,6 @@ export default function Products() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/90 to-[#0B1120] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
-            <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
-            <span>Two-Tier Clinical Hierarchy</span>
-          </div>
-
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white drop-shadow-md max-w-4xl mx-auto leading-[1.15]">
             Emsurg Products & Clinical Solutions
           </h1>
