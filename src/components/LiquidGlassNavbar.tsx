@@ -299,7 +299,7 @@ export default function LiquidGlassNavbar() {
               Expertise
             </a>
 
-            {/* Research & Insights */}
+            {/* Blogs */}
             <Link
               to="/blogs"
               className={`inline-flex items-center transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 ${
@@ -308,7 +308,7 @@ export default function LiquidGlassNavbar() {
                   : "text-white/80 hover:text-white"
               }`}
             >
-              Research & Insights
+              Blogs
             </Link>
 
             {/* Infrastructure / Gallery */}
@@ -448,7 +448,7 @@ export default function LiquidGlassNavbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
-                  <span>Research & Insights</span>
+                  <span>Blogs</span>
                   <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
