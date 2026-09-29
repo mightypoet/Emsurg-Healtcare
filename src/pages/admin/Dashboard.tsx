@@ -891,22 +891,41 @@ export default function Dashboard() {
     });
   };
 
-  const handleToggleGalleryItemFeatured = async (item: GalleryItem) => {
-    const nextVal = !item.is_featured;
-    // Optimistic state update for instant UI feedback
-    setGalleryItems((prev) =>
-      prev.map((g) => (g.id === item.id ? { ...g, is_featured: nextVal } : g))
+  const handleToggleGalleryItemFeatured = async (itemOrId: GalleryItem | string, explicitStatus?: boolean) => {
+    const id = typeof itemOrId === "string" ? itemOrId : itemOrId.id;
+    const currentStatus =
+      explicitStatus !== undefined
+        ? explicitStatus
+        : typeof itemOrId === "object"
+        ? Boolean(itemOrId.is_featured)
+        : Boolean(galleryItems.find((g) => g.id === id)?.is_featured);
+
+    const nextStatus = !currentStatus;
+
+    // 1. Optimistic UI update (instantly changes the button color in the admin panel)
+    setGalleryItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, is_featured: nextStatus } : item
+      )
     );
+
     try {
-      await toggleGalleryItemFeatured(item.id);
+      // 2. Centralized toggle in Supabase & live-sync broadcast
+      await toggleGalleryItemFeatured(id, currentStatus);
+
+      // 3. Force fresh data pull from Supabase to guarantee UI is perfectly in sync
       await loadGalleryData();
+
       showToast(
         "success",
-        `Image ${nextVal ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
+        `Image ${nextStatus ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
       );
-    } catch (err) {
-      console.error("Failed to toggle gallery item featured:", err);
-      await loadGalleryData();
+    } catch (error) {
+      console.error("Error toggling featured status:", error);
+      showToast("error", "Failed to update featured status in database.");
+      
+      // Revert the UI if the database update failed
+      loadGalleryData();
     }
   };
 

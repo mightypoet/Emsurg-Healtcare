@@ -1,42 +1,81 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchGalleryItems, subscribeToGallery, GalleryItem } from "../../lib/galleryStore";
+import { supabase } from "../../lib/supabase";
+import { fetchGallery, GalleryItem } from "../../lib/galleryStore";
 import { formatDriveImageUrl } from "../../lib/utils";
 import { LayoutGrid, Card } from "../ui/layout-grid";
-import { ArrowRight, Building2, Sparkles, ShieldCheck, ExternalLink } from "lucide-react";
+import { ArrowRight, Building2, Sparkles, ShieldCheck, ExternalLink, RefreshCw } from "lucide-react";
 
 export default function FeaturedGallerySection() {
-  const [featuredItems, setFeaturedItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [featuredImages, setFeaturedImages] = useState<GalleryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const loadItems = async () => {
+  const fetchFeaturedGallery = async () => {
     try {
-      const all = await fetchGalleryItems();
+      setIsLoading(true);
+
+      // Query Supabase specifically for featured items
+      const { data, error } = await supabase
+        .from("gallery_items")
+        .select("*")
+        .eq("is_featured", true)
+        .order("order_index", { ascending: true });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        setFeaturedImages(data);
+        return;
+      }
+
+      // Fallback query checking for 'featured' column name or full store
+      const all = await fetchGallery();
       const featured = all.filter((item) => item.is_featured);
-      // Select up to 6 featured items for a clean 3-column bento grid
-      setFeaturedItems(featured.length > 0 ? featured.slice(0, 6) : all.slice(0, 6));
-    } catch (err) {
-      console.error("Failed to load featured gallery items:", err);
+      setFeaturedImages(featured.length > 0 ? featured : all.slice(0, 6));
+    } catch (error) {
+      console.error("Error fetching featured gallery:", error);
+      const all = await fetchGallery();
+      const featured = all.filter((item) => item.is_featured);
+      setFeaturedImages(featured.length > 0 ? featured : all.slice(0, 6));
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadItems();
-    const unsub = subscribeToGallery((all) => {
-      if (all && all.length > 0) {
-        const featured = all.filter((item) => item.is_featured);
-        setFeaturedItems(featured.length > 0 ? featured.slice(0, 6) : all.slice(0, 6));
-      }
-    });
-    return () => unsub();
+    // 1. Fetch on initial load
+    fetchFeaturedGallery();
+
+    // 2. Listen for Admin Panel live-sync events
+    const handleUpdate = () => {
+      fetchFeaturedGallery();
+    };
+
+    window.addEventListener("emsurg-gallery-changed", handleUpdate);
+    window.addEventListener("emsurg_gallery_updated", handleUpdate);
+
+    // 3. Supabase Realtime channel subscription
+    const channel = supabase
+      .channel("public:home-featured-gallery")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "gallery_items" },
+        () => {
+          fetchFeaturedGallery();
+        }
+      )
+      .subscribe();
+
+    // 4. Cleanup on unmount
+    return () => {
+      window.removeEventListener("emsurg-gallery-changed", handleUpdate);
+      window.removeEventListener("emsurg_gallery_updated", handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  if (!loading && featuredItems.length === 0) return null;
+  if (!isLoading && featuredImages.length === 0) return null;
 
   // Convert to Aceternity LayoutGrid Cards
-  const cards: Card[] = featuredItems.map((item, idx) => {
+  const cards: Card[] = featuredImages.slice(0, 6).map((item, idx) => {
     const spanClass =
       item.col_span === "md:col-span-2"
         ? "md:col-span-2"
@@ -56,11 +95,9 @@ export default function FeaturedGallerySection() {
             <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-400/40 backdrop-blur-md">
               {item.category || "Clinical Facility"}
             </span>
-            {item.is_featured && (
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 backdrop-blur-md flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-400" /> Featured Facility
-              </span>
-            )}
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 backdrop-blur-md flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-amber-400" /> Featured Facility
+            </span>
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-slate-200 border border-white/20 backdrop-blur-md flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-emerald-400" /> ISO 13485 Validated
             </span>
@@ -120,8 +157,14 @@ export default function FeaturedGallerySection() {
         </div>
 
         {/* Aceternity UI LayoutGrid */}
-        <div className="w-full">
-          <LayoutGrid cards={cards} />
+        <div className="w-full min-h-[300px]">
+          {isLoading && featuredImages.length === 0 ? (
+            <div className="flex items-center justify-center py-20">
+              <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
+            </div>
+          ) : (
+            <LayoutGrid cards={cards} />
+          )}
         </div>
       </div>
     </section>

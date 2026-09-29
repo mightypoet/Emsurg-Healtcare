@@ -29,7 +29,7 @@ interface GalleryTabProps {
   onRefresh: () => void;
   onOpenEditor: (item?: GalleryItem) => void;
   onDelete: (id: string, title?: string) => void;
-  onToggleFeatured: (item: GalleryItem) => void;
+  onToggleFeatured: (id: string, currentStatus: boolean) => void;
   onCopyUrl: (id: string, url: string) => void;
   copiedUrlId: string | null;
   onOpenBulkUpload: () => void;
@@ -268,16 +268,19 @@ export default function GalleryTab({
                 {/* Homepage Featured Clickable Toggle */}
                 <button
                   type="button"
-                  onClick={() => onToggleFeatured(item)}
-                  className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm border flex items-center gap-1 transition-all z-10 ${
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onToggleFeatured(item.id, Boolean(item.is_featured));
+                  }}
+                  className={`absolute top-2 right-2 px-3 py-1 text-xs font-bold rounded-full transition-colors z-10 shadow-sm backdrop-blur-md cursor-pointer active:scale-95 select-none ${
                     item.is_featured
-                      ? "bg-amber-500/90 text-white border-amber-400 shadow-sm"
-                      : "bg-slate-900/70 text-slate-300 border-slate-700/60 hover:text-white"
+                      ? "bg-amber-500 text-white hover:bg-amber-600"
+                      : "bg-white/80 text-slate-600 hover:bg-white hover:text-sky-600"
                   }`}
                   title={item.is_featured ? "Featured on Homepage (Click to disable)" : "Click to feature on Homepage"}
                 >
-                  <Sparkles className="w-3 h-3 text-amber-300" />
-                  {item.is_featured ? "Featured" : "Feature"}
+                  {item.is_featured ? "★ FEATURED" : "☆ FEATURE"}
                 </button>
               </div>
 
