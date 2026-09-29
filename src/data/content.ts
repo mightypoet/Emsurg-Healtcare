@@ -10,6 +10,12 @@ export const companyInfo = {
   hours: "Monday–Friday, 9:00 AM–4:00 PM",
   mission: "Advancing healthcare with innovation, integrity and expertise.",
   vision: "Engineering better outcomes through medical innovation and care.",
+  social: {
+    facebook: "https://www.facebook.com/ehipl",
+    instagram: "https://www.instagram.com/emsurg_healthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw%3D%3D",
+    linkedin: "https://www.linkedin.com/company/emsurg-healthcare-india-pvt-ltd/",
+    x: "https://x.com/emsrug",
+  },
 };
 
 export const locations = [

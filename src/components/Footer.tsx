@@ -53,7 +53,7 @@ export default function Footer() {
               <div className="flex items-center gap-3">
                 {/* Facebook */}
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/ehipl"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on Facebook"
@@ -65,7 +65,7 @@ export default function Footer() {
 
                 {/* Instagram */}
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/emsurg_healthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw%3D%3D"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on Instagram"
@@ -77,7 +77,7 @@ export default function Footer() {
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/company/emsurg-healthcare"
+                  href="https://www.linkedin.com/company/emsurg-healthcare-india-pvt-ltd/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Connect with Emsurg on LinkedIn"
@@ -89,7 +89,7 @@ export default function Footer() {
 
                 {/* X (Twitter) */}
                 <a
-                  href="https://twitter.com"
+                  href="https://x.com/emsrug"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Emsurg on X"
