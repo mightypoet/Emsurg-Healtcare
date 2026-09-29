@@ -796,9 +796,19 @@ export default function Dashboard() {
 
   const handleToggleProductFeatured = async (product: Product) => {
     const isCurrentlyFeatured = product.featured ?? product.is_featured ?? false;
-    await toggleFeatured(product.id);
-    await loadProducts();
-    showToast("success", `Product ${!isCurrentlyFeatured ? "featured on homepage" : "unfeatured from homepage"}.`);
+    const nextVal = !isCurrentlyFeatured;
+    // Optimistic state update for instant UI feedback
+    setProducts((prev) =>
+      prev.map((p) => (p.id === product.id ? { ...p, featured: nextVal, is_featured: nextVal } : p))
+    );
+    try {
+      await toggleFeatured(product.id);
+      await loadProducts();
+      showToast("success", `Product ${nextVal ? "featured on homepage" : "unfeatured from homepage"}.`);
+    } catch (err) {
+      console.error("Failed to toggle product featured:", err);
+      await loadProducts();
+    }
   };
 
   /* ---------------- GALLERY & MEDIA LOGIC ---------------- */
@@ -882,12 +892,22 @@ export default function Dashboard() {
   };
 
   const handleToggleGalleryItemFeatured = async (item: GalleryItem) => {
-    await toggleGalleryItemFeatured(item.id);
-    await loadGalleryData();
-    showToast(
-      "success",
-      `Image ${!item.is_featured ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
+    const nextVal = !item.is_featured;
+    // Optimistic state update for instant UI feedback
+    setGalleryItems((prev) =>
+      prev.map((g) => (g.id === item.id ? { ...g, is_featured: nextVal } : g))
     );
+    try {
+      await toggleGalleryItemFeatured(item.id);
+      await loadGalleryData();
+      showToast(
+        "success",
+        `Image ${nextVal ? "marked as Featured on Homepage" : "removed from Homepage featured"}.`
+      );
+    } catch (err) {
+      console.error("Failed to toggle gallery item featured:", err);
+      await loadGalleryData();
+    }
   };
 
   const handleResetGallery = async () => {

@@ -301,24 +301,55 @@ export async function toggleGalleryItemFeatured(id: string): Promise<GalleryItem
   try {
     const all = await fetchGallery();
     const item = all.find((g) => g.id === id);
-    if (!item) return null;
+    if (!item) {
+      console.warn("Item not found in memory for toggleGalleryItemFeatured:", id);
+      return null;
+    }
 
     const nextVal = !item.is_featured;
 
-    await supabase
+    // 1. Update in gallery_items table
+    const { error: err1 } = await supabase
       .from("gallery_items")
-      .update({ is_featured: nextVal })
+      .update({ is_featured: nextVal, featured: nextVal })
       .eq("id", id);
 
-    await supabase
-      .from("gallery")
-      .update({ is_featured: nextVal })
-      .eq("id", id);
+    if (err1 && (err1.message.includes("column") || err1.code === "PGRST204")) {
+      // Try single column update if one column is missing
+      const { error: errIsFeat } = await supabase
+        .from("gallery_items")
+        .update({ is_featured: nextVal })
+        .eq("id", id);
+
+      if (errIsFeat) {
+        await supabase
+          .from("gallery_items")
+          .update({ featured: nextVal })
+          .eq("id", id);
+      }
+    }
+
+    // 2. If id is non-standard (e.g., client-generated), also try by image_url
+    if (item.image_url) {
+      await supabase
+        .from("gallery_items")
+        .update({ is_featured: nextVal })
+        .eq("image_url", item.image_url);
+    }
+
+    // 3. Also update fallback gallery table
+    try {
+      await supabase
+        .from("gallery")
+        .update({ is_featured: nextVal, featured: nextVal })
+        .eq("id", id);
+    } catch {}
 
     notifyGalleryChanged();
     return { ...item, is_featured: nextVal };
   } catch (err) {
     console.error("Error toggling gallery item featured in Supabase:", err);
+    notifyGalleryChanged();
     return null;
   }
 }
