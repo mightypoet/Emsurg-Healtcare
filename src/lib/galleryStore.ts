@@ -46,10 +46,9 @@ export async function seedGalleryToSupabase(): Promise<GalleryItem[]> {
   try {
     const payloads = DEFAULT_GALLERY_ITEMS.map((item, idx) => ({
       title: item.title,
-      description: item.description,
+      description: item.description || "",
       image_url: formatDriveImageUrl(item.image_url),
       category: item.category || "Cleanrooms & Sterile Processing",
-      col_span: item.col_span || "col-span-1",
       is_featured: item.is_featured ?? true,
       order_index: idx,
       created_at: item.created_at || new Date().toISOString(),
@@ -132,12 +131,12 @@ export async function saveGalleryItem(item: any, editId?: string): Promise<Galle
   const sanitizedUrl = item.image_url || item.image ? formatDriveImageUrl(item.image_url || item.image) : "";
   const targetId = editId || item.id;
 
-  const payload = {
+  // Do not include col_span in database payload because the Postgres schema does not contain col_span column
+  const payload: any = {
     title: item.title?.trim() || "Untitled Facility Highlight",
     category: item.category || "Cleanrooms & Sterile Processing",
     image_url: sanitizedUrl,
     description: item.description?.trim() || "",
-    col_span: item.col_span || "col-span-1",
     is_featured: item.is_featured ?? true,
     order_index: item.order_index ?? item.orderIndex ?? 0,
   };
@@ -210,12 +209,12 @@ export const saveLocalGalleryItem = saveGalleryItem;
  * Bulk saves gallery items to Supabase
  */
 export async function saveBulkGalleryItems(itemsData: Array<Partial<GalleryItem>>): Promise<GalleryItem[]> {
+  // Do not include col_span in database payload because the Postgres schema does not contain col_span column
   const payloads = itemsData.map((item, idx) => ({
     title: item.title?.trim() || `Facility Highlight ${idx + 1}`,
     category: item.category || "Cleanrooms & Sterile Processing",
     image_url: item.image_url ? formatDriveImageUrl(item.image_url) : "",
     description: item.description?.trim() || "Clinical facility, laboratory research, and medical manufacturing highlight.",
-    col_span: item.col_span || "col-span-1",
     is_featured: item.is_featured ?? true,
     order_index: item.order_index ?? item.orderIndex ?? idx,
   }));
@@ -229,6 +228,27 @@ export async function saveBulkGalleryItems(itemsData: Array<Partial<GalleryItem>
     if (!error && data) {
       notifyGalleryChanged();
       return data.map(normalizeGalleryItem);
+    }
+
+    // If column mismatch occurs, retry with minimal schema
+    if (error && error.message && error.message.includes("Could not find the")) {
+      console.warn("Retrying bulk gallery insert without optional columns due to:", error.message);
+      const minimalPayloads = payloads.map((p) => ({
+        title: p.title,
+        category: p.category,
+        image_url: p.image_url,
+        description: p.description,
+      }));
+
+      const resMin = await supabase
+        .from("gallery_items")
+        .insert(minimalPayloads)
+        .select();
+
+      if (!resMin.error && resMin.data) {
+        notifyGalleryChanged();
+        return resMin.data.map(normalizeGalleryItem);
+      }
     }
 
     // Fallback to gallery table

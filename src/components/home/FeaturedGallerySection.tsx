@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchGalleryItems, subscribeToGallery, GalleryItem } from "../../lib/galleryStore";
 import { formatDriveImageUrl } from "../../lib/utils";
 import { LayoutGrid, Card } from "../ui/layout-grid";
-import { ArrowRight, Building2, Sparkles, ShieldCheck, ExternalLink, Eye } from "lucide-react";
+import { ArrowRight, Building2, Sparkles, ShieldCheck, ExternalLink } from "lucide-react";
 
 export default function FeaturedGallerySection() {
   const [featuredItems, setFeaturedItems] = useState<GalleryItem[]>([]);
@@ -122,12 +122,6 @@ export default function FeaturedGallerySection() {
         {/* Aceternity UI LayoutGrid */}
         <div className="w-full">
           <LayoutGrid cards={cards} />
-        </div>
-
-        {/* Clinical Note Footer */}
-        <div className="flex items-center justify-center gap-2 mt-8 text-xs text-slate-400 font-medium">
-          <Eye className="w-3.5 h-3.5 text-blue-500" />
-          <span>Click any facility card to expand clinical specifications and high-resolution imaging.</span>
         </div>
       </div>
     </section>
