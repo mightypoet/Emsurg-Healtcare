@@ -334,8 +334,8 @@ export default function ProductDetail() {
               </p>
 
               {/* Action Dock (Primary CTAs) */}
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8 space-y-3">
-                <div className="flex flex-col sm:flex-row gap-3">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <LiquidButton
                     variant="primary"
                     size="lg"
@@ -343,30 +343,24 @@ export default function ProductDetail() {
                       setIsDownloadModal(false);
                       setIsInquiryOpen(true);
                     }}
-                    className="w-full sm:w-auto text-sm font-bold uppercase tracking-wider py-3.5 px-7 justify-center gap-2"
+                    className="w-full sm:w-auto text-sm font-bold uppercase tracking-wider py-3.5 px-7 justify-center gap-2 shadow-md shadow-sky-600/20"
                   >
                     <span>Inquire Now</span>
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </LiquidButton>
-                </div>
 
-                <div className="flex flex-wrap items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-500 gap-2">
-                  <span className="flex items-center gap-1.5 font-medium text-slate-700">
-                    <span>⚡</span> Fast Response from Clinical Specialists &amp; Tenders Desk
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsDownloadModal(true);
-                        setIsInquiryOpen(true);
-                      }}
-                      className="inline-flex items-center gap-1.5 font-bold text-sky-600 hover:text-sky-800 transition-colors py-1 px-2.5 rounded-lg hover:bg-sky-50"
-                    >
-                      <Download className="w-3.5 h-3.5 text-sky-600" />
-                      <span>Technical Brochure (PDF)</span>
-                    </button>
-                  </div>
+                  <LiquidButton
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      setIsDownloadModal(true);
+                      setIsInquiryOpen(true);
+                    }}
+                    className="w-full sm:w-auto text-sm font-bold uppercase tracking-wider py-3.5 px-6 justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4 text-sky-600" />
+                    <span>Technical Brochure (PDF)</span>
+                  </LiquidButton>
                 </div>
               </div>
 
@@ -437,7 +431,11 @@ export default function ProductDetail() {
         product={product}
         onSuccess={handleInquirySuccess}
         isDownload={isDownloadModal}
-        downloadUrl={product?.brochure_url || "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurg-corporate-brochure.pdf"}
+        downloadUrl={
+          (product?.brochure_url && product.brochure_url !== "#") 
+            ? product.brochure_url 
+            : "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Hemodialysis%20Product%20Brochure.pdf"
+        }
       />
     </div>
   );

@@ -92,7 +92,7 @@ Manufactured at Emsurg's automated formulation facility in Kolkata, our hemodial
       "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Hemodialysis%20Product%20Brochure.pdf",
     created_at: new Date(Date.now() - 600000000).toISOString(),
   },
   {
@@ -315,7 +315,7 @@ BoneSurg CR allows the operating surgeon to incorporate heat-stable liquid or po
       "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Bonesurg%20Brochure.pdf",
     created_at: new Date(Date.now() - 480000000).toISOString(),
   },
   {
@@ -360,7 +360,7 @@ Engineered with interconnected microporosity and macroporosity (pore diameter 10
       "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Bonesurg%20Brochure.pdf",
     created_at: new Date(Date.now() - 460000000).toISOString(),
   },
 
@@ -508,7 +508,7 @@ By pairing 60% rapidly resorbable Beta-Tricalcium Phosphate (β-TCP) with 40% st
       "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Bonesurg%20Brochure.pdf",
     created_at: new Date(Date.now() - 380000000).toISOString(),
   },
 
@@ -589,7 +589,7 @@ In partnership with Demetra (Italy), Emsurg supplies Cemex HV, the benchmark sel
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Cemex%20Line%20Slide%20Deck.pdf",
     created_at: new Date(Date.now() - 340000000).toISOString(),
   },
   {
@@ -624,7 +624,7 @@ Cemex LV is formulated for modern third-generation cementing techniques where ce
       "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Cemex%20Line%20Slide%20Deck.pdf",
     created_at: new Date(Date.now() - 320000000).toISOString(),
   },
   {
@@ -659,7 +659,7 @@ Cemex ID Green incorporates natural chlorophyll-derived biocompatible green pigm
       "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Cemex%20Line%20Slide%20Deck.pdf",
     created_at: new Date(Date.now() - 300000000).toISOString(),
   },
 
@@ -736,7 +736,7 @@ Provides 8 to 12 minutes of consistent, injectable paste consistency allowing de
       "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/OPACITY%201_merged.pdf",
     created_at: new Date(Date.now() - 260000000).toISOString(),
   },
   {
@@ -935,27 +935,34 @@ function mapSingleDbProduct(p: any, idx?: number): Product {
     imgList = ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop"];
   }
 
-  const product: Product = {
-    id: p.id || `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-    title: p.title || "Medical Product",
-    slug: p.slug || (p.title ? p.title.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-") : "product"),
-    division: (p.division === "Channel Partner" ? "Channel Partner" : "Manufacturing"),
-    category: p.category || "Orthobiologics",
-    subCategory: p.sub_category || p.subCategory,
-    partnerBrand: brand,
-    short_description: desc,
-    full_description: fullDesc,
-    features: featList,
-    specifications: specMap,
-    images: imgList,
-    certifications: p.certifications || undefined,
-    isUpcoming: p.is_upcoming ?? p.isUpcoming ?? false,
-    is_featured: isFeat,
-    featured: isFeat,
-    orderIndex: order,
-    brochure_url: p.brochure_url || p.brochureUrl || "#",
-    created_at: p.created_at || new Date().toISOString(),
-  };
+    const matchedInit = INITIAL_PRODUCTS.find((init) => init.slug === (p.slug || "") || init.id === (p.id || ""));
+    const finalBrochure = (p.brochure_url && p.brochure_url !== "#")
+      ? p.brochure_url
+      : (p.brochureUrl && p.brochureUrl !== "#")
+      ? p.brochureUrl
+      : matchedInit?.brochure_url || "#";
+
+    const product: Product = {
+      id: p.id || `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      title: p.title || "Medical Product",
+      slug: p.slug || (p.title ? p.title.toLowerCase().replace(/[^\w ]+/g, "").replace(/ +/g, "-") : "product"),
+      division: (p.division === "Channel Partner" ? "Channel Partner" : "Manufacturing"),
+      category: p.category || "Orthobiologics",
+      subCategory: p.sub_category || p.subCategory,
+      partnerBrand: brand,
+      short_description: desc,
+      full_description: fullDesc,
+      features: featList,
+      specifications: specMap,
+      images: imgList,
+      certifications: p.certifications || undefined,
+      isUpcoming: p.is_upcoming ?? p.isUpcoming ?? false,
+      is_featured: isFeat,
+      featured: isFeat,
+      orderIndex: order,
+      brochure_url: finalBrochure,
+      created_at: p.created_at || new Date().toISOString(),
+    };
 
   if (!product.faqs || product.faqs.length === 0) {
     product.faqs = getProductFAQs(product);

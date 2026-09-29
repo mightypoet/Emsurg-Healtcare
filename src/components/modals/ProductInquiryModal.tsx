@@ -98,20 +98,29 @@ export default function ProductInquiryModal({
       });
 
       if (isDownload) {
-        // Trigger PDF opening in new tab
-        const targetPdf = downloadUrl || product?.brochure_url || "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurg-corporate-brochure.pdf";
+        // Trigger PDF download / opening in new tab
+        const targetPdf = (downloadUrl && downloadUrl !== "#") 
+          ? downloadUrl 
+          : (product?.brochure_url && product.brochure_url !== "#") 
+            ? product.brochure_url 
+            : "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Hemodialysis%20Product%20Brochure.pdf";
+        
         try {
-          const opened = window.open(targetPdf, "_blank", "noopener,noreferrer");
-          if (!opened) {
-            window.location.href = targetPdf;
-          }
+          const downloadLink = document.createElement("a");
+          downloadLink.href = targetPdf;
+          downloadLink.target = "_blank";
+          downloadLink.rel = "noopener noreferrer";
+          downloadLink.download = "Hemodialysis-Product-Brochure.pdf";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
         } catch {
-          window.location.href = targetPdf;
+          window.open(targetPdf, "_blank", "noopener,noreferrer");
         }
 
         setSubmitted(true);
         if (onSuccess) {
-          onSuccess("Brochure unlocked! Opening technical document in new tab...");
+          onSuccess("Brochure unlocked! Downloading technical document...");
         }
 
         setTimeout(() => {
