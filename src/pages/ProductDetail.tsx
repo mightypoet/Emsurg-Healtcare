@@ -27,6 +27,7 @@ export default function ProductDetail() {
 
   // Inquiry Modal State
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [isDownloadModal, setIsDownloadModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -338,7 +339,10 @@ export default function ProductDetail() {
                   <LiquidButton
                     variant="primary"
                     size="lg"
-                    onClick={() => setIsInquiryOpen(true)}
+                    onClick={() => {
+                      setIsDownloadModal(false);
+                      setIsInquiryOpen(true);
+                    }}
                     className="w-full sm:w-auto text-sm font-bold uppercase tracking-wider py-3.5 px-7 justify-center gap-2"
                   >
                     <span>Inquire Now</span>
@@ -354,12 +358,13 @@ export default function ProductDetail() {
                     <button
                       type="button"
                       onClick={() => {
-                        setToastMessage("Technical product brochure has been requested. We will email you the PDF.");
-                        setTimeout(() => setToastMessage(null), 4000);
+                        setIsDownloadModal(true);
+                        setIsInquiryOpen(true);
                       }}
-                      className="inline-flex items-center gap-1 font-bold text-blue-600 hover:text-blue-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 font-bold text-sky-600 hover:text-sky-800 transition-colors py-1 px-2.5 rounded-lg hover:bg-sky-50"
                     >
-                      <Download className="w-3.5 h-3.5" /> Technical Brochure (PDF)
+                      <Download className="w-3.5 h-3.5 text-sky-600" />
+                      <span>Technical Brochure (PDF)</span>
                     </button>
                   </div>
                 </div>
@@ -422,12 +427,17 @@ export default function ProductDetail() {
         )}
       </div>
 
-      {/* Inquiry Modal */}
+      {/* Inquiry / Gated Download Modal */}
       <ProductInquiryModal
         isOpen={isInquiryOpen}
-        onClose={() => setIsInquiryOpen(false)}
+        onClose={() => {
+          setIsInquiryOpen(false);
+          setIsDownloadModal(false);
+        }}
         product={product}
         onSuccess={handleInquirySuccess}
+        isDownload={isDownloadModal}
+        downloadUrl={product?.brochure_url || "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurg-corporate-brochure.pdf"}
       />
     </div>
   );

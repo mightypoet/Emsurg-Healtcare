@@ -10,7 +10,8 @@ import {
   Briefcase, 
   FileText,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Download
 } from "lucide-react";
 import { Product, submitProductInquiry, getWhatsAppNumberForProduct } from "../../lib/productsStore";
 
@@ -19,6 +20,8 @@ export interface ProductInquiryModalProps {
   onClose: () => void;
   product?: Product | null;
   onSuccess?: (message?: string) => void;
+  isDownload?: boolean;
+  downloadUrl?: string;
 }
 
 const DESIGNATION_ROLES = [
@@ -34,7 +37,9 @@ export default function ProductInquiryModal({
   isOpen,
   onClose,
   product,
-  onSuccess
+  onSuccess,
+  isDownload = false,
+  downloadUrl
 }: ProductInquiryModalProps) {
   const [name, setName] = useState("");
   const [institution, setInstitution] = useState("");
@@ -74,6 +79,10 @@ export default function ProductInquiryModal({
 
     try {
       // 1. Save lead to Admin Panel (localStorage & Supabase)
+      const formattedNotes = isDownload
+        ? `[BROCHURE DOWNLOAD REQUESTED] ${notes.trim() || "Technical brochure & product dossier requested."}`
+        : notes.trim();
+
       await submitProductInquiry({
         product_id: product?.id,
         product_name: productName,
@@ -84,55 +93,79 @@ export default function ProductInquiryModal({
         city: cityState.trim(),
         phone: phone.trim(),
         role: role,
-        quantity_requirement: notes.trim() || "Quote & specs requested",
-        notes: notes.trim(),
+        quantity_requirement: isDownload ? "Brochure PDF Download" : (notes.trim() || "Quote & specs requested"),
+        notes: formattedNotes,
       });
 
-      // 2. Format WhatsApp Dispatch
-      const formattedMessage = [
-        "*New Product Inquiry - Emsurg Healthcare*",
-        "----------------------------------------",
-        `*Product:* ${productName}`,
-        `*Category:* ${categoryText}`,
-        "",
-        `*Name:* ${name.trim()}`,
-        `*Role:* ${role}`,
-        `*Hospital/Institution:* ${institution.trim()}`,
-        `*Location:* ${cityState.trim()}`,
-        `*Phone:* ${phone.trim()}`,
-        "",
-        "*Requirement / Notes:*",
-        notes.trim() || "Immediate hospital quotation, evaluation samples and technical dossier requested.",
-        "----------------------------------------",
-        "_Generated via emsurg.com official portal_"
-      ].join("\n");
+      if (isDownload) {
+        // Trigger PDF opening in new tab
+        const targetPdf = downloadUrl || product?.brochure_url || "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/emsurg-corporate-brochure.pdf";
+        try {
+          const opened = window.open(targetPdf, "_blank", "noopener,noreferrer");
+          if (!opened) {
+            window.location.href = targetPdf;
+          }
+        } catch {
+          window.location.href = targetPdf;
+        }
 
-      // Category-to-WhatsApp Routing Rules:
-      // 1. +91 74397 57452: Nephrology & Trading Cements (Default)
-      // 2. +91 98745 35674: BoneSurg / Orthobiologics & Sports Medicine
-      // 3. +91 83350 29278: NPWT / Wound Management & MDL Biopsy Needles
-      const targetPhone = getWhatsAppNumberForProduct(product);
-      const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(formattedMessage)}`;
+        setSubmitted(true);
+        if (onSuccess) {
+          onSuccess("Brochure unlocked! Opening technical document in new tab...");
+        }
 
-      // Safe dispatch to WhatsApp in new tab
-      try {
-        const opened = window.open(waUrl, "_blank", "noopener,noreferrer");
-        if (!opened) {
+        setTimeout(() => {
+          onClose();
+          setSubmitted(false);
+          setName("");
+          setInstitution("");
+          setCityState("");
+          setPhone("");
+          setNotes("");
+        }, 2200);
+      } else {
+        // 2. Format WhatsApp Dispatch
+        const formattedMessage = [
+          "*New Product Inquiry - Emsurg Healthcare*",
+          "----------------------------------------",
+          `*Product:* ${productName}`,
+          `*Category:* ${categoryText}`,
+          "",
+          `*Name:* ${name.trim()}`,
+          `*Role:* ${role}`,
+          `*Hospital/Institution:* ${institution.trim()}`,
+          `*Location:* ${cityState.trim()}`,
+          `*Phone:* ${phone.trim()}`,
+          "",
+          "*Requirement / Notes:*",
+          notes.trim() || "Immediate hospital quotation, evaluation samples and technical dossier requested.",
+          "----------------------------------------",
+          "_Generated via emsurg.com official portal_"
+        ].join("\n");
+
+        const targetPhone = getWhatsAppNumberForProduct(product);
+        const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(formattedMessage)}`;
+
+        // Safe dispatch to WhatsApp in new tab
+        try {
+          const opened = window.open(waUrl, "_blank", "noopener,noreferrer");
+          if (!opened) {
+            window.location.href = waUrl;
+          }
+        } catch {
           window.location.href = waUrl;
         }
-      } catch {
-        window.location.href = waUrl;
-      }
 
-      setSubmitted(true);
-      if (onSuccess) {
-        onSuccess("Inquiry logged! Redirecting to Emsurg WhatsApp Clinical Desk...");
-      }
+        setSubmitted(true);
+        if (onSuccess) {
+          onSuccess("Inquiry logged! Redirecting to Emsurg WhatsApp Clinical Desk...");
+        }
 
-      // Close modal smoothly after brief feedback
-      setTimeout(() => {
-        onClose();
-      }, 1800);
+        // Close modal smoothly after brief feedback
+        setTimeout(() => {
+          onClose();
+        }, 1800);
+      }
     } catch (err) {
       console.error("Submission error:", err);
       setError("Unable to log inquiry right now. Please message our desk directly on WhatsApp.");
@@ -164,12 +197,21 @@ export default function ProductInquiryModal({
         {/* Header: Product Context */}
         <div className="border-b border-sky-100 pb-5 mb-5 pr-8">
           <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-sky-700 bg-sky-50 border border-sky-200/80 px-2.5 py-0.5 rounded-full mb-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-            <span>Clinical & Institutional Procurement</span>
+            {isDownload ? (
+              <>
+                <Download className="w-3.5 h-3.5 text-sky-600" />
+                <span>Technical Brochure & Dossier Download</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
+                <span>Clinical & Institutional Procurement</span>
+              </>
+            )}
           </div>
 
           <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 leading-snug">
-            {productName}
+            {isDownload ? `Download Brochure: ${productName}` : productName}
           </h3>
 
           <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-slate-500 font-medium">
@@ -184,12 +226,16 @@ export default function ProductInquiryModal({
             <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-200 shadow-sm">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h4 className="text-xl font-bold text-slate-900 mb-1.5">Inquiry Logged Successfully</h4>
+            <h4 className="text-xl font-bold text-slate-900 mb-1.5">
+              {isDownload ? "Brochure Unlocked" : "Inquiry Logged Successfully"}
+            </h4>
             <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto leading-relaxed mb-4">
-              Routing your request to the Emsurg Clinical Desk on WhatsApp. Our representative will respond with pricing, dossiers, and dispatch timeline.
+              {isDownload
+                ? "Your details have been registered. Opening the technical brochure PDF in a new tab now..."
+                : "Routing your request to the Emsurg Clinical Desk on WhatsApp. Our representative will respond with pricing, dossiers, and dispatch timeline."}
             </p>
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full">
-              <span>Redirecting to WhatsApp...</span>
+              <span>{isDownload ? "Opening Document..." : "Redirecting to WhatsApp..."}</span>
             </div>
           </div>
         ) : (
@@ -210,6 +256,7 @@ export default function ProductInquiryModal({
                 <input 
                   type="text" 
                   required
+                  placeholder="e.g. Dr. A. Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -227,6 +274,7 @@ export default function ProductInquiryModal({
                 <input 
                   type="text" 
                   required
+                  placeholder="e.g. Apollo Multi-Specialty Hospital"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -245,6 +293,7 @@ export default function ProductInquiryModal({
                   <input 
                     type="text" 
                     required
+                    placeholder="e.g. Kolkata, WB"
                     value={cityState}
                     onChange={(e) => setCityState(e.target.value)}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -261,6 +310,7 @@ export default function ProductInquiryModal({
                   <input 
                     type="tel" 
                     required
+                    placeholder="+91 98765 43210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -293,13 +343,14 @@ export default function ProductInquiryModal({
             {/* 6. Requirement / Quantity / Notes */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Requirement / Quantity / Notes
+                {isDownload ? "Specific Clinical Interests (Optional)" : "Requirement / Quantity / Notes"}
               </label>
               <div className="relative">
                 <FileText className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <textarea 
                   rows={2}
                   value={notes}
+                  placeholder={isDownload ? "e.g. Requesting technical specifications and surgical dossier" : "e.g. Requesting quote for 50 units"}
                   onChange={(e) => setNotes(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium resize-none"
                 />
@@ -311,15 +362,28 @@ export default function ProductInquiryModal({
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-60"
+                className={`w-full py-3.5 px-6 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-60 shadow-lg ${
+                  isDownload
+                    ? "bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 shadow-sky-600/25"
+                    : "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-emerald-600/25"
+                }`}
               >
                 {submitting ? (
-                  <span>Submitting Inquiry...</span>
+                  <span>{isDownload ? "Unlocking Brochure..." : "Submitting Inquiry..."}</span>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
-                    <span>Submit Inquiry</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
+                    {isDownload ? (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Download Technical Brochure (PDF)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Submit Inquiry</span>
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </>
+                    )}
                   </>
                 )}
               </button>

@@ -101,7 +101,7 @@ export default function LiquidGlassNavbar() {
               <span className={`font-semibold tracking-tight text-xs leading-tight ${
                 isLightPage ? "text-slate-900" : "text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
               }`}>
-                Emsurg Biomedical
+                Emsurg Healthcare
               </span>
               <span className={`text-[10px] tracking-wider uppercase font-medium ${
                 isLightPage ? "text-slate-500" : "text-white/80 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
@@ -121,15 +121,15 @@ export default function LiquidGlassNavbar() {
             >
               <Link
                 to="/products"
-                className={`inline-flex items-center gap-1 transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 group ${
+                className={`inline-flex items-center gap-1 transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 group ${
                   isLightPage 
-                    ? "text-slate-700 hover:text-sky-600" 
-                    : "text-white/80 hover:text-white"
+                    ? "text-sky-700 hover:text-sky-900" 
+                    : "text-sky-200 hover:text-white"
                 }`}
               >
                 <span>Products</span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 opacity-70 group-hover:opacity-100 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-200 opacity-80 group-hover:opacity-100 ${
                     solutionsHovered ? "rotate-180" : ""
                   }`}
                 />
@@ -290,10 +290,10 @@ export default function LiquidGlassNavbar() {
             <a
               href="#our-expertise"
               onClick={handleExpertiseClick}
-              className={`inline-flex items-center transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 cursor-pointer ${
+              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 cursor-pointer ${
                 isLightPage 
-                  ? "text-slate-700 hover:text-sky-600" 
-                  : "text-white/80 hover:text-white"
+                  ? "text-sky-700 hover:text-sky-900" 
+                  : "text-sky-200 hover:text-white"
               }`}
             >
               Expertise
@@ -302,10 +302,10 @@ export default function LiquidGlassNavbar() {
             {/* Blogs */}
             <Link
               to="/blogs"
-              className={`inline-flex items-center transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 ${
+              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
                 isLightPage 
-                  ? "text-slate-700 hover:text-sky-600" 
-                  : "text-white/80 hover:text-white"
+                  ? "text-sky-700 hover:text-sky-900" 
+                  : "text-sky-200 hover:text-white"
               }`}
             >
               Blogs
@@ -314,10 +314,10 @@ export default function LiquidGlassNavbar() {
             {/* Infrastructure / Gallery */}
             <Link
               to="/gallery"
-              className={`inline-flex items-center transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 ${
+              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
                 isLightPage 
-                  ? "text-slate-700 hover:text-sky-600" 
-                  : "text-white/80 hover:text-white"
+                  ? "text-sky-700 hover:text-sky-900" 
+                  : "text-sky-200 hover:text-white"
               }`}
             >
               Infrastructure
@@ -326,10 +326,10 @@ export default function LiquidGlassNavbar() {
             {/* About Link */}
             <Link
               to="/about"
-              className={`inline-flex items-center transition-colors text-xs font-medium uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/50 ${
+              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
                 isLightPage 
-                  ? "text-slate-700 hover:text-sky-600" 
-                  : "text-white/80 hover:text-white"
+                  ? "text-sky-700 hover:text-sky-900" 
+                  : "text-sky-200 hover:text-white"
               }`}
             >
               About
