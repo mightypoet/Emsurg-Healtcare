@@ -22,6 +22,7 @@ import {
   UserCheck,
   Target,
   Eye,
+  Zap,
   Compass,
   Award,
   Sprout,
@@ -262,156 +263,173 @@ export default function About() {
             </div>
           </div>
 
-          {/* OUR MISSION & OUR VISION SECTION */}
-          <div className="max-w-4xl mx-auto pt-4">
-            {/* Centered Heading & Switcher */}
-            <div className="flex flex-col items-center text-center gap-3 mb-8 pb-2">
-              <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/70 border border-sky-200/80 text-[11px] font-bold tracking-[0.2em] px-3.5 py-1 rounded-full uppercase">
-                <Compass className="w-3.5 h-3.5 text-sky-600" />
-                OUR STRATEGIC PILLARS
+          {/* OUR MISSION & OUR VISION INFOGRAPHIC SECTION */}
+          <div className="max-w-7xl mx-auto pt-8">
+            {/* Centered Heading */}
+            <div className="flex flex-col items-center text-center gap-3 mb-12">
+              <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/80 border border-sky-200 text-xs font-bold tracking-[0.25em] px-4 py-1.5 rounded-full uppercase shadow-xs">
+                <Compass className="w-4 h-4 text-sky-600" />
+                <span>STRATEGIC FOUNDATION</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 tracking-tight">
-                Our Mission <span className="text-slate-400 font-extralight">&</span> Our Vision
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 tracking-tight">
+                Our Mission <span className="text-sky-600 font-semibold">&</span> Our Vision
               </h2>
-
-              {/* Centered Pill Toggle Switch */}
-              <div className="inline-flex items-center p-1 bg-sky-100/70 rounded-full border border-sky-200/60 shadow-inner mt-2">
-                <button
-                  type="button"
-                  onClick={() => setMissionVisionView("mission")}
-                  className={`px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
-                    missionVisionView === "mission"
-                      ? "bg-white text-sky-800 shadow-sm"
-                      : "text-slate-600 hover:text-sky-900"
-                  }`}
-                >
-                  Our Mission
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMissionVisionView("vision")}
-                  className={`px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
-                    missionVisionView === "vision"
-                      ? "bg-white text-sky-800 shadow-sm"
-                      : "text-slate-600 hover:text-sky-900"
-                  }`}
-                >
-                  Our Vision
-                </button>
-              </div>
+              <p className="text-slate-600 text-sm sm:text-base max-w-2xl font-normal leading-relaxed">
+                Guiding our clinical research, indigenous biomedical production, and healthcare partnerships across India and global markets.
+              </p>
             </div>
 
-            {/* Centered Active Content Card */}
-            <div className="max-w-3xl mx-auto text-left">
-              {/* 1. OUR MISSION CARD */}
-              {missionVisionView === "mission" && (
-                <div className="bg-white/95 backdrop-blur-xl border border-sky-100 rounded-3xl p-6 sm:p-9 shadow-md shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all relative overflow-hidden flex flex-col justify-between group animate-in fade-in zoom-in-95 duration-200">
-                  {/* Subtle top ambient bar */}
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-400" />
-                  
+            {/* Modern Dual-Card Infographic Layout with Ambient Gradient Glow */}
+            <div className="relative">
+              {/* Background Ambient Glow Blobs */}
+              <div className="absolute -top-10 -left-10 w-72 h-72 bg-sky-400/15 rounded-full blur-3xl pointer-events-none -z-10" />
+              <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+                {/* 1. OUR MISSION CARD */}
+                <div className="relative group bg-white/95 backdrop-blur-2xl border border-sky-100/90 rounded-3xl p-7 sm:p-10 shadow-lg shadow-sky-900/5 hover:border-sky-300 hover:shadow-2xl hover:shadow-sky-900/10 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  {/* Top Ambient Highlight */}
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-500 via-blue-600 to-cyan-400" />
+
                   <div>
-                    {/* Header */}
-                    <div className="flex items-center gap-3.5 mb-5">
-                      <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 group-hover:scale-105 transition-transform shadow-sm">
-                        <Target className="w-6 h-6" />
+                    {/* Header Strip with Icons */}
+                    <div className="flex items-center justify-between gap-4 mb-6">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200/80 flex items-center justify-center text-sky-600 shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                          <Target className="w-7 h-7 text-sky-600" />
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-sky-600">
+                            Core Purpose
+                          </span>
+                          <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                            Our Mission
+                          </h3>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-sky-600">Core Purpose</div>
-                        <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Our Mission</h3>
-                      </div>
+
+                      <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-200">
+                        Patient First
+                      </span>
                     </div>
 
                     {/* Mission Paragraph */}
-                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
-                      To drive innovation and excellence in healthcare by delivering high-quality medical devices, implants, and equipment that improve patient outcomes. We are committed to maintaining the highest standards of safety, quality, and ethical practices, while continuously adapting to the evolving clinical needs and empowering healthcare professionals in India and globally.
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8 font-normal">
+                      To drive innovation and excellence in healthcare by delivering high-quality medical devices, implants, and equipment that improve patient outcomes. We are committed to maintaining the highest standards of safety, quality, and ethical practices, while continuously adapting to evolving clinical needs and empowering healthcare professionals in India and globally.
                     </p>
 
                     {/* Mission Bullet Points */}
-                    <div className="pt-5 border-t border-sky-50">
-                      <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3.5 flex items-center gap-1.5">
-                        <Award className="w-3.5 h-3.5 text-sky-600" /> Strategic Commitments:
+                    <div className="pt-6 border-t border-slate-100">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-2">
+                        <Award className="w-4 h-4 text-sky-600" />
+                        <span>Strategic Commitments</span>
                       </div>
-                      <ul className="space-y-2.5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
                           "Provide innovative and life-saving medical devices",
                           "Continuous innovation in medical technology",
-                          "Maintain the highest standards of ethical practices",
+                          "Maintain highest standards of ethical practices",
                           "Deliver reliable and high-quality solutions",
-                          "Focus on sustainable business practices and robust management",
-                          "Support healthcare professionals with training and knowledge sharing"
+                          "Focus on sustainable business practices",
+                          "Support clinicians with training & knowledge"
                         ].map((point, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
-                            <CheckCircle2 className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />
-                            <span>{point}</span>
-                          </li>
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2.5 p-2.5 rounded-xl bg-sky-50/50 hover:bg-sky-50 border border-sky-100/70 hover:border-sky-200 transition-all duration-200"
+                          >
+                            <div className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
+                            </div>
+                            <span className="text-xs font-medium text-slate-700 leading-snug">
+                              {point}
+                            </span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-sky-800 font-semibold">
+                  {/* Card Footer */}
+                  <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-sky-800 font-semibold">
                     <span className="inline-flex items-center gap-1.5">
                       <ShieldCheck className="w-4 h-4 text-emerald-600" /> CDSCO Form MD-9 / Class C
                     </span>
                     <span className="text-slate-400 font-normal">Emsurg Healthcare</span>
                   </div>
                 </div>
-              )}
 
-              {/* 2. OUR VISION CARD */}
-              {missionVisionView === "vision" && (
-                <div className="bg-white/95 backdrop-blur-xl border border-sky-100 rounded-3xl p-6 sm:p-9 shadow-md shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all relative overflow-hidden flex flex-col justify-between group animate-in fade-in zoom-in-95 duration-200">
-                  {/* Subtle top ambient bar */}
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500" />
-                  
+                {/* 2. OUR VISION CARD */}
+                <div className="relative group bg-white/95 backdrop-blur-2xl border border-indigo-100/90 rounded-3xl p-7 sm:p-10 shadow-lg shadow-indigo-900/5 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-900/10 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                  {/* Top Ambient Highlight */}
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500" />
+
                   <div>
-                    {/* Header */}
-                    <div className="flex items-center gap-3.5 mb-5">
-                      <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200/80 flex items-center justify-center text-indigo-600 group-hover:scale-105 transition-transform shadow-sm">
-                        <Eye className="w-6 h-6" />
+                    {/* Header Strip with Icons */}
+                    <div className="flex items-center justify-between gap-4 mb-6">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200/80 flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                          <Eye className="w-7 h-7 text-indigo-600" />
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-600">
+                            Future Horizon
+                          </span>
+                          <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                            Our Vision
+                          </h3>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-indigo-600">Future Horizon</div>
-                        <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Our Vision</h3>
-                      </div>
+
+                      <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        2028 Milestone
+                      </span>
                     </div>
 
                     {/* Vision Paragraph */}
-                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
-                      To become a globally recognized, professionally managed medical technology company that expands the possibilities of healthcare. We aim to lead through innovation, collaboration, and ethical business practices while fostering a culture of excellence, meritocracy, and sustainable growth. Our vision is to empower medical professionals and institutions with advanced solutions that set new benchmarks in patient care and clinical efficiency.
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-8 font-normal">
+                      To become a globally recognized, professionally managed medical technology company that expands the possibilities of healthcare. We aim to lead through innovation, collaboration, and ethical business practices while fostering a culture of excellence, meritocracy, and sustainable growth, empowering medical professionals worldwide.
                     </p>
 
                     {/* Vision Bullet Points */}
-                    <div className="pt-5 border-t border-sky-50">
-                      <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3.5 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Key Strategic Objectives:
+                    <div className="pt-6 border-t border-slate-100">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-indigo-600" />
+                        <span>Key Strategic Objectives</span>
                       </div>
-                      <ul className="space-y-2.5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
                           "Achieve leadership in healthcare innovation",
                           "Foster a culture of professional excellence",
-                          "Empower healthcare professionals and institutions",
-                          "Promote sustainable growth and long-term partnerships",
-                          "Integrate global best practices with indigenous solutions",
-                          "Continuously enhance the quality and effectiveness of medical technologies"
+                          "Empower clinicians and hospital networks",
+                          "Promote sustainable long-term partnerships",
+                          "Integrate global standards with local R&D",
+                          "Continuously enhance device efficacy"
                         ].map((point, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
-                            <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
-                            <span>{point}</span>
-                          </li>
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2.5 p-2.5 rounded-xl bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/70 hover:border-indigo-200 transition-all duration-200"
+                          >
+                            <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                            </div>
+                            <span className="text-xs font-medium text-slate-700 leading-snug">
+                              {point}
+                            </span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-sky-50 flex items-center justify-between text-xs text-indigo-900 font-semibold">
+                  {/* Card Footer */}
+                  <div className="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-indigo-900 font-semibold">
                     <span className="inline-flex items-center gap-1.5">
                       <TrendingUp className="w-4 h-4 text-indigo-600" /> 1,000M INR Roadmap 2028
                     </span>
                     <span className="text-slate-400 font-normal">Global Excellence</span>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -526,10 +544,6 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="mb-14 sm:mb-20 text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/80 border border-sky-200/80 text-xs font-bold tracking-[0.25em] px-3.5 py-1 rounded-full uppercase mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-600" />
-              OFFICIAL ADDRESS
-            </div>
             <h2 className="text-3xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
               From the MD’s Desk
             </h2>
@@ -540,8 +554,61 @@ export default function About() {
 
           {/* Two-Column Executive Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start mb-16">
-            {/* Left Column: Portrait & Profile (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col items-center lg:items-start">
+            {/* Left Column: Authentic Address & Philosophy (7 cols on desktop) */}
+            <div className="lg:col-span-7 flex flex-col justify-between order-2 lg:order-1">
+              {/* High-Impact Quote Box */}
+              <div className="bg-sky-50/60 border-l-4 border-sky-500 rounded-r-2xl p-6 text-slate-900 shadow-sm relative overflow-hidden mb-8">
+                <Quote className="absolute -top-3 -right-3 w-28 h-28 text-sky-900/[0.04] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-sky-600 text-xs font-bold tracking-widest uppercase mb-3">
+                    Company's Core Commitment
+                  </div>
+                  <blockquote className="text-xl sm:text-2xl lg:text-3xl font-light italic leading-snug text-slate-900">
+                    “We at <span className="font-semibold text-sky-800">“Emsurg”</span> believe, never die before the death and <span className="font-semibold text-sky-700">IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</span>”
+                  </blockquote>
+                  <div className="mt-4 pt-4 border-t border-sky-100 flex items-center justify-between text-xs text-slate-500">
+                    <span className="font-medium text-slate-700">— Mr. Kunal Mukherjee, Managing Director</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Core Narrative */}
+              <div className="space-y-5 text-slate-700 text-base sm:text-lg leading-relaxed">
+                <p>
+                  We at <strong className="text-slate-900">“Emsurg”</strong> believe, never die before the death and <strong>IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</strong>
+                </p>
+
+                <p>
+                  That's the way we grew from <strong className="text-slate-900">Zero to 360 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
+                </p>
+
+                <p>
+                  By year 2028, we should be a <strong className="text-slate-900">1000 million INR</strong> company with <strong className="text-slate-900">300+ employees</strong>. We are excited about the opportunities that lie ahead and look forward to continuing success.
+                </p>
+
+                <p className="text-slate-600">
+                  We are thankful to our employees, our teachers, and of course our stakeholders who believed in us and even in tough times never left us. We are thankful to our banks and financial institutions who are also our valued stakeholders.
+                </p>
+              </div>
+
+              {/* Signature Sign-Off */}
+              <div className="mt-8 pt-6 border-t border-sky-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="font-serif italic text-2xl sm:text-3xl text-slate-900 tracking-wide font-medium select-none">
+                    Kunal Mukherjee
+                  </div>
+                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">
+                    Mr. Kunal Mukherjee
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    Managing Director & CEO, Emsurg Healthcare (India) Pvt. Ltd.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Portrait & Profile (5 cols on desktop) */}
+            <div className="lg:col-span-5 flex flex-col items-center lg:items-end order-1 lg:order-2">
               <div className="w-full max-w-md mx-auto lg:max-w-none">
                 {/* Portrait Card */}
                 <div className="rounded-3xl border border-sky-100 bg-gradient-to-b from-white to-sky-50/40 p-3 shadow-xl shadow-sky-900/5 overflow-hidden group">
@@ -579,13 +646,6 @@ export default function About() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Caption Info & Trajectory Pill */}
-                  <div className="pt-3 px-1">
-                    <span className="bg-sky-50 text-sky-700 border border-sky-200/70 text-xs font-semibold px-3 py-1 rounded-full mt-2 inline-block">
-                      Zero to 360M INR · Targeting 1,000M INR by 2028 with 300+ Employees
-                    </span>
-                  </div>
                 </div>
 
                 {/* Key Roles / Entities Tag Group */}
@@ -599,61 +659,6 @@ export default function About() {
                   <span className="px-3 py-1 rounded-lg bg-sky-50/70 border border-sky-100 text-sky-800 text-xs font-medium">
                     State-of-the-Art R&D Facility & Ace Team
                   </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Authentic Address & Philosophy (7 cols) */}
-            <div className="lg:col-span-7 flex flex-col justify-between">
-              {/* High-Impact Quote Box */}
-              <div className="bg-sky-50/60 border-l-4 border-sky-500 rounded-r-2xl p-6 text-slate-900 shadow-sm relative overflow-hidden mb-8">
-                <Quote className="absolute -top-3 -right-3 w-28 h-28 text-sky-900/[0.04] pointer-events-none" />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 text-sky-600 text-xs font-bold tracking-widest uppercase mb-3">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Company's Core Commitment
-                  </div>
-                  <blockquote className="text-xl sm:text-2xl lg:text-3xl font-light italic leading-snug text-slate-900">
-                    “We at <span className="font-semibold text-sky-800">“Emsurg”</span> believe, never die before the death and <span className="font-semibold text-sky-700">IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</span>”
-                  </blockquote>
-                  <div className="mt-4 pt-4 border-t border-sky-100 flex items-center justify-between text-xs text-slate-500">
-                    <span className="font-medium text-slate-700">— Mr. Kunal Mukherjee, Managing Director</span>
-                    <span className="text-sky-600 font-bold tracking-wider uppercase">YOU ENSURE IT</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Core Narrative */}
-              <div className="space-y-5 text-slate-700 text-base sm:text-lg leading-relaxed">
-                <p>
-                  We at <strong className="text-slate-900">“Emsurg”</strong> believe, never die before the death and <strong>IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</strong>
-                </p>
-
-                <p>
-                  That's the way we grew from <strong className="text-slate-900">Zero to 360 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
-                </p>
-
-                <p>
-                  By year 2028, we should be a <strong className="text-slate-900">1000 million INR</strong> company with <strong className="text-slate-900">300+ employees</strong>. We are excited about the opportunities that lie ahead and look forward to continuing success.
-                </p>
-
-                <p className="text-slate-600">
-                  We are thankful to our employees, our teachers, and of course our stakeholders who believed in us and even in tough times never left us. We are thankful to our banks and financial institutions who are also our valued stakeholders.
-                </p>
-              </div>
-
-              {/* Signature Sign-Off */}
-              <div className="mt-8 pt-6 border-t border-sky-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <div className="font-serif italic text-2xl sm:text-3xl text-slate-900 tracking-wide font-medium select-none">
-                    Kunal Mukherjee
-                  </div>
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">
-                    Mr. Kunal Mukherjee
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    Managing Director & CEO, Emsurg Healthcare (India) Pvt. Ltd.
-                  </div>
                 </div>
               </div>
             </div>
@@ -823,56 +828,7 @@ export default function About() {
         members={leadershipTeam}
       />
 
-      {/* 4. MISSION & VISION SECTION */}
-      <section className="py-20 sm:py-24 bg-white border-b border-sky-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/80 border border-sky-200/80 text-xs font-bold tracking-[0.25em] px-3.5 py-1 rounded-full uppercase mb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-              FOUNDATIONAL PURPOSE
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-light text-slate-900 tracking-tight">
-              Mission & Strategic Vision
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Mission */}
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-sky-100 shadow-md relative overflow-hidden group hover:border-sky-300 transition-all">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-bl-full pointer-events-none" />
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 mb-6 group-hover:scale-110 transition-transform">
-                <HeartHandshake className="w-6 h-6" />
-              </div>
-              <h3 className="text-xs font-bold text-sky-700 uppercase tracking-widest mb-3">Our Mission</h3>
-              <p className="text-2xl sm:text-3xl font-light text-slate-900 leading-snug">
-                “Advancing healthcare with innovation, integrity and clinical expertise.”
-              </p>
-              <p className="text-slate-600 text-sm mt-4 leading-relaxed">
-                Dedicated to developing accessible, high-standard healthcare consumables and surgical systems 
-                that shorten recovery periods and empower surgeons across every tier of Indian healthcare.
-              </p>
-            </div>
-
-            {/* Vision */}
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-sky-100 shadow-md relative overflow-hidden group hover:border-sky-300 transition-all">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-bl-full pointer-events-none" />
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 mb-6 group-hover:scale-110 transition-transform">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <h3 className="text-xs font-bold text-sky-700 uppercase tracking-widest mb-3">Our Vision</h3>
-              <p className="text-2xl sm:text-3xl font-light text-slate-900 leading-snug">
-                “Engineering better outcomes through medical innovation and care.”
-              </p>
-              <p className="text-slate-600 text-sm mt-4 leading-relaxed">
-                To stand as India's preeminent medical technology brand globally recognized for biomaterial 
-                synthesis, cleanroom automation, and enduring physician partnerships.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. INFRASTRUCTURE & SPECIALIZED UNITS (4 KOLKATA HUBS) */}
+      {/* 4. INFRASTRUCTURE & SPECIALIZED UNITS (4 KOLKATA HUBS) */}
       <section className="py-20 sm:py-24 bg-sky-50/40 border-b border-sky-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">

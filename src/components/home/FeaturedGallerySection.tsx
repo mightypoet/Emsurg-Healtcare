@@ -76,12 +76,16 @@ export default function FeaturedGallerySection() {
 
   // Convert to Aceternity LayoutGrid Cards
   const cards: Card[] = featuredImages.map((item, idx) => {
-    const spanClass =
-      item.col_span === "md:col-span-2"
-        ? "md:col-span-2"
-        : idx % 4 === 0 || idx % 4 === 3
-        ? "md:col-span-2"
-        : "col-span-1";
+    const total = featuredImages.length;
+    let spanClass = "col-span-1";
+
+    if (total === 1) {
+      spanClass = "md:col-span-3";
+    } else if (total === 4) {
+      spanClass = idx === 0 || idx === 3 ? "md:col-span-2" : "col-span-1";
+    } else {
+      spanClass = "col-span-1";
+    }
 
     return {
       id: item.id || `facility-${idx}`,

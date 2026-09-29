@@ -6,22 +6,13 @@ import {
   ShieldCheck, 
   CheckCircle2, 
   Download, 
-  MessageSquare, 
   Building, 
   Award, 
-  FileText, 
-  ChevronDown, 
-  ChevronUp, 
-  ExternalLink, 
-  Sparkles, 
   Info,
-  HelpCircle,
   ArrowRight
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import { Product, fetchProductBySlug, fetchProducts, getLocalProductBySlug, subscribeToProducts, formatDriveImageUrl, getWhatsAppNumberForProduct } from "../lib/productsStore";
 import ProductInquiryModal from "../components/products/ProductInquiryModal";
-import { ProductFAQSection } from "../components/products/ProductFAQSection";
 import { LiquidButton } from "../components/ui/liquid-glass-button";
 import { companyInfo } from "../data/content";
 
@@ -33,13 +24,6 @@ export default function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string>("");
-
-  // Accordion state
-  const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({
-    indications: true,
-    specifications: true,
-    storage: false,
-  });
 
   // Inquiry Modal State
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
@@ -94,10 +78,6 @@ export default function ProductDetail() {
       setActiveImage(initialImg || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop");
     }
   }, [product]);
-
-  const toggleAccordion = (key: string) => {
-    setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
 
   const handleInquirySuccess = () => {
     setToastMessage("Your inquiry has been submitted! Our clinical specialist will contact you promptly.");
@@ -371,12 +351,6 @@ export default function ProductDetail() {
                     <span>⚡</span> Fast Response from Clinical Specialists &amp; Tenders Desk
                   </span>
                   <div className="flex items-center gap-3">
-                    <a
-                      href="#technical-faqs"
-                      className="inline-flex items-center gap-1 font-bold text-slate-600 hover:text-blue-600 transition-colors"
-                    >
-                      <HelpCircle className="w-3.5 h-3.5 text-blue-600" /> Technical FAQs &darr;
-                    </a>
                     <button
                       type="button"
                       onClick={() => {
@@ -393,7 +367,7 @@ export default function ProductDetail() {
 
               {/* Key Features Bullet List */}
               {product.features && product.features.length > 0 && (
-                <div className="bg-slate-100/70 p-5 rounded-2xl border border-slate-200 mb-8">
+                <div className="bg-slate-100/70 p-5 rounded-2xl border border-slate-200">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                     Core Technical & Clinical Highlights
                   </h4>
@@ -408,103 +382,8 @@ export default function ProductDetail() {
                 </div>
               )}
             </div>
-
-            {/* Accordion Tabs */}
-            <div className="space-y-3">
-              {/* Accordion 1: Clinical Indications & Description */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => toggleAccordion("indications")}
-                  className="w-full p-4 sm:p-5 flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-blue-600" /> Clinical Indications & Mechanisms
-                  </span>
-                  {openAccordions.indications ? (
-                    <ChevronUp className="w-4 h-4 text-slate-400" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  )}
-                </button>
-                {openAccordions.indications && (
-                  <div className="px-5 pb-5 pt-1 text-sm text-slate-600 border-t border-slate-100 prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed">
-                    <ReactMarkdown>{product.full_description || product.short_description}</ReactMarkdown>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 2: Technical Specifications & Variants */}
-              {product.specifications && Object.keys(product.specifications).length > 0 && (
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion("specifications")}
-                    className="w-full p-4 sm:p-5 flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" /> Technical Specifications & Variants
-                    </span>
-                    {openAccordions.specifications ? (
-                      <ChevronUp className="w-4 h-4 text-slate-400" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
-                    )}
-                  </button>
-                  {openAccordions.specifications && (
-                    <div className="p-5 border-t border-slate-100">
-                      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-xs">
-                        {Object.entries(product.specifications).map(([key, value]) => (
-                          <div key={key} className="border-b border-slate-100 pb-2">
-                            <dt className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">{key}</dt>
-                            <dd className="font-semibold text-slate-900 mt-0.5 text-xs">{value}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Accordion 3: Storage, Sterility & Handling */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => toggleAccordion("storage")}
-                  className="w-full p-4 sm:p-5 flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-amber-600" /> Storage, Sterility & Institutional Supply
-                  </span>
-                  {openAccordions.storage ? (
-                    <ChevronUp className="w-4 h-4 text-slate-400" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  )}
-                </button>
-                {openAccordions.storage && (
-                  <div className="p-5 border-t border-slate-100 text-xs sm:text-sm text-slate-600 space-y-2 leading-relaxed">
-                    <p>
-                      <strong>Storage Conditions:</strong> Store in a cool, dry place between 15°C and 25°C away from direct sunlight and excessive humidity.
-                    </p>
-                    <p>
-                      <strong>Sterility Assurance Level (SAL):</strong> Delivered sterile in validated tamper-evident medical blister packaging. Single-use only; do not re-sterilize.
-                    </p>
-                    <p>
-                      <strong>Hospital Tenders:</strong> Emsurg maintains dedicated buffer stocks for accredited hospitals (Apollo, Fortis, Narayana Health, Manipal) to ensure 24/48-hour delivery across India.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         </div>
-
-        {/* Technical FAQ & Safety Accordion Section */}
-        <ProductFAQSection
-          product={product}
-          onOpenInquiry={() => setIsInquiryOpen(true)}
-        />
 
         {/* Related Products Recommendation */}
         {relatedProducts.length > 0 && (

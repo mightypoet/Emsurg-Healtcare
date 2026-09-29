@@ -42,7 +42,7 @@ export default function Home() {
           <p className="text-xs sm:text-sm text-slate-500 mb-10 sm:mb-14 max-w-xl mx-auto font-normal px-2">
             Where indigenous biomedical manufacturing, global technology partnerships, and clinical excellence converge.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-center justify-items-center">
             {[
               { label: "INDIGENOUS MANUFACTURING", desc: "CDSCO Class C approved facility in Kolkata" },
               { label: "GLOBAL PARTNERSHIPS", desc: "Exclusive alliance with Teknimed (France) & MDL (Italy)" },
@@ -53,7 +53,7 @@ export default function Home() {
             ].map((item, idx) => (
               <div 
                 key={idx} 
-                className="flex flex-col items-center justify-center p-5 sm:p-8 bg-sky-50/40 rounded-2xl border border-sky-100 hover:border-sky-300 hover:bg-sky-50/80 transition-all text-center group"
+                className="w-full flex flex-col items-center justify-center p-5 sm:p-8 bg-sky-50/40 rounded-2xl border border-sky-100 hover:border-sky-300 hover:bg-sky-50/80 transition-all text-center group"
               >
                 <span className="text-xs font-semibold tracking-[0.15em] text-slate-700 uppercase mb-2 group-hover:text-sky-600 transition-colors">
                   {item.label}

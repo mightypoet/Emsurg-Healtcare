@@ -5,22 +5,18 @@ export default function MetricsStrip() {
     {
       value: "15+",
       label: "Years of Clinical Excellence",
-      subtext: "Pioneering medtech since 2011",
     },
     {
       value: "25+",
       label: "Strategic Partnerships",
-      subtext: "Global & national collaborations",
     },
     {
       value: "10+",
       label: "Industry Awards",
-      subtext: "Recognized for innovation & R&D",
     },
     {
       value: "100%",
       label: "Indigenous Production",
-      subtext: "Kolkata-based CDSCO facility",
     },
   ];
 
@@ -35,11 +31,8 @@ export default function MetricsStrip() {
             <div className="text-2xl sm:text-4xl md:text-5xl font-light text-slate-800 tracking-tight mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors">
               {metric.value}
             </div>
-            <div className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold text-slate-600 mb-1">
+            <div className="text-[10px] sm:text-xs uppercase tracking-widest font-semibold text-slate-600">
               {metric.label}
-            </div>
-            <div className="text-[10px] sm:text-xs text-slate-400">
-              {metric.subtext}
             </div>
           </div>
         ))}

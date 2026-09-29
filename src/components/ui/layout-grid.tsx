@@ -26,31 +26,51 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
   return (
     <>
       {/* Gallery Grid */}
-      <div className="w-full h-full grid grid-cols-1 md:grid-cols-3 max-w-7xl mx-auto gap-4 relative">
-        {cards.map((card, i) => (
-          <div key={card.id || i} className={cn(card.className, "min-h-[260px] md:min-h-[320px]")}>
+      <div
+        className={cn(
+          "w-full h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto gap-6 relative justify-center",
+          cards.length === 2 && "max-w-4xl md:grid-cols-2 lg:grid-cols-2",
+          cards.length === 4 && "max-w-5xl md:grid-cols-2 lg:grid-cols-2"
+        )}
+      >
+        {cards.map((card, i) => {
+          // If total is 5, center the last two items (index 3 and 4) in the 3-column desktop layout
+          const is5Cards = cards.length === 5;
+          const isLastTwoOf5 = is5Cards && (i === 3 || i === 4);
+
+          return (
             <div
-              onClick={() => handleClick(card)}
-              className="relative overflow-hidden cursor-pointer rounded-2xl group transition-all duration-300 h-full w-full bg-slate-900 shadow-sm hover:shadow-xl hover:scale-[1.01]"
-            >
-              {(card.title || card.category) && (
-                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 z-20 pointer-events-none transition-transform duration-300 group-hover:translate-y-[-2px]">
-                  {card.category && (
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/85 backdrop-blur-md text-sky-300 border border-slate-700/60 mb-1.5 shadow-sm">
-                      {card.category}
-                    </span>
-                  )}
-                  {card.title && (
-                    <h4 className="text-sm sm:text-base font-bold text-white drop-shadow-sm line-clamp-1">
-                      {card.title}
-                    </h4>
-                  )}
-                </div>
+              key={card.id || i}
+              className={cn(
+                card.className,
+                "w-full min-h-[260px] md:min-h-[320px] flex justify-center",
+                isLastTwoOf5 && i === 3 && "lg:col-start-1 lg:translate-x-[50%]",
+                isLastTwoOf5 && i === 4 && "lg:col-start-2 lg:translate-x-[50%]"
               )}
-              <ImageComponent card={card} />
+            >
+              <div
+                onClick={() => handleClick(card)}
+                className="relative overflow-hidden cursor-pointer rounded-2xl group transition-all duration-300 h-full w-full bg-slate-900 shadow-sm hover:shadow-xl hover:scale-[1.01]"
+              >
+                {(card.title || card.category) && (
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 z-20 pointer-events-none transition-transform duration-300 group-hover:translate-y-[-2px] flex flex-col items-center justify-center text-center">
+                    {card.category && (
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/85 backdrop-blur-md text-sky-300 border border-slate-700/60 mb-1.5 shadow-sm text-center">
+                        {card.category}
+                      </span>
+                    )}
+                    {card.title && (
+                      <h4 className="text-sm sm:text-base font-bold text-white drop-shadow-sm line-clamp-1 text-center">
+                        {card.title}
+                      </h4>
+                    )}
+                  </div>
+                )}
+                <ImageComponent card={card} />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Lightbox Image Modal */}
