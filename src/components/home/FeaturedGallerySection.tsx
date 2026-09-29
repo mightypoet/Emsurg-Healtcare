@@ -29,12 +29,12 @@ export default function FeaturedGallerySection() {
       // Fallback query checking for 'featured' column name or full store
       const all = await fetchGallery();
       const featured = all.filter((item) => item.is_featured);
-      setFeaturedImages(featured.length > 0 ? featured : all.slice(0, 6));
+      setFeaturedImages(featured.length > 0 ? featured : all);
     } catch (error) {
       console.error("Error fetching featured gallery:", error);
       const all = await fetchGallery();
       const featured = all.filter((item) => item.is_featured);
-      setFeaturedImages(featured.length > 0 ? featured : all.slice(0, 6));
+      setFeaturedImages(featured.length > 0 ? featured : all);
     } finally {
       setIsLoading(false);
     }
@@ -75,11 +75,11 @@ export default function FeaturedGallerySection() {
   if (!isLoading && featuredImages.length === 0) return null;
 
   // Convert to Aceternity LayoutGrid Cards
-  const cards: Card[] = featuredImages.slice(0, 6).map((item, idx) => {
+  const cards: Card[] = featuredImages.map((item, idx) => {
     const spanClass =
       item.col_span === "md:col-span-2"
         ? "md:col-span-2"
-        : idx === 0 || idx === 3
+        : idx % 4 === 0 || idx % 4 === 3
         ? "md:col-span-2"
         : "col-span-1";
 
