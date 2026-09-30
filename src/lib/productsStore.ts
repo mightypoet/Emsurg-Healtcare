@@ -697,7 +697,7 @@ Tecres (Verona, Italy) is globally renowned for specialized acrylic formulations
       "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Mendec%20line_B1C152_R0325_EN_web_251025_112143.pdf",
     created_at: new Date(Date.now() - 280000000).toISOString(),
   },
   {
@@ -810,7 +810,7 @@ Emsurg is the exclusive Indian healthcare partner for MDL S.r.l. (Italy), a glob
       "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: true,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/MDL%20Brochure_1.pdf",
     created_at: new Date(Date.now() - 220000000).toISOString(),
   },
   {
@@ -846,7 +846,7 @@ The MDL ILLY, JAM BLU, and OSTEOJ needle families provide hematologists and onco
       "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/MDL%20Brochure_1.pdf",
     created_at: new Date(Date.now() - 200000000).toISOString(),
   },
 ];

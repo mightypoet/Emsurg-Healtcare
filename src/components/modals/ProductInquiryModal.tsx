@@ -265,7 +265,7 @@ export default function ProductInquiryModal({
                 <input 
                   type="text" 
                   required
-                  placeholder="e.g. Dr. A. Sharma"
+                  placeholder="Enter your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -283,7 +283,7 @@ export default function ProductInquiryModal({
                 <input 
                   type="text" 
                   required
-                  placeholder="e.g. Apollo Multi-Specialty Hospital"
+                  placeholder="Enter hospital, clinic or institution"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -302,7 +302,7 @@ export default function ProductInquiryModal({
                   <input 
                     type="text" 
                     required
-                    placeholder="e.g. Kolkata, WB"
+                    placeholder="Enter city & state"
                     value={cityState}
                     onChange={(e) => setCityState(e.target.value)}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -319,7 +319,7 @@ export default function ProductInquiryModal({
                   <input 
                     type="tel" 
                     required
-                    placeholder="+91 98765 43210"
+                    placeholder="Enter contact number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium"
@@ -359,7 +359,7 @@ export default function ProductInquiryModal({
                 <textarea 
                   rows={2}
                   value={notes}
-                  placeholder={isDownload ? "e.g. Requesting technical specifications and surgical dossier" : "e.g. Requesting quote for 50 units"}
+                  placeholder={isDownload ? "Enter any specific requirements or questions (optional)" : "Enter quantity requirement or clinical query (optional)"}
                   onChange={(e) => setNotes(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all font-medium resize-none"
                 />

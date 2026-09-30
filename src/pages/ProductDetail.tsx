@@ -85,6 +85,14 @@ export default function ProductDetail() {
     setTimeout(() => setToastMessage(null), 5000);
   };
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/products");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -176,10 +184,13 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto px-4 py-10 sm:py-14">
         <div className="mb-6">
           <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition-colors"
+            type="button"
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-sky-700 bg-white hover:bg-sky-50/60 px-4 py-2.5 rounded-xl border border-slate-200 hover:border-sky-200 shadow-xs transition-all cursor-pointer active:scale-95 select-none group"
+            aria-label="Back to Products Catalog"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back
+            <ArrowLeft className="w-3.5 h-3.5 text-slate-500 group-hover:text-sky-600 transition-colors" />
+            <span>Back to Products</span>
           </button>
         </div>
 

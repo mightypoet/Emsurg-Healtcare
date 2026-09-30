@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { LayoutGrid, Card } from "../components/ui/layout-grid";
 import { fetchGalleryItems, subscribeToGallery, GalleryItem } from "../lib/galleryStore";
 import { formatDriveImageUrl } from "../lib/utils";
-import { Sparkles, Layers, RefreshCw } from "lucide-react";
+import { Layers, RefreshCw } from "lucide-react";
 
 export default function Gallery() {
   const [items, setItems] = useState<GalleryItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [loading, setLoading] = useState(true);
 
   const loadGallery = async () => {
@@ -30,38 +29,11 @@ export default function Gallery() {
     return () => unsub();
   }, []);
 
-  const categories = ["All", ...Array.from(new Set(items.map((i) => i.category || "General")))];
-
-  const filteredItems = selectedCategory === "All"
-    ? items
-    : items.filter((i) => i.category === selectedCategory);
-
-  const cards: Card[] = filteredItems.map((item, idx) => ({
+  const cards: Card[] = items.map((item, idx) => ({
     id: item.id || idx,
     className: item.col_span || (idx % 3 === 0 ? "md:col-span-2" : "col-span-1"),
     thumbnail: formatDriveImageUrl(item.image_url),
-    title: item.title,
-    category: item.category,
-    content: (
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-400/30">
-            {item.category || "Facility"}
-          </span>
-          {item.is_featured && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-400" /> Featured
-            </span>
-          )}
-        </div>
-        <p className="font-bold md:text-3xl text-xl text-white">
-          {item.title}
-        </p>
-        <p className="font-normal text-sm md:text-base my-3 max-w-xl text-neutral-200 leading-relaxed">
-          {item.description}
-        </p>
-      </div>
-    ),
+    content: null,
   }));
 
   return (
@@ -79,25 +51,6 @@ export default function Gallery() {
           <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-normal px-2">
             A glimpse into the cleanrooms, biomaterials R&D suites, and advanced manufacturing lines driving Emsurg's clinical innovation.
           </p>
-
-          {/* Category Tabs */}
-          {categories.length > 1 && (
-            <div className="flex items-center gap-2 mt-8 overflow-x-auto no-scrollbar pb-2 sm:flex-wrap sm:justify-center px-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
-                    selectedCategory === cat
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                      : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 

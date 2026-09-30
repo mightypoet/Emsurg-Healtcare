@@ -250,7 +250,7 @@ export default function About() {
               <div className="text-slate-500 text-xs font-medium uppercase tracking-wider mt-1">Years of Innovation</div>
             </div>
             <div className="bg-white/80 backdrop-blur-md border border-sky-100 rounded-2xl p-5 shadow-sm shadow-sky-900/5 text-left hover:border-sky-200 transition-colors">
-              <div className="text-sky-600 font-bold text-3xl md:text-4xl tracking-tight">360M+ INR</div>
+              <div className="text-sky-600 font-bold text-3xl md:text-4xl tracking-tight">500M+ INR</div>
               <div className="text-slate-500 text-xs font-medium uppercase tracking-wider mt-1">Annual Turnover</div>
             </div>
             <div className="bg-white/80 backdrop-blur-md border border-sky-100 rounded-2xl p-5 shadow-sm shadow-sky-900/5 text-left hover:border-sky-200 transition-colors">
@@ -436,12 +436,17 @@ export default function About() {
       </section>
 
       {/* 2. OUR HISTORY SECTION */}
-      <section id="our-history" className="py-20 sm:py-24 bg-slate-50/70 border-b border-sky-100 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="our-history" className="py-20 sm:py-24 bg-gradient-to-b from-slate-50/70 via-sky-50/30 to-white border-b border-sky-100 relative overflow-hidden">
+        {/* Subtle background ambient elements */}
+        <div className="absolute top-0 right-10 w-96 h-96 bg-sky-100/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-14 sm:mb-16">
             <div>
-              <div className="inline-block bg-[#1e3a8a] text-white text-sm sm:text-base font-bold px-6 py-2.5 rounded-full shadow-sm">
+              <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-700 border border-sky-200/80 text-xs sm:text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-600" />
                 Our History
               </div>
             </div>
@@ -450,7 +455,9 @@ export default function About() {
                 Tracing Our Journey of Growth
                 <div className="mt-1">
                   <span className="font-semibold text-slate-900">Innovation and </span>
-                  <span className="text-[#3730a3]">Healthcare Excellence</span>
+                  <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Healthcare Excellence
+                  </span>
                 </div>
               </h2>
             </div>
@@ -459,11 +466,12 @@ export default function About() {
           {/* 6 Cards in 3-Column Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Card 1 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <Sprout className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <Sprout className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Founding and Early Focus (2010)
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -472,11 +480,12 @@ export default function About() {
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <Handshake className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <Handshake className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Channel Partnership with Smith & Nephew (2012)
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -485,11 +494,12 @@ export default function About() {
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <FileSignature className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <FileSignature className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Exclusive Importer for Teknimed and MDL
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -498,11 +508,12 @@ export default function About() {
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <Factory className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <Factory className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#881337] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Expansion into Indigenous Manufacturing (2020)
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -511,11 +522,12 @@ export default function About() {
             </div>
 
             {/* Card 5 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <FlaskConical className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <FlaskConical className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Diversification into Wound Care and Ortho Biologics (2023)
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -524,11 +536,12 @@ export default function About() {
             </div>
 
             {/* Card 6 */}
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-start">
-              <div className="w-12 h-12 rounded-full bg-[#fef08a] flex items-center justify-center text-[#1e3a8a] mb-6 shadow-sm">
-                <Microscope className="w-6 h-6 text-[#1e3a8a]" />
+            <div className="group relative bg-white/95 backdrop-blur-xl rounded-2xl p-7 sm:p-8 border border-sky-100/90 shadow-sm hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/5 transition-all duration-300 flex flex-col justify-start overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 mb-6 shadow-xs group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                <Microscope className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#1e293b] mb-3 leading-snug">
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-700 transition-colors mb-3 leading-snug">
                 Manufacturing and Marketing Medical Devices (2024)
               </h3>
               <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed font-normal">
@@ -579,7 +592,7 @@ export default function About() {
                 </p>
 
                 <p>
-                  That's the way we grew from <strong className="text-slate-900">Zero to 360 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
+                  That's the way we grew from <strong className="text-slate-900">Zero to 500 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
                 </p>
 
                 <p>
