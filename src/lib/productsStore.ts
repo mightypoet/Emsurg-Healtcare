@@ -62,10 +62,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     title: "Dialysis Fluid & Drycitrate Powder",
     division: "Manufacturing",
     category: "Nephrology",
-    short_description: "Ultra-pure hemodialysis liquid acid concentrates and dry citrate bicarbonate powder cartridges formulated for high-flux renal dialysis.",
+    short_description: "Hemodialysis solutions and powder concentrates that keep electrolytes balanced, with sodium, potassium, calcium, magnesium, chloride and bicarbonate plus controlled citric acid levels. The fluid range includes Dextrose Type 1, Bicarbonate, Potassium-Free and Calcium-Free types. Emsurg runs its own manufacturing facility for haemodialysis fluid and dry citrate powder.",
     full_description: `## Ultra-Pure Pharmacopeial Hemodialysis Formulations
 
-Manufactured at Emsurg's automated formulation facility in Kolkata, our hemodialysis fluids and dry citrate sodium bicarbonate cartridges conform strictly to Indian and British Pharmacopeia (IP/BP) standards for artificial kidney therapy.
+Hemodialysis solutions and powder concentrates that keep electrolytes balanced, with sodium, potassium, calcium, magnesium, chloride and bicarbonate plus controlled citric acid levels. The fluid range includes Dextrose Type 1, Bicarbonate, Potassium-Free and Calcium-Free types. Emsurg runs its own manufacturing facility for haemodialysis fluid and dry citrate powder.
 
 ### Advanced Quality Architecture
 - Multi-stage high-efficiency reverse osmosis (RO) and sub-micron endotoxin filtration ensures dialysate water meets stringent microbiological thresholds (<0.1 CFU/ml, endotoxin <0.03 EU/ml).

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LiquidButton } from "../ui/liquid-glass-button";
@@ -6,17 +6,35 @@ import { LiquidButton } from "../ui/liquid-glass-button";
 export default function Hero() {
   const navigate = useNavigate();
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      // Force native DOM properties required by iOS Safari & mobile Chrome
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented or restricted, retry quietly
+        });
+      }
+    }
+  }, []);
 
   return (
     <section className="relative min-h-[90vh] sm:min-h-screen flex flex-col justify-center text-white pt-28 sm:pt-36 pb-12 sm:pb-20 overflow-hidden bg-slate-950">
       {/* Background Video with Smooth Fade-In */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
         onLoadedData={() => setIsVideoLoaded(true)}
+        onCanPlay={() => setIsVideoLoaded(true)}
+        onPlay={() => setIsVideoLoaded(true)}
         className={`absolute inset-0 w-full h-full object-cover pointer-events-none z-0 transition-opacity duration-700 ease-out ${
           isVideoLoaded ? "opacity-100" : "opacity-0"
         }`}
