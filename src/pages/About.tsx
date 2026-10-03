@@ -73,7 +73,7 @@ const leadershipTeam: TeamMember[] = [
   },
   {
     name: "Dr. Suman Saha",
-    role: "Director - Clinical Affairs",
+    role: "Director",
     category: "Executive Board",
     department: "Clinical Advisory",
     image: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/Dr.-SUMAN-SAHA-%28Ph.jpg",
