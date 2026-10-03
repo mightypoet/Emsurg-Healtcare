@@ -63,7 +63,7 @@ export default function Hero() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12] text-white mb-4 sm:mb-6">
-            Advance reliable and<br className="hidden sm:inline" /> trustworthy healthcare.
+            Defy Limits. Define Possibilities.
           </h1>
           <p className="text-sm sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-12 max-w-2xl mx-auto font-medium leading-relaxed px-2">
             Engineering better outcomes through medical innovation, indigenous manufacturing, and global partnerships.

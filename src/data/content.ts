@@ -165,9 +165,9 @@ export const whyChoose = [
 ];
 
 export const timeline = [
-  { year: "2010", description: "Founded in Kolkata. Initial focus on biologics, vertebroplasty and kyphoplasty." },
-  { year: "2012", description: "Smith & Nephew channel partnership." },
+  { year: "2010", description: "Founded in Kolkata. Initial focus on orthobiologics, vertebroplasty and kyphoplasty." },
+  { year: "2012", description: "as channel partner of Smith & Nephew" },
   { year: "2020", description: "Indigenous manufacturing facility established for dry citrate powder and hemodialysate." },
-  { year: "2023", description: "Diversification into wound care materials and orthopaedic biologics." },
+  { year: "2023", description: "Diversification into wound care materials and orthobiologics." },
   { year: "2024", description: "Manufacturing and marketing of NPWT machines." },
 ];

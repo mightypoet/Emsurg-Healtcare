@@ -3,12 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Linkedin, 
   Mail, 
-  ArrowUpRight, 
-  ShieldCheck, 
-  Building2, 
-  Award,
-  Sparkles,
-  Users
+  ShieldCheck 
 } from "lucide-react";
 
 export interface TeamMember {
@@ -62,18 +57,9 @@ export function Team02({
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <Badge variant="outline" className="mb-4 px-3.5 py-1 text-xs uppercase tracking-widest font-bold border-sky-200 bg-sky-100/80 text-sky-700">
-            <Sparkles className="w-3 h-3 mr-1.5 text-sky-600 inline" />
-            {badge}
-          </Badge>
-          
           <h2 className="text-3xl sm:text-5xl font-light text-slate-900 tracking-tight leading-tight">
             {title}
           </h2>
-          
-          <p className="mt-4 text-slate-600 text-base sm:text-lg font-normal leading-relaxed max-w-2xl mx-auto">
-            {description}
-          </p>
         </div>
 
         {/* Modern Team Grid */}

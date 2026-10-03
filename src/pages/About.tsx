@@ -588,11 +588,7 @@ export default function About() {
               {/* Core Narrative */}
               <div className="space-y-5 text-slate-700 text-base sm:text-lg leading-relaxed">
                 <p>
-                  We at <strong className="text-slate-900">“Emsurg”</strong> believe, never die before the death and <strong>IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</strong>
-                </p>
-
-                <p>
-                  That's the way we grew from <strong className="text-slate-900">Zero to 500 million INR</strong> company with diversified interests in <strong>Nephro-care, Biologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
+                  That's the way we grew from <strong className="text-slate-900">Zero to 500 million INR</strong> company with diversified interests in <strong>Nephro-care, Orthobiologics, Wound Care, Orthopaedics, Industrial Microbiology & Innovation</strong> through our state-of-the-art R&D facility headed by Our Ace Team.
                 </p>
 
                 <p>
@@ -680,23 +676,6 @@ export default function About() {
           {/* 3. MD ADDRESS & OPERATIONAL VISION VIDEO PLAYER */}
           <div className="mt-12 sm:mt-16 pt-12 border-t border-sky-100">
             <div className="max-w-5xl mx-auto">
-              {/* Video Header bar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-                <div>
-                  <div className="inline-flex items-center gap-2 text-sky-600 text-xs font-bold uppercase tracking-[0.2em]">
-                    <span className="w-2 h-2 rounded-full bg-sky-500 animate-ping" />
-                    EXECUTIVE VIDEO ADDRESS & R&D SHOWCASE
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mt-1">
-                    Executive Vision & Indigenous Roadmap
-                  </h3>
-                </div>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200/80 text-xs font-semibold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Official Address · Emsurg R&D & Operations
-                </div>
-              </div>
-
               {/* Video Container */}
               <div 
                 ref={videoContainerRef}
@@ -817,16 +796,11 @@ export default function About() {
               </div>
 
               {/* Light Frosted Video Caption Bar */}
-              <div className="mt-4 p-4 rounded-2xl bg-white border border-sky-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm">
-                <div className="flex items-center gap-2.5 text-slate-800">
-                  <div className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />
-                  <span className="font-semibold text-slate-900">
-                    Executive Vision & Indigenous Roadmap · Mr. Kunal Mukherjee
-                  </span>
-                </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-semibold uppercase tracking-wider border border-sky-200/80">
-                  Official Address · Emsurg R&D & Operations
-                </div>
+              <div className="mt-4 p-4 rounded-2xl bg-white border border-sky-100 shadow-sm flex items-center gap-2.5 text-sm">
+                <div className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />
+                <span className="font-semibold text-slate-900">
+                  Executive Vision & Indigenous Roadmap · Mr. Kunal Mukherjee
+                </span>
               </div>
             </div>
           </div>
@@ -928,9 +902,9 @@ export default function About() {
                   </div>
                   <h4 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 group-hover:text-sky-600 transition-colors">
                     {item.year === "2010" && "Foundation in Kolkata"}
-                    {item.year === "2012" && "Smith & Nephew Partnership"}
+                    {item.year === "2012" && "Launch of sports medicine for Eastern India"}
                     {item.year === "2020" && "Indigenous Manufacturing Launch"}
-                    {item.year === "2023" && "Biologics & Wound Care Diversification"}
+                    {item.year === "2023" && "Orthobiologics"}
                     {item.year === "2024" && "Automated NPWT & Pan-India Scale"}
                   </h4>
                   <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
@@ -958,43 +932,6 @@ export default function About() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. CTA / CONTACT BANNER: Light Medical Gradient */}
-      <section className="bg-gradient-to-b from-white via-sky-50/60 to-sky-100/50 py-16 sm:py-20 border-t border-sky-100 relative overflow-hidden text-slate-900">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100 text-sky-700 border border-sky-200/80 text-xs font-semibold uppercase tracking-widest mb-4">
-            Connect With Our Leadership
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-900 mb-4">
-            Partner With India’s Premier MedTech Pioneer
-          </h2>
-          <p className="text-slate-600 text-base max-w-2xl mx-auto mb-8">
-            Whether you represent a hospital procurement board, clinical research team, or institutional distributor, 
-            we welcome dialogue with our executive management.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <LiquidButton
-              variant="primary"
-              size="lg"
-              asChild
-            >
-              <Link to="/products">
-                <span>Explore Indigenous Products</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </LiquidButton>
-            <LiquidButton
-              variant="outline"
-              size="lg"
-              asChild
-            >
-              <Link to="/contact">
-                Initiate Corporate Dialogue
-              </Link>
-            </LiquidButton>
           </div>
         </div>
       </section>
