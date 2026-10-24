@@ -45,11 +45,11 @@ export default function Gallery() {
         </div>
         <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase text-blue-300 bg-blue-950/60 border border-blue-800/60 mb-4">
-            <Layers className="w-3.5 h-3.5 text-blue-400" /> Clinical Infrastructure & Operations
+            <Layers className="w-3.5 h-3.5 text-blue-400" /> Life & Culture at Emsurg
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Our Facilities & Operations</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">Our Culture & Workplace</h1>
           <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-normal px-2">
-            A glimpse into the cleanrooms, biomaterials R&D suites, and advanced manufacturing lines driving Emsurg's clinical innovation.
+            A glimpse into the vibrant teamwork, cleanroom disciplines, celebrations, and collaborative energy driving Emsurg's mission.
           </p>
         </div>
       </div>

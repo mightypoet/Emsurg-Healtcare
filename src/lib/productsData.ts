@@ -15,6 +15,7 @@ export interface ProductItem {
   orderIndex?: number;
   image: string;
   images?: string[];
+  brochure_url?: string;
 }
 
 export const EMSURG_CATALOG: ProductItem[] = [
@@ -81,7 +82,8 @@ export const EMSURG_CATALOG: ProductItem[] = [
     image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
     images: [
       "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
-    ]
+    ],
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/AQUASURG%20-%20EBI.pdf"
   },
   {
     id: "m-neph-4",
@@ -121,7 +123,8 @@ export const EMSURG_CATALOG: ProductItem[] = [
     image: "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80",
     images: [
       "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80"
-    ]
+    ],
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/DIACLEAN-EBI.pdf"
   },
   {
     id: "m-neph-6",
@@ -141,7 +144,8 @@ export const EMSURG_CATALOG: ProductItem[] = [
     image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80",
     images: [
       "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80"
-    ]
+    ],
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/DIAKIT-EBI.pdf"
   },
 
   // B. Orthobiologics
@@ -228,7 +232,8 @@ export const EMSURG_CATALOG: ProductItem[] = [
     image: "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=1200&q=80",
     images: [
       "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=1200&q=80"
-    ]
+    ],
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/CellSurg-P.pdf"
   },
   {
     id: "m-wound-3",

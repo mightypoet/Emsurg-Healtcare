@@ -311,7 +311,7 @@ export default function LiquidGlassNavbar() {
               Blogs
             </Link>
 
-            {/* Infrastructure / Gallery */}
+            {/* Culture / Gallery */}
             <Link
               to="/gallery"
               className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
@@ -320,7 +320,7 @@ export default function LiquidGlassNavbar() {
                   : "text-sky-200 hover:text-white"
               }`}
             >
-              Infrastructure
+              Culture
             </Link>
 
             {/* About Link */}
@@ -457,7 +457,7 @@ export default function LiquidGlassNavbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
-                  <span>Infrastructure & Facilities</span>
+                  <span>Culture</span>
                   <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 

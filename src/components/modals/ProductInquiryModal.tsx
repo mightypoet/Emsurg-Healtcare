@@ -110,7 +110,8 @@ export default function ProductInquiryModal({
           downloadLink.href = targetPdf;
           downloadLink.target = "_blank";
           downloadLink.rel = "noopener noreferrer";
-          downloadLink.download = "Hemodialysis-Product-Brochure.pdf";
+          const safeName = (product?.title || "Emsurg-Product").replace(/[^a-zA-Z0-9]/g, "-");
+          downloadLink.download = `${safeName}-Technical-Brochure.pdf`;
           document.body.appendChild(downloadLink);
           downloadLink.click();
           document.body.removeChild(downloadLink);

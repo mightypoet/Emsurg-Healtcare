@@ -164,7 +164,7 @@ Aquasurg is a stabilized peracetic acid and hydrogen peroxide synergistic cold s
       "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/AQUASURG%20-%20EBI.pdf",
     created_at: new Date(Date.now() - 560000000).toISOString(),
   },
   {
@@ -234,7 +234,7 @@ Diaclean is a specialized enzymatic cleaner specifically formulated to digest an
       "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/DIACLEAN-EBI.pdf",
     created_at: new Date(Date.now() - 520000000).toISOString(),
   },
   {
@@ -268,7 +268,7 @@ Diakit is an indigenously manufactured, pre-packaged, sterile procedural pack as
       "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/DIAKIT-EBI.pdf",
     created_at: new Date(Date.now() - 500000000).toISOString(),
   },
 
@@ -436,7 +436,7 @@ Cellsurg P is an indigenously manufactured, highly purified porous Type-I collag
       "https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=1200&q=80"
     ],
     is_featured: false,
-    brochure_url: "#",
+    brochure_url: "https://7nc4blpengmbdwii.public.blob.vercel-storage.com/CellSurg-P.pdf",
     created_at: new Date(Date.now() - 420000000).toISOString(),
   },
   {
@@ -861,6 +861,7 @@ export const SLUG_ALIAS_MAP: Record<string, string> = {
   "hemodialysis-fluids-dry-powders": "dialysis-fluid-drycitrate",
   "teknimed-opacity-plus-bone-cement": "teknimed-opacity-plus",
   "mdl-biopsy-devices": "mdl-soft-tissue-biopsy",
+  "cellsurgp": "cellsurg-p",
 };
 
 // Pre-populate orderIndex and featured on INITIAL_PRODUCTS if not set
