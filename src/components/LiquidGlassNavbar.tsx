@@ -60,7 +60,7 @@ export default function LiquidGlassNavbar() {
 
   return (
     <>
-      {/* Floating Liquid Glass Navbar Container */}
+      {/* Floating White Navbar Container */}
       <header
         role="banner"
         className={`fixed top-4 inset-x-0 mx-auto z-50 w-[92%] max-w-6xl transition-all duration-300 ${
@@ -69,50 +69,36 @@ export default function LiquidGlassNavbar() {
       >
         <div
           className={`relative w-full rounded-full transition-all duration-300 ${
-            isLightPage
-              ? isScrolled
-                ? "bg-white/90 backdrop-blur-3xl border border-sky-200/80 shadow-[0_12px_36px_rgba(2,132,199,0.12)]"
-                : "bg-white/80 hover:bg-white/90 backdrop-blur-2xl border border-sky-100 shadow-[0_8px_30px_rgba(2,132,199,0.08)]"
-              : isScrolled
-                ? "bg-white/25 backdrop-blur-3xl border border-white/40 shadow-xl"
-                : "bg-white/15 hover:bg-white/20 backdrop-blur-2xl border border-white/30 shadow-lg"
-          } before:pointer-events-none before:absolute before:inset-x-8 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent px-3.5 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between gap-3`}
+            isScrolled
+              ? "bg-white/98 backdrop-blur-3xl border border-sky-200/90 shadow-[0_12px_36px_rgba(2,132,199,0.14)]"
+              : "bg-white/95 hover:bg-white backdrop-blur-2xl border border-sky-100/90 shadow-[0_8px_30px_rgba(2,132,199,0.1)]"
+          } px-3.5 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between gap-3`}
         >
           {/* 1. Brand (Left) */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 shrink-0 group focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/60 rounded-full pr-1 sm:pr-2"
+            className="relative z-10 flex items-center gap-2.5 shrink-0 group focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/60 rounded-full pr-1 sm:pr-2"
             aria-label="Emsurg Healthcare Home"
           >
             <div className="relative flex items-center">
               <img
                 src="https://7nc4blpengmbdwii.public.blob.vercel-storage.com/logo%20%282%29.png"
                 alt="Emsurg Healthcare"
-                className={`h-7 sm:h-8 md:h-8.5 w-auto object-contain transition-transform duration-300 group-hover:scale-105 ${
-                  isLightPage 
-                    ? "drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]" 
-                    : "brightness-0 invert drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
-                }`}
+                className="h-7 sm:h-8 md:h-8.5 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]"
               />
             </div>
-            <div className={`hidden xl:flex flex-col text-left border-l pl-2.5 ${
-              isLightPage ? "border-slate-300" : "border-white/30"
-            }`}>
-              <span className={`font-semibold tracking-tight text-xs leading-tight ${
-                isLightPage ? "text-slate-900" : "text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
-              }`}>
+            <div className="hidden xl:flex flex-col text-left border-l border-slate-200 pl-2.5">
+              <span className="font-semibold tracking-tight text-xs leading-tight text-slate-900">
                 Emsurg Healthcare
               </span>
-              <span className={`text-[10px] tracking-wider uppercase font-medium ${
-                isLightPage ? "text-slate-500" : "text-white/80 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
-              }`}>
+              <span className="text-[10px] tracking-wider uppercase font-medium text-slate-500">
                 Precision & Care
               </span>
             </div>
           </Link>
 
           {/* 2. Clean Minimal Navigation Links (Center) */}
-          <nav className="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+          <nav className="relative z-10 hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
             {/* Products Dropdown Link */}
             <div
               className="relative"
@@ -121,11 +107,7 @@ export default function LiquidGlassNavbar() {
             >
               <Link
                 to="/products"
-                className={`inline-flex items-center gap-1 transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 group ${
-                  isLightPage 
-                    ? "text-sky-700 hover:text-sky-900" 
-                    : "text-sky-200 hover:text-white"
-                }`}
+                className="inline-flex items-center gap-1 transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 group text-slate-700 hover:text-sky-600"
               >
                 <span>Products</span>
                 <ChevronDown
@@ -290,11 +272,7 @@ export default function LiquidGlassNavbar() {
             <a
               href="#our-expertise"
               onClick={handleExpertiseClick}
-              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 cursor-pointer ${
-                isLightPage 
-                  ? "text-sky-700 hover:text-sky-900" 
-                  : "text-sky-200 hover:text-white"
-              }`}
+              className="inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 cursor-pointer text-slate-700 hover:text-sky-600"
             >
               Expertise
             </a>
@@ -302,11 +280,7 @@ export default function LiquidGlassNavbar() {
             {/* Blogs */}
             <Link
               to="/blogs"
-              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
-                isLightPage 
-                  ? "text-sky-700 hover:text-sky-900" 
-                  : "text-sky-200 hover:text-white"
-              }`}
+              className="inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 text-slate-700 hover:text-sky-600"
             >
               Blogs
             </Link>
@@ -314,11 +288,7 @@ export default function LiquidGlassNavbar() {
             {/* Culture / Gallery */}
             <Link
               to="/gallery"
-              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
-                isLightPage 
-                  ? "text-sky-700 hover:text-sky-900" 
-                  : "text-sky-200 hover:text-white"
-              }`}
+              className="inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 text-slate-700 hover:text-sky-600"
             >
               Culture
             </Link>
@@ -326,18 +296,14 @@ export default function LiquidGlassNavbar() {
             {/* About Link */}
             <Link
               to="/about"
-              className={`inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 ${
-                isLightPage 
-                  ? "text-sky-700 hover:text-sky-900" 
-                  : "text-sky-200 hover:text-white"
-              }`}
+              className="inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 text-slate-700 hover:text-sky-600"
             >
               About
             </Link>
           </nav>
 
           {/* 3. Call-to-Action (Right) - Consolidated Unified Action Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative z-10 flex items-center gap-2 sm:gap-3">
             <LiquidButton
               variant="primary"
               size="sm"
@@ -354,11 +320,7 @@ export default function LiquidGlassNavbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden min-w-[36px] min-h-[36px] w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-xs focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500 ${
-                isLightPage
-                  ? "bg-sky-50 text-slate-700 hover:bg-sky-100 border border-sky-200/60"
-                  : "bg-white/15 hover:bg-white/25 border border-white/30 text-white"
-              }`}
+              className="lg:hidden min-w-[36px] min-h-[36px] w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-xs focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500 bg-sky-50 text-slate-700 hover:bg-sky-100 border border-sky-200/70"
               aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

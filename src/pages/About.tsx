@@ -515,7 +515,7 @@ export default function About() {
                     “We at <span className="font-semibold text-sky-800">“Emsurg”</span> believe, never die before the death and <span className="font-semibold text-sky-700">IF YOU TRY, YOU RISK FAILURE. IF YOU DON'T, YOU ENSURE IT.</span>”
                   </blockquote>
                   <div className="mt-4 pt-4 border-t border-sky-100 flex items-center justify-between text-xs text-slate-500">
-                    <span className="font-medium text-slate-700">— Mr. Kunal Mukherjee, Managing Director</span>
+                    <span className="font-medium text-slate-700">Mr. Kunal Mukherjee, Managing Director &amp; CEO, Emsurg Group.</span>
                   </div>
                 </div>
               </div>
@@ -545,7 +545,7 @@ export default function About() {
                     Mr. Kunal Mukherjee
                   </div>
                   <div className="text-xs text-slate-400">
-                    Managing Director & CEO, Emsurg Healthcare (India) Pvt. Ltd.
+                    Managing Director & CEO, Emsurg Group.
                   </div>
                 </div>
               </div>
