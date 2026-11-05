@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { ALLOWED_ADMIN_EMAILS } from "./Login";
 import { 
   getLocalPosts, 
   saveLocalPost, 
@@ -233,15 +234,42 @@ export default function Dashboard() {
   }, []);
 
   const checkAuth = async () => {
+    const isEmailAllowed = (email?: string | null) =>
+      Boolean(
+        email &&
+          ALLOWED_ADMIN_EMAILS.some(
+            (allowed) => allowed.toLowerCase() === email.trim().toLowerCase()
+          )
+      );
+
     try {
       const { data } = await supabase.auth.getSession();
-      const isMockAuth = sessionStorage.getItem("admin_auth") === "true";
-      if (!data.session && !isMockAuth) {
+      const sessionEmail = data.session?.user?.email;
+      const storedEmail = sessionStorage.getItem("admin_email");
+      const isMockAuth =
+        sessionStorage.getItem("admin_auth") === "true" &&
+        isEmailAllowed(storedEmail);
+
+      if (data.session) {
+        if (!isEmailAllowed(sessionEmail)) {
+          await supabase.auth.signOut();
+          sessionStorage.removeItem("admin_auth");
+          sessionStorage.removeItem("admin_email");
+          navigate("/admin/login");
+        }
+      } else if (!isMockAuth) {
+        sessionStorage.removeItem("admin_auth");
+        sessionStorage.removeItem("admin_email");
         navigate("/admin/login");
       }
     } catch {
-      const isMockAuth = sessionStorage.getItem("admin_auth") === "true";
+      const storedEmail = sessionStorage.getItem("admin_email");
+      const isMockAuth =
+        sessionStorage.getItem("admin_auth") === "true" &&
+        isEmailAllowed(storedEmail);
       if (!isMockAuth) {
+        sessionStorage.removeItem("admin_auth");
+        sessionStorage.removeItem("admin_email");
         navigate("/admin/login");
       }
     }
@@ -254,6 +282,7 @@ export default function Dashboard() {
       // ignore
     }
     sessionStorage.removeItem("admin_auth");
+    sessionStorage.removeItem("admin_email");
     navigate("/admin/login");
   };
 

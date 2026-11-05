@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { Lock, Mail } from "lucide-react";
 
+export const ALLOWED_ADMIN_EMAILS = [
+  'rohan.d@emsurg.com',
+  'ritobroto@emsurg.com',
+  'drsuman@emsurg.com',
+  'swarnali.d@emsurg.com'
+];
+
 export default function Login() {
   const [email, setEmail] = useState("rohan.d@emsurg.com");
   const [password, setPassword] = useState("rd@123");
@@ -15,28 +22,53 @@ export default function Login() {
     setLoading(true);
     setError("");
 
+    const normalizedEmail = email.trim().toLowerCase();
+    const isWhitelisted = ALLOWED_ADMIN_EMAILS.some(
+      (allowedEmail) => allowedEmail.toLowerCase() === normalizedEmail
+    );
+
+    if (!isWhitelisted) {
+      sessionStorage.removeItem("admin_auth");
+      sessionStorage.removeItem("admin_email");
+      setError("Access denied. This email address is not authorized to access the Admin Portal.");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Try Supabase auth first
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password,
       });
 
       if (signInError) {
-        // Fallback for demo/testing without Supabase auth fully setup
-        if (email === "rohan.d@emsurg.com" && password === "rd@123") {
+        // Fallback for authorized admin accounts when Supabase auth is not configured
+        if (isWhitelisted && password === "rd@123") {
           sessionStorage.setItem("admin_auth", "true");
+          sessionStorage.setItem("admin_email", normalizedEmail);
           navigate("/admin");
         } else {
           setError("Invalid credentials. Please try again.");
         }
       } else if (data.session) {
+        const sessionEmail = data.session.user?.email?.toLowerCase() || "";
+        if (!ALLOWED_ADMIN_EMAILS.includes(sessionEmail)) {
+          await supabase.auth.signOut();
+          sessionStorage.removeItem("admin_auth");
+          sessionStorage.removeItem("admin_email");
+          setError("Access denied. This email address is not authorized to access the Admin Portal.");
+          return;
+        }
+        sessionStorage.setItem("admin_auth", "true");
+        sessionStorage.setItem("admin_email", sessionEmail);
         navigate("/admin");
       }
     } catch (err) {
-      // Fallback
-      if (email === "rohan.d@emsurg.com" && password === "rd@123") {
+      // Fallback for authorized admin accounts
+      if (isWhitelisted && password === "rd@123") {
         sessionStorage.setItem("admin_auth", "true");
+        sessionStorage.setItem("admin_email", normalizedEmail);
         navigate("/admin");
       } else {
         setError("An error occurred during login.");
