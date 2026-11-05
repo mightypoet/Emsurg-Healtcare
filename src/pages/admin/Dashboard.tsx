@@ -212,9 +212,42 @@ export default function Dashboard() {
   /* ---------------- INQUIRIES STATE ---------------- */
   const [inquiries, setInquiries] = useState<ProductInquiry[]>([]);
 
+  const isEmailAllowed = (email?: string | null) =>
+    Boolean(
+      email &&
+        ALLOWED_ADMIN_EMAILS.some(
+          (allowed) => allowed.toLowerCase() === email.trim().toLowerCase()
+        )
+    );
+
   useEffect(() => {
     checkAuth();
     loadAllData();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session) {
+          const userEmail = session.user?.email;
+          if (!isEmailAllowed(userEmail)) {
+            await supabase.auth.signOut();
+            sessionStorage.removeItem("admin_auth");
+            sessionStorage.removeItem("admin_email");
+            sessionStorage.setItem(
+              "admin_auth_error",
+              `Access denied: ${userEmail || "Your account"} is not authorized to access the Admin Panel.`
+            );
+            navigate("/admin/login", { replace: true });
+          } else if (userEmail) {
+            sessionStorage.setItem("admin_auth", "true");
+            sessionStorage.setItem("admin_email", userEmail.trim().toLowerCase());
+          }
+        } else if (event === "SIGNED_OUT") {
+          sessionStorage.removeItem("admin_auth");
+          sessionStorage.removeItem("admin_email");
+          navigate("/admin/login", { replace: true });
+        }
+      }
+    );
 
     const unsubProducts = subscribeToProducts((refreshedProducts) => {
       setProducts(refreshedProducts);
@@ -227,6 +260,7 @@ export default function Dashboard() {
     });
 
     return () => {
+      authListener.subscription.unsubscribe();
       unsubProducts();
       unsubInquiries();
       unsubGallery();
@@ -234,13 +268,9 @@ export default function Dashboard() {
   }, []);
 
   const checkAuth = async () => {
-    const isEmailAllowed = (email?: string | null) =>
-      Boolean(
-        email &&
-          ALLOWED_ADMIN_EMAILS.some(
-            (allowed) => allowed.toLowerCase() === email.trim().toLowerCase()
-          )
-      );
+    const hasOAuthCallbackParams =
+      window.location.hash.includes("access_token") ||
+      window.location.search.includes("code=");
 
     try {
       const { data } = await supabase.auth.getSession();
@@ -255,22 +285,29 @@ export default function Dashboard() {
           await supabase.auth.signOut();
           sessionStorage.removeItem("admin_auth");
           sessionStorage.removeItem("admin_email");
-          navigate("/admin/login");
+          sessionStorage.setItem(
+            "admin_auth_error",
+            `Access denied: ${sessionEmail || "Your account"} is not authorized to access the Admin Panel.`
+          );
+          navigate("/admin/login", { replace: true });
+        } else if (sessionEmail) {
+          sessionStorage.setItem("admin_auth", "true");
+          sessionStorage.setItem("admin_email", sessionEmail.trim().toLowerCase());
         }
-      } else if (!isMockAuth) {
+      } else if (!isMockAuth && !hasOAuthCallbackParams) {
         sessionStorage.removeItem("admin_auth");
         sessionStorage.removeItem("admin_email");
-        navigate("/admin/login");
+        navigate("/admin/login", { replace: true });
       }
     } catch {
       const storedEmail = sessionStorage.getItem("admin_email");
       const isMockAuth =
         sessionStorage.getItem("admin_auth") === "true" &&
         isEmailAllowed(storedEmail);
-      if (!isMockAuth) {
+      if (!isMockAuth && !hasOAuthCallbackParams) {
         sessionStorage.removeItem("admin_auth");
         sessionStorage.removeItem("admin_email");
-        navigate("/admin/login");
+        navigate("/admin/login", { replace: true });
       }
     }
   };

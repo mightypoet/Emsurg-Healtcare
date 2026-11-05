@@ -41,6 +41,7 @@ export default function App() {
           </Route>
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>
