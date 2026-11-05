@@ -287,7 +287,7 @@ export default function About() {
                 <div className="group relative bg-white/95 backdrop-blur-2xl rounded-3xl border border-sky-100/90 p-6 sm:p-8 lg:p-10 shadow-lg shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all duration-300 overflow-hidden flex flex-col justify-between">
                   <div className="flex flex-col justify-center text-left">
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-slate-900 tracking-tight mb-4 leading-tight">
-                      <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Vision:</span>
+                      <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Vision</span>
                     </h3>
 
                     <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
@@ -321,7 +321,7 @@ export default function About() {
                     {/* Mission */}
                     <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
                       <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
-                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Mission:</span>
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Mission</span>
                       </h3>
                       <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
                         To make a new horizon in healthcare industry.
@@ -331,7 +331,7 @@ export default function About() {
                     {/* Strategy */}
                     <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
                       <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
-                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Strategy:</span>
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Strategy</span>
                       </h3>
                       <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
                         To make a strong presence in field of Medical Device, Orthopaedic, Spine, Nephrology &amp; Biologics
@@ -341,7 +341,7 @@ export default function About() {
                     {/* Goal */}
                     <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
                       <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
-                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Goal:</span>
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Goal</span>
                       </h3>
                       <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
                         Accelerate through innovative ideas, products and services
