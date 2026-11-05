@@ -260,7 +260,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* OUR MISSION & OUR VISION INFOGRAPHIC SECTION */}
+          {/* VISION, MISSION, STRATEGY & GOAL SECTION */}
           <div className="max-w-7xl mx-auto pt-8">
             {/* Centered Heading */}
             <div className="flex flex-col items-center text-center gap-3 mb-12">
@@ -269,7 +269,7 @@ export default function About() {
                 <span>STRATEGIC FOUNDATION</span>
               </div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 tracking-tight">
-                Our Mission <span className="text-sky-600 font-semibold">&</span> Our Vision
+                Our Vision <span className="text-sky-600 font-semibold">&</span> Mission
               </h2>
               <p className="text-slate-600 text-sm sm:text-base max-w-2xl font-normal leading-relaxed">
                 Guiding our clinical research, indigenous biomedical production, and healthcare partnerships across India and global markets.
@@ -283,85 +283,70 @@ export default function About() {
               <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none -z-10" />
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 text-left">
-                {/* 1. OUR MISSION CARD */}
+                {/* 1. VISION CARD */}
                 <div className="group relative bg-white/95 backdrop-blur-2xl rounded-3xl border border-sky-100/90 p-6 sm:p-8 lg:p-10 shadow-lg shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all duration-300 overflow-hidden flex flex-col justify-between">
                   <div className="flex flex-col justify-center text-left">
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-slate-900 tracking-tight mb-4 leading-tight">
-                      <span className="font-light text-slate-900">Our </span>
-                      <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Mission</span>
+                      <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Vision:</span>
                     </h3>
 
                     <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
-                      To drive innovation and excellence in healthcare by delivering high-quality medical devices, advanced biomaterials, and reliable solutions that improve patient outcomes and empower healthcare professionals. We are committed to maintaining the highest standards of safety, quality, and ethical practice while continuously developing technologies that address evolving clinical challenges across India and globally.
+                      To become one of the best professionally managed company without compromising with the core value by
                     </p>
 
-                    <ul className="space-y-2.5 text-slate-700 text-sm sm:text-[15px] font-medium leading-relaxed">
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                    <ul className="space-y-3 text-slate-700 text-sm sm:text-[15px] font-medium leading-relaxed">
+                      <li className="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
                         <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Focus on patient care and safety</span>
+                        <span>Making an ace team and retaining them</span>
                       </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                      <li className="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
                         <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Continuous innovation in medical technology</span>
+                        <span>Being a partner of choice</span>
                       </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                      <li className="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
                         <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Ethical and transparent business practices</span>
+                        <span>Complying good trade practice</span>
                       </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                      <li className="flex items-start gap-3 p-3 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
                         <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Deliver reliable and high-quality solutions</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Foster research and development in biomaterials and wound management</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Support healthcare professionals with training and knowledge sharing</span>
+                        <span>Inculcating meritocracy</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                {/* 2. OUR VISION CARD */}
+                {/* 2. MISSION, STRATEGY & GOAL CARD */}
                 <div className="group relative bg-white/95 backdrop-blur-2xl rounded-3xl border border-sky-100/90 p-6 sm:p-8 lg:p-10 shadow-lg shadow-sky-900/5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/10 transition-all duration-300 overflow-hidden flex flex-col justify-between">
-                  <div className="flex flex-col justify-center text-left">
-                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-slate-900 tracking-tight mb-4 leading-tight">
-                      <span className="font-light text-slate-900">Our </span>
-                      <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Vision</span>
-                    </h3>
+                  <div className="flex flex-col justify-center text-left space-y-6">
+                    {/* Mission */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Mission:</span>
+                      </h3>
+                      <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
+                        To make a new horizon in healthcare industry.
+                      </p>
+                    </div>
 
-                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
-                      To become a globally recognized, professionally managed medical technology company that expands the possibilities of healthcare. We aim to lead through innovation, collaboration, and ethical business practices while fostering a culture of excellence, meritocracy, and sustainable growth. Our vision is to empower medical professionals and institutions with advanced solutions that set new benchmarks in patient care and clinical efficiency.
-                    </p>
+                    {/* Strategy */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Strategy:</span>
+                      </h3>
+                      <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
+                        To make a strong presence in field of Medical Device, Orthopaedic, Spine, Nephrology &amp; Biologics
+                      </p>
+                    </div>
 
-                    <ul className="space-y-2.5 text-slate-700 text-sm sm:text-[15px] font-medium leading-relaxed">
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Achieve leadership in healthcare innovation</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Foster a culture of professional excellence</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Empower healthcare professionals and institutions</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Promote sustainable growth and long-term partnerships</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Integrate global best practices with indigenous solutions</span>
-                      </li>
-                      <li className="flex items-start gap-3 p-2 rounded-xl bg-sky-50/50 border border-sky-100/70 hover:bg-sky-50 hover:border-sky-200 transition-colors">
-                        <span className="w-5 h-5 rounded-full bg-sky-100 text-sky-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 select-none">✓</span>
-                        <span>Continuously enhance the quality and effectiveness of medical technologies</span>
-                      </li>
-                    </ul>
+                    {/* Goal */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 hover:bg-sky-50/70 hover:border-sky-200 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-light text-slate-900 tracking-tight mb-2 leading-tight">
+                        <span className="font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Goal:</span>
+                      </h3>
+                      <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
+                        Accelerate through innovative ideas, products and services
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
