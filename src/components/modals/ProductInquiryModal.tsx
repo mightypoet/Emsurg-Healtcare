@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
 import { 
   X, 
   Send, 
@@ -83,19 +84,48 @@ export default function ProductInquiryModal({
         ? `[BROCHURE DOWNLOAD REQUESTED] ${notes.trim() || "Technical brochure & product dossier requested."}`
         : notes.trim();
 
-      await submitProductInquiry({
+      const finalData = {
         product_id: product?.id,
         product_name: productName,
+        productName: productName,
         category: product?.category,
         division: product?.division,
         name: name.trim(),
+        full_name: name.trim(),
         institution: institution.trim(),
         city: cityState.trim(),
+        city_state: cityState.trim(),
         phone: phone.trim(),
         role: role,
         quantity_requirement: isDownload ? "Brochure PDF Download" : (notes.trim() || "Quote & specs requested"),
         notes: formattedNotes,
-      });
+      };
+
+      await submitProductInquiry(finalData);
+
+      // EmailJS Notification
+      try {
+        const templateParams = {
+          full_name: finalData.full_name,
+          phone: finalData.phone,
+          institution: finalData.institution || 'N/A',
+          city_state: finalData.city_state || 'N/A',
+          role: finalData.role || 'N/A',
+          productName: finalData.productName,
+          notes: finalData.notes || 'No additional notes.'
+        };
+
+        await emailjs.send(
+          'service_6zkh5h8', // Replace with your Service ID
+          'template_4gunczr', // Replace with your Template ID
+          templateParams,
+          'PgyK0ZB4ymGzb4sjL' // Replace with your Public Key
+        );
+        console.log("Email notification sent!");
+      } catch (emailError) {
+        console.error("Failed to send email notification:", emailError);
+        // We don't throw here so the user still sees a success message for the database save
+      }
 
       if (isDownload) {
         // Trigger PDF download / opening in new tab
