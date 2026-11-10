@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ChevronRight, Clock, Calendar, ArrowLeft } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Post, fetchPostBySlug, getLocalPostBySlug } from "../lib/postsStore";
 
 // Export this for backwards compatibility
@@ -58,6 +60,8 @@ export default function BlogPost() {
     );
   }
 
+  const normalizedContent = (post.content || "").replace(/\\n/g, "\n");
+
   return (
     <div className="bg-slate-50 min-h-screen">
       {/* Article Hero */}
@@ -113,32 +117,90 @@ export default function BlogPost() {
             className="w-full h-auto max-h-[500px] object-cover rounded-2xl mb-12 shadow-sm"
           />
           
-          <div className="prose prose-lg prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-a:text-blue-600 hover:prose-a:text-blue-700">
-            {/* Simple markdown parsing for the content */}
-            {post.content.split('\\n\\n').map((paragraph, i) => {
-              if (paragraph.startsWith('## ')) {
-                return <h2 key={i} className="text-2xl font-bold mt-10 mb-4">{paragraph.replace('## ', '')}</h2>;
-              }
-              if (paragraph.startsWith('### ')) {
-                return <h3 key={i} className="text-xl font-bold mt-8 mb-3">{paragraph.replace('### ', '')}</h3>;
-              }
-              if (paragraph.startsWith('- ')) {
-                const items = paragraph.split('\\n- ').map(item => item.replace('- ', ''));
-                return (
-                  <ul key={i} className="list-disc pl-6 my-6 space-y-2">
-                    {items.map((item, j) => {
-                      // Handle bolding
-                      const parts = item.split('**');
-                      if (parts.length > 2) {
-                         return <li key={j}><strong>{parts[1]}</strong>{parts[2]}</li>;
-                      }
-                      return <li key={j}>{item}</li>;
-                    })}
+          <div className="prose prose-lg prose-slate max-w-none text-slate-700 leading-relaxed">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                h1: ({ children }) => (
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-10 mb-4 leading-tight">
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-10 mb-4 leading-snug">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-8 mb-3 leading-snug">
+                    {children}
+                  </h3>
+                ),
+                h4: ({ children }) => (
+                  <h4 className="text-base sm:text-lg font-bold text-slate-900 mt-6 mb-2">
+                    {children}
+                  </h4>
+                ),
+                p: ({ children }) => (
+                  <p className="my-5 text-base sm:text-lg leading-relaxed text-slate-700">
+                    {children}
+                  </p>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-bold text-slate-900">{children}</strong>
+                ),
+                em: ({ children }) => (
+                  <em className="italic text-slate-800">{children}</em>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc pl-6 my-5 space-y-2.5 text-base sm:text-lg text-slate-700">
+                    {children}
                   </ul>
-                );
-              }
-              return <p key={i} className="my-6 leading-relaxed text-slate-700">{paragraph}</p>;
-            })}
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal pl-6 my-5 space-y-2.5 text-base sm:text-lg text-slate-700">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="leading-relaxed">{children}</li>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-4 border-blue-600 bg-blue-50/50 pl-5 py-3 my-6 italic text-slate-700 rounded-r-xl">
+                    {children}
+                  </blockquote>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-700 underline font-medium"
+                  >
+                    {children}
+                  </a>
+                ),
+                hr: () => <hr className="my-8 border-slate-200" />,
+                table: ({ children }) => (
+                  <div className="my-6 overflow-x-auto rounded-xl border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm text-left">
+                      {children}
+                    </table>
+                  </div>
+                ),
+                thead: ({ children }) => (
+                  <thead className="bg-slate-100 text-slate-900 font-bold">{children}</thead>
+                ),
+                th: ({ children }) => (
+                  <th className="px-4 py-3 font-bold text-slate-900">{children}</th>
+                ),
+                td: ({ children }) => (
+                  <td className="px-4 py-3 border-t border-slate-200 text-slate-700">{children}</td>
+                ),
+              }}
+            >
+              {normalizedContent}
+            </ReactMarkdown>
           </div>
           
           <div className="mt-12 pt-8 border-t border-slate-200">
