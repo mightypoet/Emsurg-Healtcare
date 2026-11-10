@@ -199,15 +199,15 @@ export function ArgentLoopInfiniteSlider({
               }}
             >
               <img
-                src={article.image}
+                src={article.image || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800"}
                 alt={article.title}
                 className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
                 style={{
                   transform: isCurrent ? "scale(1)" : "scale(1.15)",
                 }}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1800&q=85";
+                  e.currentTarget.src =
+                    "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800";
                 }}
               />
               {/* High-Contrast Silver & Dark Vignette Overlay */}
@@ -262,12 +262,12 @@ export function ArgentLoopInfiniteSlider({
               {boundedArticles.map((article, idx) => (
                 <div key={idx} className="w-full h-[230px] sm:h-[250px] relative">
                   <img
-                    src={article.image}
+                    src={article.image || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800"}
                     alt={article.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80";
+                      e.currentTarget.src =
+                        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800";
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />

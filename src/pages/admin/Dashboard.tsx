@@ -343,7 +343,14 @@ export default function Dashboard() {
         const local = getLocalPosts();
         const map = new Map<string, Post>();
         local.forEach((p) => map.set(p.slug, p));
-        data.forEach((p: Post) => map.set(p.slug, p));
+        data.forEach((p: Post) => {
+          const existingLocal = map.get(p.slug);
+          const mergedCover =
+            (p.cover_image && p.cover_image.trim()) ||
+            (existingLocal?.cover_image && existingLocal.cover_image.trim()) ||
+            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800";
+          map.set(p.slug, { ...existingLocal, ...p, cover_image: mergedCover });
+        });
         setPosts(Array.from(map.values()));
       }
     } catch {
@@ -402,6 +409,18 @@ export default function Dashboard() {
 
     setUploadingImage(true);
     try {
+      const publicUrl = await uploadProductImage(file);
+      if (publicUrl) {
+        setCoverImage(publicUrl);
+        setUploadingImage(false);
+        showToast("success", "Cover image uploaded and attached.");
+        return;
+      }
+    } catch {
+      // Fallback to local FileReader below if storage upload fails
+    }
+
+    try {
       const reader = new FileReader();
       reader.onload = () => {
         const base64 = reader.result as string;
@@ -428,13 +447,36 @@ export default function Dashboard() {
     }
 
     setSavingPost(true);
+    let finalCoverImage = coverImage.trim()
+      ? formatDriveImageUrl(coverImage.trim())
+      : "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800";
+
+    if (finalCoverImage.startsWith("data:image/") || finalCoverImage.startsWith("blob:")) {
+      try {
+        const fetchResponse = await fetch(finalCoverImage);
+        const blob = await fetchResponse.blob();
+        const extension = blob.type.split("/")[1] || "jpg";
+        const fileToUpload = new File(
+          [blob],
+          `article-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${extension}`,
+          { type: blob.type || "image/jpeg" }
+        );
+        const cdnUrl = await uploadProductImage(fileToUpload);
+        if (cdnUrl) {
+          finalCoverImage = cdnUrl;
+        }
+      } catch (uploadErr) {
+        console.warn("Could not upload base64 article image to storage, using fallback if too large:", uploadErr);
+      }
+    }
+
     const postData = {
       title: title.trim(),
       slug: slug.trim(),
       category,
       excerpt: excerpt.trim(),
       content: content.trim(),
-      cover_image: coverImage.trim(),
+      cover_image: finalCoverImage || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800",
       published,
       featured,
     };
@@ -1761,25 +1803,28 @@ export default function Dashboard() {
                             </td>
                           </tr>
                         ) : (
-                          posts.map((post) => (
-                            <tr key={post.id} className="hover:bg-slate-50 transition-colors">
-                              <td className="px-6 py-4">
-                                <div className="flex items-center gap-3">
-                                  {post.cover_image && (
+                          posts.map((post) => {
+                            const imageUrl = post.cover_image || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+                            return (
+                              <tr key={post.id} className="hover:bg-slate-50 transition-colors">
+                                <td className="px-6 py-4">
+                                  <div className="flex items-center gap-3">
                                     <img
-                                      src={post.cover_image}
+                                      src={imageUrl}
                                       alt={post.title}
                                       referrerPolicy="no-referrer"
                                       loading="lazy"
+                                      onError={(e) => {
+                                        e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+                                      }}
                                       className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0"
                                     />
-                                  )}
-                                  <div>
-                                    <div className="text-sm font-bold text-slate-900 line-clamp-1">{post.title}</div>
-                                    <div className="text-xs text-slate-500">/{post.slug}</div>
+                                    <div>
+                                      <div className="text-sm font-bold text-slate-900 line-clamp-1">{post.title}</div>
+                                      <div className="text-xs text-slate-500">/{post.slug}</div>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
+                                </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
                                   className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -1841,9 +1886,10 @@ export default function Dashboard() {
                                 </div>
                               </td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
+                          );
+                        })
+                      )}
+                    </tbody>
                     </table>
                   </div>
                 </div>
@@ -1933,12 +1979,22 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <input
-                        type="url"
-                        placeholder="Paste image URL or Google Drive share link..."
+                        type="text"
+                        placeholder="Paste image URL or Google Drive share link (leaves clinical fallback if empty)..."
                         value={coverImage}
                         onChange={(e) => setCoverImage(formatDriveImageUrl(e.target.value))}
                         className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm"
                       />
+                      <div className="mt-3 relative h-40 w-full max-w-sm rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                        <img
+                          src={coverImage || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800'}
+                          alt={title || "Article cover preview"}
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+                          }}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </div>
 
                     <div className="md:col-span-2">

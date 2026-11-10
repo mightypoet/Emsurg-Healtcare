@@ -91,24 +91,34 @@ Our Kolkata facility incorporates multi-stage reverse osmosis filtration and con
   }
 ];
 
+export const FALLBACK_ARTICLE_IMAGE = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+
 const LOCAL_STORAGE_KEY = "emsurg_articles_posts";
+
+export function normalizePostImage(post: Post): Post {
+  const rawImg = post.cover_image ? formatDriveImageUrl(post.cover_image.trim()) : "";
+  return {
+    ...post,
+    cover_image: rawImg || FALLBACK_ARTICLE_IMAGE,
+  };
+}
 
 export function getLocalPosts(): Post[] {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(INITIAL_POSTS));
-      return INITIAL_POSTS;
+      return INITIAL_POSTS.map(normalizePostImage);
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      return parsed.map(normalizePostImage);
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(INITIAL_POSTS));
-    return INITIAL_POSTS;
+    return INITIAL_POSTS.map(normalizePostImage);
   } catch (err) {
     console.warn("Could not read posts from localStorage:", err);
-    return INITIAL_POSTS;
+    return INITIAL_POSTS.map(normalizePostImage);
   }
 }
 
@@ -116,10 +126,12 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
   const current = getLocalPosts();
   let updatedPost: Post;
 
-  const sanitizedCover = postData.cover_image ? formatDriveImageUrl(postData.cover_image) : postData.cover_image;
+  const rawCover = postData.cover_image?.trim()
+    ? formatDriveImageUrl(postData.cover_image.trim())
+    : "";
   const sanitizedData = {
     ...postData,
-    ...(sanitizedCover !== undefined ? { cover_image: sanitizedCover } : {}),
+    cover_image: rawCover || FALLBACK_ARTICLE_IMAGE,
   };
 
   if (existingId) {
@@ -128,6 +140,7 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
       updatedPost = {
         ...current[index],
         ...sanitizedData,
+        cover_image: rawCover || current[index].cover_image || FALLBACK_ARTICLE_IMAGE,
         id: existingId,
       } as Post;
       current[index] = updatedPost;
@@ -138,7 +151,6 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
         author: "Emsurg Medical Team",
         published: true,
         featured: false,
-        cover_image: "",
         ...sanitizedData,
       } as Post;
       current.unshift(updatedPost);
@@ -150,7 +162,6 @@ export function saveLocalPost(postData: Partial<Post>, existingId?: string): Pos
       author: "Emsurg Medical Team",
       published: true,
       featured: false,
-      cover_image: "",
       ...sanitizedData,
     } as Post;
     current.unshift(updatedPost);
@@ -241,8 +252,15 @@ export async function fetchPublishedPosts(): Promise<Post[]> {
 
     if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
       const map = new Map<string, Post>();
-      local.forEach(p => map.set(p.slug, p));
-      res.data.forEach((p: Post) => map.set(p.slug, p));
+      local.forEach(p => map.set(p.slug, normalizePostImage(p)));
+      res.data.forEach((p: Post) => {
+        const existingLocal = map.get(p.slug);
+        const mergedCover =
+          (p.cover_image && p.cover_image.trim()) ||
+          (existingLocal?.cover_image && existingLocal.cover_image.trim()) ||
+          FALLBACK_ARTICLE_IMAGE;
+        map.set(p.slug, normalizePostImage({ ...existingLocal, ...p, cover_image: mergedCover }));
+      });
       return Array.from(map.values()).sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
@@ -270,11 +288,16 @@ export async function fetchPostBySlug(slug: string): Promise<Post | null> {
     )) as any;
 
     if (!res?.error && res?.data) {
-      return res.data as Post;
+      const remotePost = res.data as Post;
+      const mergedCover =
+        (remotePost.cover_image && remotePost.cover_image.trim()) ||
+        (local?.cover_image && local.cover_image.trim()) ||
+        FALLBACK_ARTICLE_IMAGE;
+      return normalizePostImage({ ...local, ...remotePost, cover_image: mergedCover });
     }
-    return local || null;
+    return local ? normalizePostImage(local) : null;
   } catch {
-    return local || null;
+    return local ? normalizePostImage(local) : null;
   }
 }
 
@@ -295,7 +318,14 @@ export async function fetchFeaturedPosts(): Promise<Post[]> {
     )) as any;
 
     if (!res?.error && res?.data && res.data.length > 0) {
-      return res.data as Post[];
+      return (res.data as Post[]).map((p) => {
+        const matchingLocal = local.find((lp) => lp.slug === p.slug);
+        const mergedCover =
+          (p.cover_image && p.cover_image.trim()) ||
+          (matchingLocal?.cover_image && matchingLocal.cover_image.trim()) ||
+          FALLBACK_ARTICLE_IMAGE;
+        return normalizePostImage({ ...matchingLocal, ...p, cover_image: mergedCover });
+      });
     }
     return local.length > 0 ? local.slice(0, 3) : getLocalPosts().filter(p => p.published).slice(0, 3);
   } catch {

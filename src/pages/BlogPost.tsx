@@ -103,9 +103,13 @@ export default function BlogPost() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
         {/* Article Body */}
         <article className="lg:w-2/3 max-w-4xl">
-          <img 
-            src={post.cover_image} 
-            alt={post.title} 
+          <img
+            src={post.cover_image || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800'}
+            alt={post.title}
+            onError={(e) => {
+              // If the database URL fails or is broken, gracefully use a fallback clinical image
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+            }}
             className="w-full h-auto max-h-[500px] object-cover rounded-2xl mb-12 shadow-sm"
           />
           

@@ -56,7 +56,7 @@ export default function SwissNewsSection() {
       title: post.title,
       image:
         formatDriveImageUrl(post.cover_image) ||
-        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800",
       category: post.category || "Clinical Research",
       year: year,
       description: cleanDescription || "Read clinical insights and surgical updates from Emsurg Healthcare.",

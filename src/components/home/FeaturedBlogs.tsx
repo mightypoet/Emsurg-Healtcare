@@ -53,49 +53,56 @@ export default function FeaturedBlogs() {
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredPosts.map((post) => (
-            <Link 
-              key={post.id} 
-              to={`/blogs/${post.slug}`} 
-              className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-            >
-              <div className="relative h-56 overflow-hidden">
-                <img 
-                  src={post.cover_image} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-blue-700 tracking-wide uppercase shadow-sm">
-                  {post.category}
-                </div>
-              </div>
-              
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="flex items-center gap-4 text-xs font-medium text-slate-500 mb-4">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(post.created_at), "MMM d, yyyy")}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-4 h-4" />
-                    4 min read
+          {featuredPosts.map((article) => {
+            const imageUrl = article.cover_image || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+            return (
+              <Link 
+                key={article.id} 
+                to={`/blogs/${article.slug}`} 
+                className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="relative h-56 overflow-hidden">
+                  <img 
+                    src={imageUrl} 
+                    alt={article.title}
+                    onError={(e) => {
+                      // If the database URL fails or is broken, gracefully use a fallback clinical image
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800';
+                    }}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-blue-700 tracking-wide uppercase shadow-sm">
+                    {article.category}
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
-                  {post.title}
-                </h3>
-                
-                <p className="text-slate-600 text-sm mb-6 line-clamp-2 flex-grow">
-                  {post.excerpt}
-                </p>
-                
-                <div className="mt-auto flex items-center text-sm font-bold text-blue-600 group-hover:text-blue-700 transition-colors">
-                  Read Full Article <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center gap-4 text-xs font-medium text-slate-500 mb-4">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4" />
+                      {format(new Date(article.created_at), "MMM d, yyyy")}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4" />
+                      4 min read
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                    {article.title}
+                  </h3>
+                  
+                  <p className="text-slate-600 text-sm mb-6 line-clamp-2 flex-grow">
+                    {article.excerpt}
+                  </p>
+                  
+                  <div className="mt-auto flex items-center text-sm font-bold text-blue-600 group-hover:text-blue-700 transition-colors">
+                    Read Full Article <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
