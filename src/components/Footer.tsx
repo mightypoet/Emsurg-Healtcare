@@ -289,7 +289,7 @@ export default function Footer() {
                     Blogs
                   </Link>
                   <Link 
-                    to="/careers" 
+                    to="/career" 
                     className="text-slate-600 hover:text-sky-600 transition-colors block py-0.5 font-medium"
                   >
                     Career

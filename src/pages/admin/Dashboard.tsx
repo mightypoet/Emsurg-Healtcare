@@ -39,6 +39,14 @@ import {
   subscribeToGallery,
   GalleryItem
 } from "../../lib/galleryStore";
+import {
+  JobOpening,
+  JobApplication,
+  fetchJobOpenings,
+  fetchJobApplications,
+  subscribeToJobOpenings,
+  subscribeToJobApplications,
+} from "../../lib/careersStore";
 import { 
   LogOut, 
   Plus, 
@@ -72,12 +80,14 @@ import {
   Eye,
   Filter,
   ArrowRight,
-  GripVertical
+  GripVertical,
+  Briefcase
 } from "lucide-react";
 import { format } from "date-fns";
 import ProductsTab from "../../components/admin/ProductsTab";
 import InquiriesTab from "../../components/admin/InquiriesTab";
 import GalleryTab from "../../components/admin/GalleryTab";
+import CareersTab from "../../components/admin/CareersTab";
 import GalleryItemModal from "../../components/admin/GalleryItemModal";
 import BulkUploadModal from "../../components/admin/BulkUploadModal";
 import DriveImporterModal from "../../components/admin/DriveImporterModal";
@@ -89,7 +99,7 @@ export default function Dashboard() {
   const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   // Active Admin Tab
-  const [activeTab, setActiveTab] = useState<"products" | "articles" | "inquiries" | "gallery">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "articles" | "inquiries" | "gallery" | "careers">("products");
 
   // Feedback Toast State
   const [toast, setToast] = useState<{ type: "success" | "warning" | "error"; message: string } | null>(null);
@@ -212,6 +222,12 @@ export default function Dashboard() {
   /* ---------------- INQUIRIES STATE ---------------- */
   const [inquiries, setInquiries] = useState<ProductInquiry[]>([]);
 
+  /* ---------------- CAREERS STATE ---------------- */
+  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
+  const [loadingApplications, setLoadingApplications] = useState(true);
+
   const isEmailAllowed = (email?: string | null) =>
     Boolean(
       email &&
@@ -258,12 +274,20 @@ export default function Dashboard() {
     const unsubGallery = subscribeToGallery((refreshedGallery) => {
       setGalleryItems(refreshedGallery);
     });
+    const unsubJobs = subscribeToJobOpenings((refreshedJobs) => {
+      setJobOpenings(refreshedJobs);
+    }, false);
+    const unsubApplications = subscribeToJobApplications((refreshedApps) => {
+      setJobApplications(refreshedApps);
+    });
 
     return () => {
       authListener.subscription.unsubscribe();
       unsubProducts();
       unsubInquiries();
       unsubGallery();
+      unsubJobs();
+      unsubApplications();
     };
   }, []);
 
@@ -324,7 +348,13 @@ export default function Dashboard() {
   };
 
   const loadAllData = async () => {
-    await Promise.all([fetchPosts(), loadProducts(), loadInquiries(), loadGalleryData()]);
+    await Promise.all([
+      fetchPosts(),
+      loadProducts(),
+      loadInquiries(),
+      loadGalleryData(),
+      loadCareersData(),
+    ]);
   };
 
   /* ---------------- POSTS LOGIC ---------------- */
@@ -919,6 +949,25 @@ export default function Dashboard() {
     }
   };
 
+  /* ---------------- CAREERS LOGIC ---------------- */
+  const loadCareersData = async () => {
+    setLoadingJobs(true);
+    setLoadingApplications(true);
+    try {
+      const [jobsRes, appsRes] = await Promise.all([
+        fetchJobOpenings(false),
+        fetchJobApplications(),
+      ]);
+      setJobOpenings(jobsRes.jobs);
+      setJobApplications(appsRes);
+    } catch (err) {
+      console.error("Failed to load careers data:", err);
+    } finally {
+      setLoadingJobs(false);
+      setLoadingApplications(false);
+    }
+  };
+
   /* ---------------- GALLERY & MEDIA LOGIC ---------------- */
   const loadGalleryData = async () => {
     setLoadingGallery(true);
@@ -1328,6 +1377,20 @@ export default function Dashboard() {
                 >
                   <ImageIcon className="w-4 h-4" /> Gallery & Media ({galleryItems.length})
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("careers");
+                    loadCareersData();
+                  }}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                    activeTab === "careers"
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                >
+                  <Briefcase className="w-4 h-4" /> Careers ({jobApplications.length})
+                </button>
               </div>
             </div>
 
@@ -1404,6 +1467,17 @@ export default function Dashboard() {
             }`}
           >
             Gallery ({galleryItems.length})
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("careers");
+              loadCareersData();
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 ${
+              activeTab === "careers" ? "bg-blue-600 text-white" : "bg-white text-slate-700 border border-slate-200"
+            }`}
+          >
+            Careers ({jobApplications.length})
           </button>
         </div>
       </nav>
@@ -2104,6 +2178,20 @@ export default function Dashboard() {
             onOpenBulkUpload={() => galleryFileInputRef.current?.click()}
             onOpenDriveImporter={() => setIsDriveModalOpen(true)}
             categories={GALLERY_CATEGORIES}
+          />
+        )}
+
+        {/* ======================================================== */}
+        {/* SECTION 5: CAREERS & APPLICATIONS MANAGEMENT TAB         */}
+        {/* ======================================================== */}
+        {activeTab === "careers" && (
+          <CareersTab
+            jobs={jobOpenings}
+            applications={jobApplications}
+            loadingJobs={loadingJobs}
+            loadingApplications={loadingApplications}
+            onRefresh={loadCareersData}
+            showToast={showToast}
           />
         )}
       </div>

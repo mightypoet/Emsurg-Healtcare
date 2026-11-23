@@ -293,6 +293,14 @@ export default function LiquidGlassNavbar() {
               Culture
             </Link>
 
+            {/* Careers Link */}
+            <Link
+              to="/career"
+              className="inline-flex items-center transition-colors text-xs font-semibold uppercase tracking-wider px-3 py-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400 text-slate-700 hover:text-sky-600"
+            >
+              Careers
+            </Link>
+
             {/* About Link */}
             <Link
               to="/about"
@@ -429,6 +437,15 @@ export default function LiquidGlassNavbar() {
                   className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
                 >
                   <span>Global Partnerships</span>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
+                </Link>
+
+                <Link
+                  to="/career"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-sky-50/70 text-base font-semibold tracking-wide text-slate-800 hover:text-sky-600 transition-colors group"
+                >
+                  <span>Careers</span>
                   <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-sky-600 transition-colors" />
                 </Link>
 
