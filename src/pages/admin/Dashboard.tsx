@@ -954,14 +954,20 @@ export default function Dashboard() {
     setLoadingJobs(true);
     setLoadingApplications(true);
     try {
-      const [jobsRes, appsRes] = await Promise.all([
+      const [jobsResult, appsResult] = await Promise.allSettled([
         fetchJobOpenings(false),
         fetchJobApplications(),
       ]);
-      setJobOpenings(jobsRes.jobs);
-      setJobApplications(appsRes);
-    } catch (err) {
-      console.error("Failed to load careers data:", err);
+      if (jobsResult.status === "fulfilled") {
+        setJobOpenings(jobsResult.value.jobs);
+      } else {
+        console.error("Failed to load job openings:", jobsResult.reason);
+      }
+      if (appsResult.status === "fulfilled") {
+        setJobApplications(appsResult.value);
+      } else {
+        console.error("Failed to load job applications:", appsResult.reason);
+      }
     } finally {
       setLoadingJobs(false);
       setLoadingApplications(false);

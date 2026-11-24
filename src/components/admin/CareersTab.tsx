@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -41,6 +41,7 @@ import {
   toggleJobOpeningActive,
   deleteJobOpening,
   seedDefaultJobOpening,
+  fetchJobApplications,
   updateApplicationStatus,
   deleteJobApplication,
 } from "../../lib/careersStore";
@@ -83,6 +84,32 @@ export default function CareersTab({
   showToast,
 }: CareersTabProps) {
   const [subTab, setSubTab] = useState<"openings" | "applications">("openings");
+  const [localApplications, setLocalApplications] = useState<JobApplication[]>(applications);
+  const [refreshingApps, setRefreshingApps] = useState(false);
+
+  useEffect(() => {
+    setLocalApplications(applications);
+  }, [applications]);
+
+  const loadLatestApplications = useCallback(async () => {
+    setRefreshingApps(true);
+    try {
+      const rows = await fetchJobApplications();
+      setLocalApplications(rows);
+      await onRefresh();
+    } catch (err: any) {
+      console.error("Failed to fetch job applications:", err);
+      showToast("error", err?.message || "Failed to fetch job applications from Supabase.");
+    } finally {
+      setRefreshingApps(false);
+    }
+  }, [onRefresh, showToast]);
+
+  useEffect(() => {
+    if (subTab === "applications") {
+      loadLatestApplications();
+    }
+  }, [subTab]);
 
   // Job Modal State
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
@@ -214,6 +241,9 @@ export default function CareersTab({
     setUpdatingAppId(app.id);
     try {
       await updateApplicationStatus(app.id, nextStatus);
+      setLocalApplications((prev) =>
+        prev.map((a) => (a.id === app.id ? { ...a, status: nextStatus } : a))
+      );
       await onRefresh();
       showToast("success", `${app.full_name}'s status updated to "${nextStatus}".`);
     } catch (err) {
@@ -233,6 +263,7 @@ export default function CareersTab({
         showToast("success", `Removed "${deleteTarget.item.title}" job opening.`);
       } else {
         await deleteJobApplication(deleteTarget.item.id);
+        setLocalApplications((prev) => prev.filter((a) => a.id !== deleteTarget.item.id));
         showToast("success", `Removed application from ${deleteTarget.item.full_name}.`);
       }
       await onRefresh();
@@ -247,7 +278,7 @@ export default function CareersTab({
 
   // Count applications per job
   const getApplicantCountForJob = (job: JobOpening) =>
-    applications.filter(
+    localApplications.filter(
       (a) =>
         a.job_id === job.id ||
         a.job_title.trim().toLowerCase() === job.title.trim().toLowerCase()
@@ -255,15 +286,15 @@ export default function CareersTab({
 
   const uniqueAppJobTitles = useMemo(() => {
     const titles = new Set<string>();
-    applications.forEach((a) => {
+    localApplications.forEach((a) => {
       if (a.job_title) titles.add(a.job_title);
     });
     return Array.from(titles);
-  }, [applications]);
+  }, [localApplications]);
 
   const filteredApplications = useMemo(() => {
     const q = appSearch.trim().toLowerCase();
-    return applications.filter((app) => {
+    return localApplications.filter((app) => {
       const matchesSearch =
         !q ||
         app.full_name.toLowerCase().includes(q) ||
@@ -278,7 +309,7 @@ export default function CareersTab({
 
       return matchesSearch && matchesJob && matchesStatus;
     });
-  }, [applications, appSearch, appJobFilter, appStatusFilter]);
+  }, [localApplications, appSearch, appJobFilter, appStatusFilter]);
 
   const handleExportApplicationsCSV = () => {
     if (filteredApplications.length === 0) return;
@@ -311,12 +342,18 @@ export default function CareersTab({
       escapeCSV(app.email),
       escapeCSV(app.phone),
       escapeCSV(app.current_location),
-      escapeCSV(app.years_of_experience),
+      escapeCSV(app.experience_years),
       escapeCSV(app.current_company || ""),
       escapeCSV(app.linkedin_url || ""),
       escapeCSV(app.status),
       escapeCSV(app.resume_filename || "resume"),
-      escapeCSV(app.resume_url.startsWith("data:") ? "[Stored Base64 Resume]" : app.resume_url),
+      escapeCSV(
+        !app.resume_url
+          ? "No Resume"
+          : app.resume_url.startsWith("data:")
+          ? "[Stored Base64 Resume]"
+          : app.resume_url
+      ),
       escapeCSV(app.cover_note || ""),
     ]);
 
@@ -350,7 +387,7 @@ export default function CareersTab({
               {activeJobsCount} Active {activeJobsCount === 1 ? "Role" : "Roles"}
             </span>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-              {applications.length} {applications.length === 1 ? "Applicant" : "Applicants"}
+              {localApplications.length} {localApplications.length === 1 ? "Applicant" : "Applicants"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -376,10 +413,11 @@ export default function CareersTab({
 
           <button
             type="button"
-            onClick={onRefresh}
-            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            onClick={() => (subTab === "applications" ? loadLatestApplications() : onRefresh())}
+            disabled={refreshingApps}
+            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-60"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshingApps ? "animate-spin" : ""}`} />
             <span>Refresh</span>
           </button>
 
@@ -419,10 +457,10 @@ export default function CareersTab({
           }`}
         >
           <Users className="w-3.5 h-3.5" />
-          <span>Applications ({applications.length})</span>
-          {applications.filter((a) => a.status === "New").length > 0 && (
+          <span>Applications ({localApplications.length})</span>
+          {localApplications.filter((a) => a.status === "New").length > 0 && (
             <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500 text-white">
-              {applications.filter((a) => a.status === "New").length} New
+              {localApplications.filter((a) => a.status === "New").length} New
             </span>
           )}
         </button>
@@ -612,7 +650,7 @@ export default function CareersTab({
                 onChange={(e) => setAppJobFilter(e.target.value)}
                 className="bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium py-2 px-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
               >
-                <option value="All">All Positions ({applications.length})</option>
+                <option value="All">All Positions ({localApplications.length})</option>
                 {uniqueAppJobTitles.map((title) => (
                   <option key={title} value={title}>
                     {title}
@@ -632,6 +670,16 @@ export default function CareersTab({
                   </option>
                 ))}
               </select>
+
+              <button
+                type="button"
+                onClick={loadLatestApplications}
+                disabled={refreshingApps}
+                className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-60"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshingApps ? "animate-spin" : ""}`} />
+                <span>Refresh</span>
+              </button>
 
               <button
                 type="button"
@@ -757,7 +805,7 @@ export default function CareersTab({
                               <span>{app.current_location}</span>
                             </div>
                             <div className="text-[11px] text-slate-600 mt-0.5">
-                              <strong>Exp:</strong> {app.years_of_experience}
+                              <strong>Exp:</strong> {app.experience_years}
                             </div>
                             {app.current_company && (
                               <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">

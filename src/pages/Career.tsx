@@ -9,7 +9,6 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Rocket,
   Users,
   TrendingUp,
@@ -207,7 +206,7 @@ export default function Career() {
     setFormError("");
 
     try {
-      const { url, filename } = await uploadResumeFile(resumeFile);
+      const { url } = await uploadResumeFile(resumeFile);
 
       await submitJobApplication({
         job_id: applyingJob.id,
@@ -216,12 +215,11 @@ export default function Career() {
         email: email.trim(),
         phone: phone.trim(),
         current_location: currentLocation.trim(),
-        years_of_experience: yearsOfExperience.trim(),
-        current_company: currentCompany.trim(),
-        linkedin_url: linkedinUrl.trim(),
-        cover_note: coverNote.trim(),
+        experience_years: yearsOfExperience.trim(),
+        current_company: currentCompany.trim() || null,
+        linkedin_url: linkedinUrl.trim() || null,
+        cover_note: coverNote.trim() || null,
         resume_url: url,
-        resume_filename: filename,
       });
 
       setSubmittedSuccess(true);
@@ -315,7 +313,6 @@ export default function Career() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
             <div className="inline-flex items-center gap-2 text-sky-700 bg-sky-100/80 border border-sky-200 text-xs font-bold tracking-[0.2em] px-3.5 py-1 rounded-full uppercase mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-sky-600" />
               <span>LIFE AT EMSURG</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 tracking-tight mb-4">

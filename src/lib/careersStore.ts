@@ -26,12 +26,11 @@ CREATE TABLE IF NOT EXISTS job_applications (
   email TEXT NOT NULL,
   phone TEXT NOT NULL,
   current_location TEXT NOT NULL,
-  years_of_experience TEXT NOT NULL,
+  experience_years TEXT NOT NULL,
   current_company TEXT,
   linkedin_url TEXT,
   cover_note TEXT,
-  resume_url TEXT NOT NULL,
-  resume_filename TEXT,
+  resume_url TEXT,
   status TEXT DEFAULT 'New',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -71,11 +70,11 @@ export interface JobApplication {
   email: string;
   phone: string;
   current_location: string;
-  years_of_experience: string;
-  current_company?: string;
-  linkedin_url?: string;
-  cover_note?: string;
-  resume_url: string;
+  experience_years: string;
+  current_company?: string | null;
+  linkedin_url?: string | null;
+  cover_note?: string | null;
+  resume_url: string | null;
   resume_filename?: string;
   status: ApplicationStatus;
   created_at: string;
@@ -151,7 +150,6 @@ We are inviting applications for the position of **Area Business Manager – Ban
 };
 
 const LOCAL_JOBS_KEY = "emsurg_job_openings";
-const LOCAL_APPS_KEY = "emsurg_job_applications";
 
 function readLocalJobs(): JobOpening[] {
   try {
@@ -171,26 +169,6 @@ function writeLocalJobs(jobs: JobOpening[]): void {
     window.dispatchEvent(new CustomEvent("emsurg-careers-updated", { detail: jobs }));
   } catch (err) {
     console.warn("Could not persist local jobs:", err);
-  }
-}
-
-function readLocalApplications(): JobApplication[] {
-  try {
-    const raw = localStorage.getItem(LOCAL_APPS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeLocalApplications(apps: JobApplication[]): void {
-  try {
-    localStorage.setItem(LOCAL_APPS_KEY, JSON.stringify(apps));
-    window.dispatchEvent(new CustomEvent("emsurg-applications-updated", { detail: apps }));
-  } catch (err) {
-    console.warn("Could not persist local applications:", err);
   }
 }
 
@@ -218,11 +196,11 @@ function normalizeApplicationRow(row: any): JobApplication {
     email: row.email || "",
     phone: row.phone || "",
     current_location: row.current_location || "",
-    years_of_experience: row.years_of_experience || "",
+    experience_years: row.experience_years || row.years_of_experience || "",
     current_company: row.current_company || "",
     linkedin_url: row.linkedin_url || "",
     cover_note: row.cover_note || "",
-    resume_url: row.resume_url || "",
+    resume_url: row.resume_url || null,
     resume_filename: row.resume_filename || "",
     status: (row.status as ApplicationStatus) || "New",
     created_at: row.created_at || new Date().toISOString(),
@@ -440,61 +418,72 @@ export async function deleteJobOpening(id: string): Promise<void> {
 }
 
 /**
- * Upload resume (PDF/DOC/DOCX) to Supabase Storage 'resumes' bucket
+ * Upload resume (PDF/DOC/DOCX) to Supabase Storage 'resumes' bucket.
+ * Returns publicUrl on success, or null if storage upload fails (logs error without aborting application).
  */
 export async function uploadResumeFile(file: File): Promise<{
-  url: string;
+  url: string | null;
   filename: string;
   uploadedToStorage: boolean;
 }> {
-  const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const filePath = `applications/${Date.now()}-${Math.random()
-    .toString(36)
-    .substring(2, 8)}-${cleanName}`;
+  const cleanFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
 
   try {
     const { error: uploadError } = await supabase.storage
       .from("resumes")
-      .upload(filePath, file, {
+      .upload(cleanFileName, file, {
         cacheControl: "3600",
         upsert: false,
         contentType: file.type || undefined,
       });
 
-    if (!uploadError) {
-      const { data } = supabase.storage.from("resumes").getPublicUrl(filePath);
-      if (data?.publicUrl) {
-        return {
-          url: data.publicUrl,
-          filename: file.name,
-          uploadedToStorage: true,
-        };
-      }
-    } else {
-      console.warn("Supabase 'resumes' bucket upload error:", uploadError);
+    if (uploadError) {
+      console.error("Supabase 'resumes' storage upload error:", uploadError.message, uploadError);
+      return {
+        url: null,
+        filename: file.name,
+        uploadedToStorage: false,
+      };
     }
-  } catch (err) {
-    console.warn("Resume upload exception:", err);
+
+    const { data } = supabase.storage.from("resumes").getPublicUrl(cleanFileName);
+    if (data?.publicUrl) {
+      return {
+        url: data.publicUrl,
+        filename: file.name,
+        uploadedToStorage: true,
+      };
+    }
+
+    console.error("Supabase 'resumes' storage error: publicUrl was empty.");
+  } catch (err: any) {
+    console.error("Resume upload exception:", err?.message || err);
   }
 
-  // Fallback to base64 data URL so application still captures the resume locally if storage bucket isn't writable anonymously
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(new Error("Could not read resume file."));
-    reader.readAsDataURL(file);
-  });
-
   return {
-    url: dataUrl,
+    url: null,
     filename: file.name,
     uploadedToStorage: false,
   };
 }
 
+export interface SubmitJobApplicationInput {
+  job_id: string;
+  job_title: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  current_location: string;
+  experience_years: string;
+  current_company?: string | null;
+  linkedin_url?: string | null;
+  cover_note?: string | null;
+  resume_url: string | null;
+}
+
 export async function submitJobApplication(
-  application: Omit<JobApplication, "id" | "status" | "created_at">
-): Promise<JobApplication> {
+  application: SubmitJobApplicationInput
+): Promise<void> {
   const payload = {
     job_id: application.job_id,
     job_title: application.job_title,
@@ -502,102 +491,57 @@ export async function submitJobApplication(
     email: application.email.trim(),
     phone: application.phone.trim(),
     current_location: application.current_location.trim(),
-    years_of_experience: application.years_of_experience.trim(),
-    current_company: application.current_company?.trim() || "",
-    linkedin_url: application.linkedin_url?.trim() || "",
-    cover_note: application.cover_note?.trim() || "",
-    resume_url: application.resume_url,
-    resume_filename: application.resume_filename || "resume.pdf",
+    experience_years: application.experience_years.trim(),
+    current_company: application.current_company?.trim() || null,
+    linkedin_url: application.linkedin_url?.trim() || null,
+    cover_note: application.cover_note?.trim() || null,
+    resume_url: application.resume_url ?? null,
     status: "New" as ApplicationStatus,
   };
 
-  let savedRecord: JobApplication = {
-    id: `app-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    ...payload,
-    created_at: new Date().toISOString(),
-  };
+  const { error } = await supabase.from("job_applications").insert([payload]);
 
-  try {
-    const { data, error } = await supabase
-      .from("job_applications")
-      .insert([payload])
-      .select()
-      .single();
-
-    if (!error && data) {
-      savedRecord = normalizeApplicationRow(data);
-    } else if (error) {
-      console.warn("Supabase job_applications insert error:", error);
-    }
-  } catch (err) {
-    console.warn("Supabase submitJobApplication exception:", err);
+  if (error) {
+    console.error("Supabase job_applications insert error:", error.message, error);
+    throw new Error(error.message || "Failed to submit job application.");
   }
-
-  const existing = readLocalApplications().filter((a) => a.id !== savedRecord.id);
-  writeLocalApplications([savedRecord, ...existing]);
-
-  return savedRecord;
 }
 
 export async function fetchJobApplications(): Promise<JobApplication[]> {
-  try {
-    const { data, error } = await supabase
-      .from("job_applications")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("job_applications")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    if (!error && Array.isArray(data)) {
-      const remote = data.map(normalizeApplicationRow);
-      const local = readLocalApplications();
-      const map = new Map<string, JobApplication>();
-      remote.forEach((a) => map.set(a.id, a));
-      // Keep purely local unsynced fallback items (app-*) if any
-      local
-        .filter((a) => a.id.startsWith("app-"))
-        .forEach((a) => {
-          if (!map.has(a.id)) map.set(a.id, a);
-        });
-      const merged = Array.from(map.values()).sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      writeLocalApplications(merged);
-      return merged;
-    }
-  } catch (err) {
-    console.info("Supabase fetchJobApplications fallback:", err);
+  if (error) {
+    console.error("Supabase fetchJobApplications error:", error.message, error);
+    throw new Error(error.message || "Failed to fetch job applications.");
   }
 
-  return readLocalApplications();
+  return (data || []).map(normalizeApplicationRow);
 }
 
 export async function updateApplicationStatus(
   id: string,
   status: ApplicationStatus
 ): Promise<void> {
-  const updated = readLocalApplications().map((a) =>
-    a.id === id ? { ...a, status } : a
-  );
-  writeLocalApplications(updated);
+  const { error } = await supabase
+    .from("job_applications")
+    .update({ status })
+    .eq("id", id);
 
-  try {
-    if (!id.startsWith("app-")) {
-      await supabase.from("job_applications").update({ status }).eq("id", id);
-    }
-  } catch (err) {
-    console.info("Supabase updateApplicationStatus fallback:", err);
+  if (error) {
+    console.error("Supabase updateApplicationStatus error:", error.message, error);
+    throw new Error(error.message || "Failed to update application status.");
   }
 }
 
 export async function deleteJobApplication(id: string): Promise<void> {
-  const filtered = readLocalApplications().filter((a) => a.id !== id);
-  writeLocalApplications(filtered);
+  const { error } = await supabase.from("job_applications").delete().eq("id", id);
 
-  try {
-    if (!id.startsWith("app-")) {
-      await supabase.from("job_applications").delete().eq("id", id);
-    }
-  } catch (err) {
-    console.info("Supabase deleteJobApplication fallback:", err);
+  if (error) {
+    console.error("Supabase deleteJobApplication error:", error.message, error);
+    throw new Error(error.message || "Failed to delete job application.");
   }
 }
 
@@ -640,22 +584,17 @@ export function subscribeToJobApplications(
       "postgres_changes",
       { event: "*", schema: "public", table: "job_applications" },
       async () => {
-        const apps = await fetchJobApplications();
-        callback(apps);
+        try {
+          const apps = await fetchJobApplications();
+          callback(apps);
+        } catch (err) {
+          console.error("Realtime job_applications refresh error:", err);
+        }
       }
     )
     .subscribe();
 
-  const handleLocal = (e: any) => {
-    if (Array.isArray(e.detail)) {
-      callback(e.detail);
-    }
-  };
-
-  window.addEventListener("emsurg-applications-updated", handleLocal);
-
   return () => {
     supabase.removeChannel(channel);
-    window.removeEventListener("emsurg-applications-updated", handleLocal);
   };
 }
